@@ -6,10 +6,10 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
 
     <changeSet author="chumak_rostislav" id="create_sequence">
-        <createSequence sequenceName="create_sequence"
-                        schemaName="public"
-                        incrementBy="1"
+        <createSequence sequenceName="create_sequence"               incrementBy="1"
                         startValue="1"/>
+<!--                        schemaName="public"-->
+
 
     </changeSet>
 
