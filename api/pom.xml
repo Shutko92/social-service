@@ -9,7 +9,7 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.example</groupId>
+    <groupId>ru.skillbox.diplom.group42.social.service</groupId>
     <artifactId>social-service-api</artifactId>
 
     <properties>
