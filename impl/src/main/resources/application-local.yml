@@ -1,15 +1,22 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5432/testdb
     username: postgres
-    password: "password"
+    password: 123456789
   jpa:
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQL95Dialect
-        show_sql: false
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: true
+        auto-dll: none
         temp:
           use_jdbc_metadata_defaults: false
+
   liquibase:
     change-log: classpath:changelog_init.xml
+#logging:
+#  level:
+#    web: trace
+#    sql: trace
+#    root: debug
