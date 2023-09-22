@@ -67,7 +67,7 @@
 				<mainClass>
 					ru.skillbox.diplom.group42.social.service.Application
 				</mainClass>
-<!--				<classifier>exec</classifier>-->
+				<classifier>exec</classifier>
 			</configuration>
 			<executions>
 				<execution>
