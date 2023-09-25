@@ -8,7 +8,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQL95Dialect
-        show_sql: false
+        show_sql: true
         temp:
           use_jdbc_metadata_defaults: false
         hbm2ddl:
@@ -16,7 +16,7 @@ spring:
   liquibase:
     change-log: classpath:changelog_init.xml
     enabled: true
-    drop-first: false
+    drop-first: true
 
 vars:
   captchaCharStr: 0123456789
@@ -26,8 +26,14 @@ endpoints:
   public:
     /api/v1/auth/**,
     /swagger-ui/**,
+    /swagger-ui**,
     /api-docs/**,
-    /api-docs.yaml
+    /api-docs.yaml,
+    /swagger.json,
+    /swagger-resources/**,
+    /webjars/**,
+    /v1/api-docs
+
 roles:
   admin: "admin"
 
@@ -48,4 +54,6 @@ springdoc:
   swagger-ui:
     path: "/swagger-ui"
     operationsSorter: method
+
+
 
