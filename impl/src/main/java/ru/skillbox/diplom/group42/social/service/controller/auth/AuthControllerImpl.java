@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.skillbox.diplom.group42.social.service.dto.auth.AuthenticateDto;
 import ru.skillbox.diplom.group42.social.service.dto.auth.AuthenticateResponseDto;
 import ru.skillbox.diplom.group42.social.service.dto.auth.RegistrationDto;
-import ru.skillbox.diplom.group42.social.service.entity.auth.User;
-import ru.skillbox.diplom.group42.social.service.mapper.auth.AuthMapper;
+import ru.skillbox.diplom.group42.social.service.dto.captcha.CaptchaDto;
 import ru.skillbox.diplom.group42.social.service.service.auth.AuthService;
+import ru.skillbox.diplom.group42.social.service.service.captcha.CaptchaService;
 
 @Slf4j
 @RestController
@@ -19,13 +19,13 @@ import ru.skillbox.diplom.group42.social.service.service.auth.AuthService;
 public class AuthControllerImpl implements AuthController {
 
     private final AuthService authService;
-    private final AuthMapper authMapper;
+
+    private final CaptchaService captchaService;
 
     @Override
     @ResponseStatus(HttpStatus.OK)
     public void register(RegistrationDto registrationDto) {
-        User user = authMapper.convertRegistrationDtoToUser(registrationDto);
-        authService.register(user);
+        authService.register(registrationDto);
     }
 
 
@@ -38,5 +38,10 @@ public class AuthControllerImpl implements AuthController {
     @Override
     @ResponseStatus(HttpStatus.OK)
     public void logout() {
+    }
+
+    @Override
+    public ResponseEntity<CaptchaDto> getCaptchaImage() {
+        return ResponseEntity.ok(captchaService.getCaptcha());
     }
 }

@@ -9,4 +9,5 @@
     <include file="classpath:liquibase/create-auth-tables-changelog.xml"/>
     <include file="classpath:liquibase/insert-roles.xml"/>
     <include file="classpath:liquibase/create-account-table-changelog.xml"/>
+    <include file="classpath:liquibase/create-captcha-table.xml"/>
 </databaseChangeLog>

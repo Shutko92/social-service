@@ -19,6 +19,6 @@ public class RegistrationDto {
     private String firstName;
     private String lastName;
     private String captchaCode;
-    private String captchaSecret = "1";
+    private String captchaSecret;
 
 }

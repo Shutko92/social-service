@@ -1,14 +1,11 @@
 package ru.skillbox.diplom.group42.social.service.controller.auth;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.skillbox.diplom.group42.social.service.dto.auth.AuthenticateDto;
 import ru.skillbox.diplom.group42.social.service.dto.auth.AuthenticateResponseDto;
 import ru.skillbox.diplom.group42.social.service.dto.auth.RegistrationDto;
-
+import ru.skillbox.diplom.group42.social.service.dto.captcha.CaptchaDto;
 
 
 @RestController
@@ -22,4 +19,7 @@ public interface AuthController {
 
     @PostMapping("logout")
     void logout();
+
+    @GetMapping("captcha")
+    ResponseEntity<CaptchaDto> getCaptchaImage();
 }
