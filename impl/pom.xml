@@ -29,6 +29,12 @@
             <artifactId>social-service-db</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>ru.skillbox.diplom.group42.social.service</groupId>
+            <artifactId>social-service-api</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
 
 
     </dependencies>
