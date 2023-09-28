@@ -1,6 +1,7 @@
 package ru.skillbox.diplom.group42.social.service.dto.post;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import ru.skillbox.diplom.group42.social.service.dto.base.BaseDto;
@@ -12,6 +13,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Schema(description = "Данные поста")
+@EqualsAndHashCode
 public class PostDto extends BaseDto {
 
     @Schema(description = "Время создания")

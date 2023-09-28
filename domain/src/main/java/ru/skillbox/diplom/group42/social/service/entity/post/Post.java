@@ -1,5 +1,6 @@
 package ru.skillbox.diplom.group42.social.service.entity.post;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import ru.skillbox.diplom.group42.social.service.dto.post.Type;
@@ -14,6 +15,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(name = "post")
+@EqualsAndHashCode
 public class Post extends BaseEntity {
 
     @Column(name = "time", columnDefinition = "TIMESTAMP WITH TIME ZONE")
