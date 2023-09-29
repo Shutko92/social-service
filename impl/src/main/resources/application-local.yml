@@ -1,15 +1,29 @@
-#spring:
-#  datasource:
-#    driver-class-name: org.postgresql.Driver
-#    url: jdbc:postgresql://localhost:5432/postgres
-#    username: postgres
-#    password: skillbox
-#  jpa:
-#    properties:
-#      hibernate:
-#        dialect: org.hibernate.dialect.PostgreSQL95Dialect
-#        show_sql: false
-#        temp:
-#          use_jdbc_metadata_defaults: false
-#  liquibase:
-#    change-log: classpath:changelog_init.xml
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: testtest
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+        show_sql: false
+        temp:
+          use_jdbc_metadata_defaults: false
+        hbm2ddl:
+          auto: update
+  liquibase:
+    change-log: classpath:changelog_init.xml
+
+endpoints:
+  admin: "/api/v1/admin/**"
+  public: "/api/v1/auth/**"
+roles:
+  admin: "admin"
+
+jwt:
+  token:
+    secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+#    refresh-token:
+#      expiration: 604800000 # 7 days
