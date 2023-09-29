@@ -1,0 +1,55 @@
+package ru.skillbox.diplom.group42.social.service.controller.account;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
+import ru.skillbox.diplom.group42.social.service.dto.account.AccountDto;
+import ru.skillbox.diplom.group42.social.service.dto.account.AccountSearchDto;
+import ru.skillbox.diplom.group42.social.service.service.account.AccountService;
+
+@RestController
+@RequiredArgsConstructor
+public class AccountControllerImpl implements AccountController {
+
+    private final AccountService accountService;
+
+    @Override
+    public ResponseEntity<AccountDto> getAccount() {
+        return ResponseEntity.ok(accountService.getAccount()); // Получение
+    }
+
+    @Override
+    public ResponseEntity<String> deleteAccount() {
+        return new ResponseEntity<>(accountService.deleteAccount(), HttpStatus.OK);
+    }
+
+
+    @Override
+    public ResponseEntity<AccountDto> getById(Long id) {
+        return new ResponseEntity<>(accountService.getAccountById(id), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<AccountDto> update(AccountDto accountDto) {
+        return new ResponseEntity<>(accountService.updateAccount(accountDto), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<String> deleteById(Long id) {
+        accountService.deleteById(id);
+        return ResponseEntity.ok("User with id: " + id + " deleted");
+    }
+
+    @Override
+    public ResponseEntity<Page<AccountDto>> getAll(AccountSearchDto searchDto, Pageable page) {
+        return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+    @Override
+    public ResponseEntity<AccountDto> create(AccountDto dto) {
+        return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+    }
+}

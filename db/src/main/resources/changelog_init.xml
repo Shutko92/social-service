@@ -8,4 +8,5 @@
     <include file="classpath:liquibase/create-sequence.xml"/>
     <include file="classpath:liquibase/create-auth-tables-changelog.xml"/>
     <include file="classpath:liquibase/insert-roles.xml"/>
+    <include file="classpath:liquibase/create-account-table-changelog.xml"/>
 </databaseChangeLog>

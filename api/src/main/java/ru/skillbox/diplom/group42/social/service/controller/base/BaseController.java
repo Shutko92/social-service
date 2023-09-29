@@ -9,7 +9,7 @@ import ru.skillbox.diplom.group42.social.service.dto.base.BaseSearchDto;
 
 public interface BaseController<baseDto extends BaseDto, baseSearchDTO extends BaseSearchDto> {
 
-    @GetMapping(value = "{/id}")
+    @GetMapping(value = "{id}")
     ResponseEntity<baseDto> getById(@PathVariable("id") Long id);
 
     @GetMapping
@@ -21,7 +21,7 @@ public interface BaseController<baseDto extends BaseDto, baseSearchDTO extends B
     @PutMapping
     ResponseEntity<baseDto> update(@RequestBody baseDto dto);
 
-    @DeleteMapping("{/id}")
+    @DeleteMapping("{id}")
     ResponseEntity deleteById(@PathVariable("id") Long id);
 
 

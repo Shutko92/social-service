@@ -28,9 +28,15 @@ public class AuthControllerImpl implements AuthController {
         authService.register(user);
     }
 
+
     @Override
     public ResponseEntity<AuthenticateResponseDto> login(AuthenticateDto authenticateDto) {
         AuthenticateResponseDto dto = authService.login(authenticateDto);
         return ResponseEntity.ok(dto);
+    }
+
+    @Override
+    @ResponseStatus(HttpStatus.OK)
+    public void logout() {
     }
 }

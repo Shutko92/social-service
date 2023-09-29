@@ -19,4 +19,7 @@ public interface AuthController {
 
     @PostMapping("login")
     ResponseEntity<AuthenticateResponseDto> login(@RequestBody AuthenticateDto authenticateDto);
+
+    @PostMapping("logout")
+    void logout();
 }
