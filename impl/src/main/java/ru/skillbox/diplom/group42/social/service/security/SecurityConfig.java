@@ -1,7 +1,6 @@
 package ru.skillbox.diplom.group42.social.service.security;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,15 +20,6 @@ import ru.skillbox.diplom.group42.social.service.security.jwt.JwtTokenProvider;
 @AllArgsConstructor
 @EnableMethodSecurity
 public class SecurityConfig {
-    @Value("${endpoints.admin}")
-    private String adminEndpoint;
-
-    @Value("${endpoints.public}")
-    private String publicEndpoint;
-
-    @Value("${roles.admin}")
-    private String role;
-
     private final JwtTokenProvider jwtTokenProvider;
 
     @Bean
@@ -40,6 +30,9 @@ public class SecurityConfig {
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
+        String publicEndpoint = "/api/v1/admin/**";
+        String adminEndpoint = "/api/v1/admin/**";
+        String role = "admin";
         return http
                 .cors()
                 .and()
