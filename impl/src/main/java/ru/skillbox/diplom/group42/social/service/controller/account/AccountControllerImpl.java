@@ -1,5 +1,6 @@
 package ru.skillbox.diplom.group42.social.service.controller.account;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,17 +38,20 @@ public class AccountControllerImpl implements AccountController {
         return new ResponseEntity<>(accountService.updateAccount(accountDto), HttpStatus.OK);
     }
 
+    @Hidden
     @Override
     public ResponseEntity<String> deleteById(Long id) {
         accountService.deleteById(id);
         return ResponseEntity.ok("User with id: " + id + " deleted");
     }
 
+    @Hidden
     @Override
     public ResponseEntity<Page<AccountDto>> getAll(AccountSearchDto searchDto, Pageable page) {
         return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
     }
 
+    @Hidden
     @Override
     public ResponseEntity<AccountDto> create(AccountDto dto) {
         return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);

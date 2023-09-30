@@ -1,6 +1,7 @@
-package ru.skillbox.diplom.group42.social.service.security;
+package ru.skillbox.diplom.group42.social.service.config.security;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,11 +19,16 @@ import ru.skillbox.diplom.group42.social.service.security.jwt.JwtTokenProvider;
 
 @Configuration
 @EnableWebSecurity
-@AllArgsConstructor
+@RequiredArgsConstructor
 @EnableMethodSecurity
 public class SecurityConfig {
-    private static final String ADMIN_ENDPOINT = "/api/v1/admin/**";
-    private static final String PUBLIC_ENDPOINT = "/api/v1/auth/**";
+    @Value("${endpoints.admin}")
+    private String ADMIN_ENDPOINT;
+
+    @Value("#{'${endpoints.public}'.split(', ')}")
+    private  String[] publicEndpoints;
+
+    @Value("${roles.admin}")
     public static final String ROLE = "admin";
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -48,7 +54,7 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(PUBLIC_ENDPOINT).permitAll()
+                .antMatchers(publicEndpoints).permitAll()
                 .antMatchers(ADMIN_ENDPOINT).hasRole(ROLE)
                 .anyRequest().authenticated()
                 .and()
