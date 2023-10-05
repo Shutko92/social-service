@@ -15,6 +15,7 @@ import ru.skillbox.diplom.group42.social.service.entity.auth.User;
 import ru.skillbox.diplom.group42.social.service.repository.auth.RoleRepository;
 import ru.skillbox.diplom.group42.social.service.repository.auth.UserRepository;
 import ru.skillbox.diplom.group42.social.service.security.jwt.JwtTokenProvider;
+import ru.skillbox.diplom.group42.social.service.service.account.AccountService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,7 @@ public class AuthService {
     private final RoleRepository roleRepository;
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final AccountService accountService;
 
     public void register(User user) {
         log.info("ENTERED register(User user) in AuthService");
@@ -41,9 +43,13 @@ public class AuthService {
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         user.setRole(userRoles);
 
-        userRepository.save(user);
+        accountService.createAccount(user);
 
-        log.info("IN register - user: {} {} successfully registered", user.getFirstName(), user.getLastName());
+        log.info("IN register - user: {} {} with email [{}] successfully registered",
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail()
+        );
     }
 
     public AuthenticateResponseDto login(AuthenticateDto authenticateDto) {
@@ -69,7 +75,7 @@ public class AuthService {
             AuthenticateResponseDto responseDto = new AuthenticateResponseDto(token, token);
             authenticateDto.setEmail(email);
 
-            log.info("User {} ({}, {}) logged in",
+            log.info("User {} ({} {}) logged in",
                     user.get().getEmail(),
                     user.get().getFirstName(),
                     user.get().getLastName());

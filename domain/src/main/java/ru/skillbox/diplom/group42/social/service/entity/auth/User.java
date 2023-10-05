@@ -15,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "\"user\"")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class User extends BaseEntity {
 
     private String firstName;
