@@ -21,6 +21,14 @@
             <artifactId>swagger-annotations</artifactId>
             <version>2.1.12</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
     </dependencies>
     <parent>
         <groupId>ru.skillbox.diplom.group42</groupId>

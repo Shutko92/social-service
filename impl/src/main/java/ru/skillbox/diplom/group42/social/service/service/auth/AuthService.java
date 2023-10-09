@@ -10,8 +10,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.diplom.group42.social.service.dto.auth.AuthenticateDto;
 import ru.skillbox.diplom.group42.social.service.dto.auth.AuthenticateResponseDto;
+import ru.skillbox.diplom.group42.social.service.dto.auth.RegistrationDto;
 import ru.skillbox.diplom.group42.social.service.entity.auth.Role;
 import ru.skillbox.diplom.group42.social.service.entity.auth.User;
+import ru.skillbox.diplom.group42.social.service.exception.InvalidCaptchaException;
+import ru.skillbox.diplom.group42.social.service.exception.RegisteringExistingUserException;
+import ru.skillbox.diplom.group42.social.service.mapper.auth.AuthMapper;
 import ru.skillbox.diplom.group42.social.service.repository.auth.RoleRepository;
 import ru.skillbox.diplom.group42.social.service.repository.auth.UserRepository;
 import ru.skillbox.diplom.group42.social.service.security.jwt.JwtTokenProvider;
@@ -33,23 +37,21 @@ public class AuthService {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final AccountService accountService;
+    private final AuthMapper authMapper;
 
-    public void register(User user) {
+    public void register(RegistrationDto registrationDto) {
         log.info("ENTERED register(User user) in AuthService");
-        Role roleUser = roleRepository.findByName(ROLE_USER);
-        List<Role> userRoles = new ArrayList<>();
-        userRoles.add(roleUser);
-
-        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
-        user.setRole(userRoles);
-
-        accountService.createAccount(user);
-
-        log.info("IN register - user: {} {} with email [{}] successfully registered",
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail()
-        );
+        Optional<User> optionalUser = userRepository.findByEmail(registrationDto.getEmail());
+        log.info("Looking for previously registered user with such email");
+        if(optionalUser.isPresent()){
+            log.warn("User already exists");
+            throw new RegisteringExistingUserException();
+        }
+        if(!passCaptcha(registrationDto)){
+            log.warn("In AuthService register: captcha failed");
+            throw new InvalidCaptchaException();
+        }
+        newUserCreation(registrationDto);
     }
 
     public AuthenticateResponseDto login(AuthenticateDto authenticateDto) {
@@ -85,5 +87,25 @@ public class AuthService {
             log.error("AuthenticationException occurred: {}", e.getMessage());
             throw new BadCredentialsException("Invalid email or password");
         }
+    }
+    private boolean passCaptcha(RegistrationDto registrationDto){
+        return registrationDto.getCaptchaCode().equals(registrationDto.getCaptchaSecret());
+    }
+    private void newUserCreation(RegistrationDto registrationDto){
+        Role roleUser = roleRepository.findByName(ROLE_USER);
+        List<Role> userRoles = new ArrayList<>();
+        userRoles.add(roleUser);
+
+        User user = authMapper.convertRegistrationDtoToUser(registrationDto);
+        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        user.setRole(userRoles);
+
+        accountService.createAccount(user);
+
+        log.info("IN register - user: {} {} with email [{}] successfully registered",
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail()
+        );
     }
 }

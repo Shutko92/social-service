@@ -18,6 +18,8 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final AccountMapper accountMapper;
 
+
+
     public AccountDto getAccount() {
         Long id = SecurityUtil.getJwtUserIdFromSecurityContext();
         return getAccountById(id);
