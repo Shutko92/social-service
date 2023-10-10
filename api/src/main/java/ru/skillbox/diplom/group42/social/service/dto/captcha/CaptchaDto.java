@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "DTO для запроса капчи")
+@Schema(description = "DTO для запроса капчи", required = true)
 
 public class CaptchaDto {
 
