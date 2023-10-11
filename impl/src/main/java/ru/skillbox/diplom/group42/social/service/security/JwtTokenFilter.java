@@ -1,4 +1,4 @@
-package ru.skillbox.diplom.group42.social.service.security.jwt;
+package ru.skillbox.diplom.group42.social.service.security;
 
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;

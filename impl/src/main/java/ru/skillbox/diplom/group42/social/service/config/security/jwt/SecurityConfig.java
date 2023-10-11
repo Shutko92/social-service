@@ -1,4 +1,4 @@
-package ru.skillbox.diplom.group42.social.service.config.security;
+package ru.skillbox.diplom.group42.social.service.config.security.jwt;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,8 +13,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import ru.skillbox.diplom.group42.social.service.security.jwt.JwtTokenFilter;
-import ru.skillbox.diplom.group42.social.service.security.jwt.JwtTokenProvider;
+import ru.skillbox.diplom.group42.social.service.security.JwtTokenFilter;
+import ru.skillbox.diplom.group42.social.service.security.JwtTokenProvider;
 
 
 @Configuration
