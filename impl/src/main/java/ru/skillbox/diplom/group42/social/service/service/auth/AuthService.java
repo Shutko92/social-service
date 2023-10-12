@@ -18,7 +18,7 @@ import ru.skillbox.diplom.group42.social.service.exception.RegisteringExistingUs
 import ru.skillbox.diplom.group42.social.service.mapper.auth.AuthMapper;
 import ru.skillbox.diplom.group42.social.service.repository.auth.RoleRepository;
 import ru.skillbox.diplom.group42.social.service.repository.auth.UserRepository;
-import ru.skillbox.diplom.group42.social.service.security.jwt.JwtTokenProvider;
+import ru.skillbox.diplom.group42.social.service.security.JwtTokenProvider;
 import ru.skillbox.diplom.group42.social.service.service.account.AccountService;
 
 import java.util.ArrayList;

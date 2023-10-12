@@ -16,7 +16,7 @@ spring:
   liquibase:
     change-log: classpath:changelog_init.xml
     enabled: true
-    drop-first: true
+    drop-first: false
 
 vars:
   captchaCharStr: 0123456789
@@ -41,3 +41,4 @@ springdoc:
   swagger-ui:
     path: "/swagger-ui"
     operationsSorter: method
+

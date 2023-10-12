@@ -1,4 +1,4 @@
-package ru.skillbox.diplom.group42.social.service.security.jwt;
+package ru.skillbox.diplom.group42.social.service.security;
 
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

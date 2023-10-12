@@ -8,7 +8,6 @@
     <changeSet author="chumak_rostislav" id="create_sequence">
         <createSequence sequenceName="create_sequence"               incrementBy="1"
                         startValue="1"/>
-<!--                        schemaName="public"-->
 
 
     </changeSet>

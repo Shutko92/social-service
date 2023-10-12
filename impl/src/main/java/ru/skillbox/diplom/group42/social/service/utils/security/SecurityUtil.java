@@ -5,7 +5,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import ru.skillbox.diplom.group42.social.service.security.jwt.JwtUser;
+import ru.skillbox.diplom.group42.social.service.security.JwtUser;
 
 @UtilityClass
 public class SecurityUtil {

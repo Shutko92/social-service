@@ -1,4 +1,4 @@
-package ru.skillbox.diplom.group42.social.service.security.jwt;
+package ru.skillbox.diplom.group42.social.service.security;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
