@@ -3,7 +3,7 @@ spring:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/skillbox
     username: postgres
-    password: skillbox
+    password: testtest
   jpa:
     properties:
       hibernate:
@@ -16,7 +16,10 @@ spring:
   liquibase:
     change-log: classpath:changelog_init.xml
     enabled: true
-    drop-first: true
+    drop-first: false
+  servlet:
+    multipart:
+      max-file-size: 10MB
 
 vars:
   captchaCharStr: 0123456789
@@ -55,5 +58,7 @@ springdoc:
     path: "/swagger-ui"
     operationsSorter: method
 
-
-
+cloudinary:
+  cloud_name: dmcmd4g2s
+  api_key: 358825755328599
+  api_secret: NoYeSddTS8z06a5Dga_wQZO6RZU
