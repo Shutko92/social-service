@@ -34,6 +34,11 @@ jwt:
   token:
     secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
 
+vk_data:
+  token: vk1.a.-sCwwHZ-dCzuLf9UOHiiwRxHtVW8BUg-XcX0reW-P6nY5tG9l-qDUqE4ADOmE1GOBTQTSAauxK5xuxcVYPLbihmO81gmqotg2_mpaa8RNWkfbN2OJOdYUxfk8-mbyKS31K3Ml69kbBevq_VHzWBEiRAlcOWIuSWG07F0xqdvAP1MmDbUPB7WqhGEvDknJM_37eg13qmrDZi3JKR5jMer3Q
+  app_id: 51762981
+  country_code_list: RU,BY,KZ,AM
+
 springdoc:
   api-docs:
     path: "/api-docs"

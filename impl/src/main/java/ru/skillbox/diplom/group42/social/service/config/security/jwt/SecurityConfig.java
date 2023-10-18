@@ -16,7 +16,6 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import ru.skillbox.diplom.group42.social.service.security.JwtTokenFilter;
 import ru.skillbox.diplom.group42.social.service.security.JwtTokenProvider;
 
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor

@@ -6,6 +6,8 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
 
     <include file="classpath:liquibase/create-sequence.xml"/>
+    <include file="classpath:liquibase/create-country-table.xml"/>
+    <include file="classpath:liquibase/create-city-table.xml"/>
     <include file="classpath:liquibase/create-auth-tables-changelog.xml"/>
     <include file="classpath:liquibase/insert-roles.xml"/>
     <include file="classpath:liquibase/create-account-table-changelog.xml"/>

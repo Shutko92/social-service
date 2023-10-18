@@ -1,0 +1,27 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet  id="create_country_table"  author="ilya">
+        <createTable  tableName="country">
+            <column  name="id"  type="bigint"  autoIncrement="true">
+                <constraints  primaryKey="true"  nullable="false"/>
+            </column>
+            <column  name="is_deleted"  type="boolean" defaultValueBoolean="false"/>
+            <column  name="title"  type="varchar(90)"/>
+        </createTable>
+<!--        <insert tableName="country">-->
+<!--            <column name="id" value="1"/>-->
+<!--            <column name="is_deleted" value="false"/>-->
+<!--            <column name="title" value="Russia"/>-->
+<!--        </insert>-->
+<!--        <insert tableName="country">-->
+<!--            <column name="id" value="2"/>-->
+<!--            <column name="is_deleted" value="false"/>-->
+<!--            <column name="title" value="Belarus"/>-->
+<!--        </insert>-->
+    </changeSet>
+</databaseChangeLog>

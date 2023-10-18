@@ -1,0 +1,54 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet  id="create_city_table"  author="ilya">
+        <createTable  tableName="city">
+            <column  name="id"  type="bigint"  autoIncrement="true">
+                <constraints  primaryKey="true"  nullable="false"/>
+            </column>
+            <column  name="is_deleted"  type="boolean" defaultValueBoolean="false"/>
+            <column  name="title"  type="varchar(90)"/>
+            <column  name="country_id"  type="bigint"/>
+        </createTable>
+<!--        <insert tableName="city">-->
+<!--            <column name="id" value="1"/>-->
+<!--            <column name="is_deleted" value="false"/>-->
+<!--            <column name="title" value="Moscow"/>-->
+<!--            <column name="country_id" value="1"/>-->
+<!--        </insert>-->
+<!--        <insert tableName="city">-->
+<!--            <column name="id" value="2"/>-->
+<!--            <column name="is_deleted" value="false"/>-->
+<!--            <column name="title" value="Sankt Petersburg"/>-->
+<!--            <column name="country_id" value="1"/>-->
+<!--        </insert>-->
+<!--        <insert tableName="city">-->
+<!--            <column name="id" value="3"/>-->
+<!--            <column name="is_deleted" value="false"/>-->
+<!--            <column name="title" value="Stavropol"/>-->
+<!--            <column name="country_id" value="1"/>-->
+<!--        </insert>-->
+<!--        <insert tableName="city">-->
+<!--            <column name="id" value="4"/>-->
+<!--            <column name="is_deleted" value="false"/>-->
+<!--            <column name="title" value="Minsk"/>-->
+<!--            <column name="country_id" value="2"/>-->
+<!--        </insert>-->
+<!--        <insert tableName="city">-->
+<!--            <column name="id" value="5"/>-->
+<!--            <column name="is_deleted" value="false"/>-->
+<!--            <column name="title" value="Brest"/>-->
+<!--            <column name="country_id" value="2"/>-->
+<!--        </insert>-->
+<!--        <insert tableName="city">-->
+<!--            <column name="id" value="6"/>-->
+<!--            <column name="is_deleted" value="false"/>-->
+<!--            <column name="title" value="Gomel"/>-->
+<!--            <column name="country_id" value="2"/>-->
+<!--        </insert>-->
+    </changeSet>
+</databaseChangeLog>
