@@ -15,13 +15,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>ru.skillbox.diplom.group42.social.service</groupId>
-            <artifactId>social-service-domain</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
         </dependency>

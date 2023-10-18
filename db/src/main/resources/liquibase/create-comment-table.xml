@@ -1,0 +1,51 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation=" http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <!--                        schemaName="public"-->
+    <changeSet id="create_comment_table" author="rostislav">
+        <createTable tableName="comment">
+            <column autoIncrement="true" name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="is_deleted" type="boolean">
+            </column>
+            <column name="comment_type" type="varchar(255)">
+
+            </column>
+            <column name="time" type="timestamp without time zone">
+
+            </column>
+            <column name="time_changed" type="timestamp without time zone">
+
+            </column>
+            <column name="author_id" type="int">
+
+            </column>
+            <column name="parent_id" type="int">
+
+            </column>
+            <column name="comment_text" type="text">
+
+            </column>
+            <column name="post_id" type="int">
+            </column>
+            <column name="is_blocked" type="boolean">
+            </column>
+            <column name="like_amount" type="int">
+
+            </column>
+            <column name="my_like" type="boolean">
+            </column>
+            <column name="comment_count" type="int">
+            </column>
+            <column name="image_path" type="varchar(255)">
+            </column>
+        </createTable>
+    </changeSet>
+
+
+</databaseChangeLog>
