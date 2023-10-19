@@ -30,14 +30,4 @@ public class Like extends BaseEntity {
     @Column(name = "reaction_type")
     private String reactionType;
 
-    @Override
-    public String toString() {
-        return "Like{" +
-                "authorId=" + authorId +
-                ", time=" + time +
-                ", itemId=" + itemId +
-                ", type=" + type +
-                ", reactionType='" + reactionType + '\'' +
-                '}';
-    }
 }

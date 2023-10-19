@@ -26,6 +26,7 @@ public class PostSearchDto extends BaseSearchDto {
      private Boolean withFriends;
      @Schema(description = "Список дегов")
      private List<String> tags;
+     private List<String> reaction;
      @Schema(description = "Дата от")
      private ZonedDateTime dateFrom;
      @Schema(description = "Дата до")

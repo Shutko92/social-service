@@ -22,14 +22,4 @@ public class LikeDto extends BaseDto {
     @Schema(description = "Тип реакции")
     private String reactionType;
 
-    @Override
-    public String toString() {
-        return "LikeDto{" +
-                "authorId=" + authorId +
-                ", time=" + time +
-                ", itemId=" + itemId +
-                ", type=" + type +
-                ", reactionType='" + reactionType + '\'' +
-                '}';
-    }
 }

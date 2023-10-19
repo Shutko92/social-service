@@ -34,7 +34,7 @@ public class PostDto extends BaseDto {
     private Set<TagDto> tags;
     @Schema(description = "Список реакций")
     private Set<ReactionDto> reactions;
-    @Schema(description = "Есть ли моя реакция")
+    @Schema(description = "Моя реакция")
     private String myReaction;
     @Schema(description = "Количество лайков")
     private Integer likeAmount;
@@ -45,25 +45,4 @@ public class PostDto extends BaseDto {
     @Schema(description = "Дата публикации")
     private ZonedDateTime publishDate;
 
-
-    @Override
-    public String toString() {
-        return "PostDto{" +
-                "time=" + time +
-                ", timeChanged=" + timeChanged +
-                ", authorId=" + authorId +
-                ", title='" + title + '\'' +
-                ", type=" + type +
-                ", postText='" + postText + '\'' +
-                ", isBlocked=" + isBlocked +
-                ", commentsCount=" + commentsCount +
-                ", tags=" + tags +
-                ", reactions=" + reactions +
-                ", myReaction='" + myReaction + '\'' +
-                ", likeAmount=" + likeAmount +
-                ", myLike=" + myLike +
-                ", imagePath='" + imagePath + '\'' +
-                ", publishDate=" + publishDate +
-                '}';
-    }
 }
