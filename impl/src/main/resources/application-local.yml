@@ -25,7 +25,10 @@ vars:
   captchaCharStr: 0123456789
 
 endpoints:
-  admin: /api/v1/admin/**
+  admin:
+      /api/v1/admin/**,
+      /admin/**,
+      /api/v1/admin-console/**
   public:
     /api/v1/auth/**,
     /swagger-ui/**,

@@ -52,9 +52,12 @@ public class VkConnector {
             return country;
         }).collect(Collectors.toList());
 
-        log.info(countryHolder.toString());
         List<Long> countryIdList = countryHolder.stream().map(BaseEntity::getId).collect(Collectors.toList());
-        countryRepository.saveAll(countryHolder);
+        for (Country country : countryHolder) {
+            if (!countryRepository.existsByTitle(country.getTitle())) {
+                countryRepository.save(country);
+            }
+        }
 
         log.info("Method collectCountries was executed in {}", this.getClass().getName());
         collectCities(vk, actor, countryIdList);
