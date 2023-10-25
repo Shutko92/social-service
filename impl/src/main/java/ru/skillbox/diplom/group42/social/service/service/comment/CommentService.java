@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import ru.skillbox.diplom.group42.social.service.dto.post.comment.CommentDto;
 import ru.skillbox.diplom.group42.social.service.dto.post.comment.CommentSearchDto;
 import ru.skillbox.diplom.group42.social.service.dto.post.comment.CommentType;
+import ru.skillbox.diplom.group42.social.service.dto.post.like.TypeLike;
 import ru.skillbox.diplom.group42.social.service.entity.post.Post;
 import ru.skillbox.diplom.group42.social.service.entity.post.comment.Comment;
 import ru.skillbox.diplom.group42.social.service.entity.post.comment.Comment_;
@@ -18,6 +19,7 @@ import ru.skillbox.diplom.group42.social.service.exception.PostFoundException;
 import ru.skillbox.diplom.group42.social.service.mapper.comment.CommentMapper;
 import ru.skillbox.diplom.group42.social.service.repository.post.CommentRepository;
 import ru.skillbox.diplom.group42.social.service.repository.post.PostRepository;
+import ru.skillbox.diplom.group42.social.service.service.like.LikeService;
 import ru.skillbox.diplom.group42.social.service.utils.SpecificationUtil;
 
 import java.time.ZonedDateTime;
@@ -30,12 +32,13 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final CommentMapper commentMapper;
+    private final LikeService likeService;
 
     public Page<CommentDto> getAllCommentsToPost(Long postId, CommentSearchDto commentSearchDto, Pageable pageable) {
         Page<Comment> commentPage = commentRepository.findAll(getSpecificationForComment(postId), pageable);
         return new PageImpl<>(commentPage.map(comment -> {
             CommentDto commentDto = commentMapper.convertToDto(comment);
-
+            commentDto.setMyLike(likeService.isThereMyLikeToComment(comment.getId(), TypeLike.COMMENT));
          return commentDto;
         }).toList(), pageable, commentPage.getTotalElements());
     }
@@ -62,7 +65,7 @@ public class CommentService {
         dto.setCommentType(CommentType.COMMENT);
         CommentDto parentComment = commentMapper.convertToDto(commentRepository.findById(commentId).orElseThrow(CommentFoundException::new));
         parentComment.setCommentCount(parentComment.getCommentCount() + 1);
-        commentRepository.save(commentMapper.createEntity(parentComment));
+        commentRepository.save(commentMapper.convertToEntity(parentComment));
         return commentMapper.convertToDto(commentRepository.save(commentMapper.createEntity(dto)));
     }
 

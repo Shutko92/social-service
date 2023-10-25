@@ -16,9 +16,7 @@
     <include file="classpath:liquibase/create-captcha-table.xml"/>
     <include file="classpath:liquibase/create-comment-table.xml"/>
     <include file="classpath:liquibase/create-post-table.xml"/>
-    <include file="classpath:liquibase/create-reaction-table.xml"/>
     <include file="classpath:liquibase/create-tag-table.xml"/>
     <include file="classpath:liquibase/create-tags-post-table.xml"/>
-    <include file="classpath:liquibase/create-reaction-post-table.xml"/>
     <include file="classpath:liquibase/create-like-table.xml"/>
 </databaseChangeLog>

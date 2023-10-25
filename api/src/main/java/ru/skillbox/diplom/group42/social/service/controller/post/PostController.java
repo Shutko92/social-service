@@ -17,11 +17,10 @@ import ru.skillbox.diplom.group42.social.service.dto.post.PostSearchDto;
 import ru.skillbox.diplom.group42.social.service.dto.post.comment.CommentDto;
 import ru.skillbox.diplom.group42.social.service.dto.post.comment.CommentSearchDto;
 import ru.skillbox.diplom.group42.social.service.dto.post.like.LikeDto;
-import ru.skillbox.diplom.group42.social.service.dto.statistic.RequestDto;
 import ru.skillbox.diplom.group42.social.service.util.ConstantURL;
 
 @RequestMapping(ConstantURL.BASE_URL + "/post")
-@Tag(name = "Контроллер для постов, комментариев, лайков и статистики"
+@Tag(name = "Контроллер для постов, комментариев, лайков"
         , description = "Реализация CRUD для постов, комментариев и лайков, также получение статистики")
 public interface PostController extends BaseController<PostDto, PostSearchDto> {
 
@@ -31,9 +30,11 @@ public interface PostController extends BaseController<PostDto, PostSearchDto> {
                     , content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE
                     , schema = @Schema(implementation = PostDto.class))),
             @ApiResponse(responseCode = "404", description = "Пост не найден"
-                    , content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
+                    , content = @Content()),
             @ApiResponse(responseCode = "400", description = "Неправильный запрос"
-                    , content = @Content(mediaType = "", schema = @Schema(nullable = true)))})
+                    , content = @Content()),
+            @ApiResponse(responseCode = "403", description = "В доступе отказано"
+                    , content = @Content)})
     @Override
     @GetMapping(value = "/{id}")
     ResponseEntity<PostDto> getById(@PathVariable @Parameter(description = "id поста") Long id);
@@ -42,24 +43,27 @@ public interface PostController extends BaseController<PostDto, PostSearchDto> {
             @ApiResponse(responseCode = "200", description = "Посты найден"
                     , content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE
                     , schema = @Schema(allOf = {Pageable.class, PostDto.class}))),
-            @ApiResponse(responseCode = "404", description = "Посты не найден"
-                    , content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
+            @ApiResponse(responseCode = "404", description = "Ресурс не найден"
+                    , content = @Content()),
             @ApiResponse(responseCode = "400", description = "Неправильный запрос"
-                    , content = @Content(mediaType = "", schema = @Schema(nullable = true)))})
+                    , content = @Content()),
+            @ApiResponse(responseCode = "403", description = "В доступе отказано"
+                    , content = @Content)})
     @Override
     @GetMapping
     ResponseEntity<Page<PostDto>> getAll(@Parameter(description = "ДТО поиска")PostSearchDto postSearchDTO,@Parameter(description = "параметры пагинации") Pageable pageable);
 
-    //TODO а что не найдено то?
     @Operation(summary = "Создание поста"
             , responses = {
             @ApiResponse(responseCode = "200", description = "Пост создан"
                     , content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE
                     , schema = @Schema(implementation = PostDto.class))),
-            @ApiResponse(responseCode = "404", description = "Счастье не найдено :("
-                    , content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
+            @ApiResponse(responseCode = "404", description = "Ресурс не найден"
+                    , content = @Content()),
             @ApiResponse(responseCode = "400", description = "Неправильный запрос"
-                    , content = @Content(mediaType = "", schema = @Schema(nullable = true)))})
+                    , content = @Content()),
+            @ApiResponse(responseCode = "403", description = "В доступе отказано"
+                    , content = @Content)})
     @Override
     @PostMapping
     ResponseEntity<PostDto> create(@RequestBody @Parameter(description = "ДТО поста") PostDto dto);
@@ -68,10 +72,12 @@ public interface PostController extends BaseController<PostDto, PostSearchDto> {
             @ApiResponse(responseCode = "200", description = "Пост обновлен"
                     , content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE
                     , schema = @Schema(implementation = PostDto.class))),
-            @ApiResponse(responseCode = "404", description = "Пост не найден"
-                    , content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
+            @ApiResponse(responseCode = "404", description = "Ресурс не найден"
+                    , content = @Content()),
             @ApiResponse(responseCode = "400", description = "Неправильный запрос"
-                    , content = @Content(mediaType = "", schema = @Schema(nullable = true)))})
+                    , content = @Content()),
+            @ApiResponse(responseCode = "403", description = "В доступе отказано"
+                    , content = @Content)})
     @Override
     @PutMapping
     ResponseEntity<PostDto> update(@RequestBody @Parameter(description = "ДТО поста") PostDto dto);
@@ -79,21 +85,14 @@ public interface PostController extends BaseController<PostDto, PostSearchDto> {
             , responses = {
             @ApiResponse(responseCode = "200", description = "Пост удален"),
             @ApiResponse(responseCode = "404", description = "Пост не найден"
-                    , content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
-            @ApiResponse(responseCode = "400", description = "Неправильный запрос")})
+                    , content = @Content()),
+            @ApiResponse(responseCode = "400", description = "Неправильный запрос"
+                    ,content = @Content()),
+            @ApiResponse(responseCode = "403", description = "В доступе отказано"
+                    , content = @Content)})
     @Override
     @DeleteMapping("/{id}")
     ResponseEntity deleteById(@PathVariable @Parameter(description = "id поста") Long id);
-
-    @Operation(summary = "Создание отложенного поста по ДТО"
-            , responses = {
-            @ApiResponse(responseCode = "200", description = "Пост создан"),
-            @ApiResponse(responseCode = "404", description = "Пост не найден"
-                    , content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
-            @ApiResponse(responseCode = "400", description = "Неправильный запрос")})
-    @PutMapping("/delayed")
-    ResponseEntity delayedPost(@RequestBody @Parameter(description = "PostDto") PostDto postDto);
-
 
     //-------------------------=Comment=-------------------------//
     @Operation(summary = "Получение всех комментариев к посту"
@@ -101,10 +100,12 @@ public interface PostController extends BaseController<PostDto, PostSearchDto> {
             @ApiResponse(responseCode = "200", description = "Комментарии найдены"
                     , content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE
                     , schema = @Schema(allOf = {CommentDto.class, Pageable.class}))),
-            @ApiResponse(responseCode = "404", description = "Страница с комментариями не найдена"
-                    , content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
+            @ApiResponse(responseCode = "404", description = "Ресурс не найден"
+                    , content = @Content()),
             @ApiResponse(responseCode = "400", description = "Неправильный запрос"
-                    , content = @Content(mediaType = "", schema = @Schema(nullable = true)))})
+                    , content = @Content()),
+            @ApiResponse(responseCode = "403", description = "В доступе отказано"
+                    , content = @Content)})
     @GetMapping("/{postId}/comment")
     ResponseEntity<Page<CommentDto>> getAllCommentsToPost(@PathVariable @Parameter(description = "postId") Long postId
             , @Parameter(description = "CommentSearchDto") CommentSearchDto commentSearchDto
@@ -115,10 +116,12 @@ public interface PostController extends BaseController<PostDto, PostSearchDto> {
             @ApiResponse(responseCode = "200", description = "Сабкомментарии найдены"
                     , content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE
                     , schema = @Schema(allOf = {CommentDto.class, Pageable.class}))),
-            @ApiResponse(responseCode = "404", description = "Страница с сабкомментариями не найдена"
-                    , content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
+            @ApiResponse(responseCode = "404", description = "Ресурс не найден"
+                    , content = @Content()),
             @ApiResponse(responseCode = "400", description = "Неправильный запрос"
-                    , content = @Content(mediaType = "", schema = @Schema(nullable = true)))})
+                    , content = @Content()),
+            @ApiResponse(responseCode = "403", description = "В доступе отказано"
+                    , content = @Content)})
     @GetMapping("/{postId}/comment/{commentId}/subcomment")
     ResponseEntity<Page<CommentDto>> getSubcomment(@PathVariable @Parameter(description = "postId") Long postId
             , @PathVariable @Parameter(description = "commentId") Long commentId
@@ -130,10 +133,12 @@ public interface PostController extends BaseController<PostDto, PostSearchDto> {
             @ApiResponse(responseCode = "200", description = "Комментарий создан"
                     , content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE
                     , schema = @Schema(implementation = CommentDto.class))),
-            @ApiResponse(responseCode = "404", description = "Страница с комментариями не найдена"
-                    , content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
+            @ApiResponse(responseCode = "404", description = "Ресурс не найден"
+                    , content = @Content()),
             @ApiResponse(responseCode = "400", description = "Неправильный запрос"
-                    , content = @Content(mediaType = "", schema = @Schema(nullable = true)))})
+                    , content = @Content()),
+            @ApiResponse(responseCode = "403", description = "В доступе отказано"
+                    , content = @Content)})
     @PostMapping("/{postId}/comment")
     ResponseEntity<CommentDto> create(@PathVariable @Parameter(description = "postId") Long postId
             ,@Parameter(description = "CommentDto") @RequestBody CommentDto dto);
@@ -143,10 +148,12 @@ public interface PostController extends BaseController<PostDto, PostSearchDto> {
             @ApiResponse(responseCode = "200", description = "Сабкомментарий создан"
                     , content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE
                     , schema = @Schema(implementation = CommentDto.class))),
-            @ApiResponse(responseCode = "404", description = "Страница с сабкомментариями не найдена"
-                    , content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
+            @ApiResponse(responseCode = "404", description = "Ресурс не найден"
+                    , content = @Content()),
             @ApiResponse(responseCode = "400", description = "Неправильный запрос"
-                    , content = @Content(mediaType = "", schema = @Schema(nullable = true)))})
+                    , content = @Content()),
+            @ApiResponse(responseCode = "403", description = "В доступе отказано"
+                    , content = @Content)})
     @PutMapping("/{id}/comment/{commentId}")
     ResponseEntity<CommentDto> createSubComment(@PathVariable("id") @Parameter(description = "postId") Long id
             , @PathVariable("commentId") @Parameter(description = "commentId") Long commentId
@@ -157,10 +164,12 @@ public interface PostController extends BaseController<PostDto, PostSearchDto> {
             @ApiResponse(responseCode = "200", description = "Комментарий обновлен"
                     , content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE
                     , schema = @Schema(implementation = CommentDto.class))),
-            @ApiResponse(responseCode = "404", description = "Страница с комментариями не найдена"
-                    , content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
+            @ApiResponse(responseCode = "404", description = "Ресурс не найден"
+                    , content = @Content()),
             @ApiResponse(responseCode = "400", description = "Неправильный запрос"
-                    , content = @Content(mediaType = "", schema = @Schema(nullable = true)))})
+                    , content = @Content()),
+            @ApiResponse(responseCode = "403", description = "В доступе отказано"
+                    , content = @Content)})
     @PutMapping("/{id}/comment")
     ResponseEntity<CommentDto> update(@PathVariable("id") @Parameter(description = "commentId") Long id
             , @RequestBody @Parameter(description = "CommentDto") CommentDto dto);
@@ -169,65 +178,72 @@ public interface PostController extends BaseController<PostDto, PostSearchDto> {
             , responses = {
             @ApiResponse(responseCode = "200", description = "Комментарий удален"
                     , content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
-            @ApiResponse(responseCode = "404", description = "Страница с комментариями не найдена"
-                    , content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
+            @ApiResponse(responseCode = "404", description = "Ресурс не найден"
+                    , content = @Content()),
             @ApiResponse(responseCode = "400", description = "Неправильный запрос"
-                    , content = @Content(mediaType = "", schema = @Schema(nullable = true)))})
+                    , content = @Content()),
+            @ApiResponse(responseCode = "403", description = "В доступе отказано"
+                    , content = @Content)})
     @DeleteMapping("/{id}/comment/{commentId}")
-    ResponseEntity deleteById(@PathVariable("id") @Parameter(description = "postId") Long id, @PathVariable("commentId") @Parameter(description = "commentId") Long commentId);
+    ResponseEntity deleteById(@PathVariable("id") @Parameter(description = "postId") Long id,
+                              @PathVariable("commentId") @Parameter(description = "commentId") Long commentId);
 
-
-    //-------------------------=Like=-------------------------//
-    @Operation(summary = "Создание лайка к посту"
+    //-------------------------=Reaction=-------------------------//
+    @Operation(summary = "Создание реакции к посту"
             , responses = {
-            @ApiResponse(responseCode = "200", description = "Лайк создан"
+            @ApiResponse(responseCode = "200", description = "Реакция создана"
                     , content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE
                     , schema = @Schema(implementation = LikeDto.class))),
-            @ApiResponse(responseCode = "404", description = "Страница с лайками не найдена"
-                    , content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
+            @ApiResponse(responseCode = "404", description = "Ресурс не найден"
+                    , content = @Content()),
             @ApiResponse(responseCode = "400", description = "Неправильный запрос"
-                    , content = @Content(mediaType = "", schema = @Schema(nullable = true)))})
+                    , content = @Content()),
+            @ApiResponse(responseCode = "403", description = "В доступе отказано"
+                    , content = @Content)})
     @PostMapping("/{id}/like")
-    ResponseEntity<LikeDto> createPostLike(@PathVariable @Parameter(description = "postId") Long id);
-    @Operation(summary = "Удаление лайка к посту"
+    ResponseEntity<LikeDto> createPostReaction(@PathVariable @Parameter(description = "postId") Long id
+            , @RequestBody LikeDto likeDto);
+    @Operation(summary = "Удаление реакции к посту"
             , responses = {
-            @ApiResponse(responseCode = "200", description = "Лайк удален"
+            @ApiResponse(responseCode = "200", description = "Реакция удалена"
                     , content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
-            @ApiResponse(responseCode = "404", description = "Страница с лайками не найдена"
-                    , content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
+            @ApiResponse(responseCode = "404", description = "Ресурс не найден"
+                    , content = @Content()),
             @ApiResponse(responseCode = "400", description = "Неправильный запрос"
-                    , content = @Content(mediaType = "", schema = @Schema(nullable = true)))})
+                    , content = @Content()),
+            @ApiResponse(responseCode = "403", description = "В доступе отказано"
+                    , content = @Content)})
     @DeleteMapping("/{id}/like")
-    ResponseEntity deletePostLike(@PathVariable @Parameter(description = "postId") Long id);
+    ResponseEntity deletePostReaction(@PathVariable @Parameter(description = "postId") Long id);
+
+    //-------------------------=Like=-------------------------//
     @Operation(summary = "Создание лайка к комментарию"
             , responses = {
             @ApiResponse(responseCode = "200", description = "Лайк создан"
                     , content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE
                     , schema = @Schema(implementation = LikeDto.class))),
-            @ApiResponse(responseCode = "404", description = "Страница с лайками не найдена"
-                    , content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
+            @ApiResponse(responseCode = "404", description = "Ресурс не найден"
+                    , content = @Content()),
             @ApiResponse(responseCode = "400", description = "Неправильный запрос"
-                    , content = @Content(mediaType = "", schema = @Schema(nullable = true)))})
+                    , content = @Content()),
+            @ApiResponse(responseCode = "403", description = "В доступе отказано"
+                    , content = @Content)})
+
     @PostMapping("/{id}/comment/{commentId}/like")
-    ResponseEntity<LikeDto> createCommentLike(@PathVariable @Parameter(description = "postId") Long id, @PathVariable @Parameter(description = "commentId") Long commentId);
+    ResponseEntity<LikeDto> createCommentLike(@PathVariable @Parameter(description = "postId") Long id, @Parameter(description = "likeDto") LikeDto likeDto
+            , @PathVariable @Parameter(description = "commentId") Long commentId);
     @Operation(summary = "Удаление лайка к комментарию"
             , responses = {
             @ApiResponse(responseCode = "200", description = "Лайк удален"
                     , content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
-            @ApiResponse(responseCode = "404", description = "Страница с лайками не найдена"
-                    , content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
+            @ApiResponse(responseCode = "404", description = "Ресурс не найден"
+                    , content = @Content()),
             @ApiResponse(responseCode = "400", description = "Неправильный запрос"
-                    , content = @Content(mediaType = "", schema = @Schema(nullable = true)))})
+                    , content = @Content()),
+            @ApiResponse(responseCode = "403", description = "В доступе отказано"
+                    , content = @Content)})
     @DeleteMapping("/{id}/comment/{commentId}/like")
-    ResponseEntity deleteCommentLike(@PathVariable @Parameter(description = "postId") Long id, @PathVariable @Parameter(description = "commentId") Long commentId);
+    ResponseEntity deleteCommentLike(@PathVariable @Parameter(description = "postId") Long id
+            , @PathVariable @Parameter(description = "commentId") Long commentId);
 
-
-    //-------------------------=Statistic=-------------------------//
-
-
-    @GetMapping("statistic/post")
-    ResponseEntity<?> getStatisticOfPost(RequestDto requestDto);
-
-    @GetMapping("statistic/comment")
-    ResponseEntity<?> getStatisticOfComment(RequestDto requestDto);
 }

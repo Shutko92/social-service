@@ -17,5 +17,4 @@ public interface LikeMapper {
 
     LikeDto convertToDto(Like like);
 
-
 }

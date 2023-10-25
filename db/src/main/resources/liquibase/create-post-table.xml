@@ -26,8 +26,6 @@
                 </column>
                 <column name="comments_count" type="int">
                 </column>
-                <column name="my_reaction" type="varchar(255)">
-                </column>
                 <column name="like_amount" type="int">
                 </column>
                 <column name="my_like" type="boolean">

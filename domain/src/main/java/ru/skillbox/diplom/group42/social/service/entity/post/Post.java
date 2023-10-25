@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import ru.skillbox.diplom.group42.social.service.dto.post.Type;
 import ru.skillbox.diplom.group42.social.service.entity.base.BaseEntity;
-import ru.skillbox.diplom.group42.social.service.entity.reaction.Reaction;
 import ru.skillbox.diplom.group42.social.service.entity.tag.Tag;
 
 import javax.persistence.*;
@@ -43,14 +42,6 @@ public class Post extends BaseEntity {
     @JoinTable(name = "tags_post", joinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
     private Set<Tag> tags;
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "reaction_post", joinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "reaction_id", referencedColumnName = "id"))
-    private Set<Reaction> reactions;
-
-    @Column(name = "my_reaction")
-    private String myReaction;
 
     @Column(name = "like_amount")
     private Integer likeAmount;

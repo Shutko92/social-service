@@ -9,6 +9,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.skillbox.diplom.group42.social.service.dto.post.PostDto;
 import ru.skillbox.diplom.group42.social.service.dto.post.PostSearchDto;
+import ru.skillbox.diplom.group42.social.service.dto.post.Type;
+import ru.skillbox.diplom.group42.social.service.dto.post.like.TypeLike;
 import ru.skillbox.diplom.group42.social.service.entity.post.Post;
 import ru.skillbox.diplom.group42.social.service.entity.post.Post_;
 import ru.skillbox.diplom.group42.social.service.entity.tag.Tag;
@@ -18,6 +20,7 @@ import ru.skillbox.diplom.group42.social.service.mapper.post.PostMapper;
 import ru.skillbox.diplom.group42.social.service.mapper.tag.TagMapper;
 import ru.skillbox.diplom.group42.social.service.repository.post.LikeRepository;
 import ru.skillbox.diplom.group42.social.service.repository.post.PostRepository;
+import ru.skillbox.diplom.group42.social.service.service.like.LikeService;
 import ru.skillbox.diplom.group42.social.service.service.tag.TagService;
 import ru.skillbox.diplom.group42.social.service.utils.SpecificationUtil;
 import ru.skillbox.diplom.group42.social.service.utils.security.SecurityUtil;
@@ -40,33 +43,32 @@ public class PostService {
     private final TagMapper tagMapper;
     private final TagService tagService;
     private final LikeRepository likeRepository;
+    private final LikeService likeService;
+
 
     public PostDto getById(Long id) {
-        log.info("start PostService getById " + id);
         return postMapper.convertToDTO(postRepository.findById(id).orElseThrow(PostFoundException::new));
     }
-//TODO на фронте в разделе профиль не отображаются отложенные посты
+
     public Page<PostDto> getAll(PostSearchDto postSearchDto, Pageable pageable) {
-        log.info("start PostService getAll " + postSearchDto + " Pageable " + pageable);
-        if (postSearchDto.getDateTo() == null) {
-            postSearchDto.setDateTo(ZonedDateTime.now());
-        }
-
         Page<Post> postList = postRepository.findAll(getPostSpecification(postSearchDto), pageable);
-
         return new PageImpl<>(postList.map(post -> {
+            if (post.getPublishDate().isBefore(ZonedDateTime.now())) {
+                updateTypePost(post);
+            }
             PostDto postDto = postMapper.convertToDTO(post);
             postDto.setTags(tagMapper.convertSetToDto(post.getTags()));
             postDto.setMyLike(likeRepository.existsByAuthorIdAndItemId(SecurityUtil.getJwtUserIdFromSecurityContext(), postDto.getId()));
-            log.info("finish PostService getAll " + postDto + " Pageable " + pageable);
+            postDto.setReactions(likeService.getSetReactionDto(post.getId()));
+            postDto.setMyReaction(likeService.getMyReaction(post.getId(), TypeLike.POST));
             return postDto;
         }).toList(), pageable, postList.getTotalElements());
     }
 
     public PostDto create(PostDto postDto) {
-        log.info("start PostService  create Post: " + postDto.toString());
         Post post = postMapper.createEntity(postDto);
         post.setTags(tagService.create(postDto.getTags()));
+        post.setType(post.getPublishDate().isAfter(ZonedDateTime.now()) ? Type.QUEUED : Type.POSTED);
         PostDto postDto1 = postMapper.convertToDTO(postRepository.save(post));
         postDto1.setIsBlocked(false);
         postDto1.setTags(tagMapper.convertSetToDto(post.getTags()));
@@ -74,7 +76,6 @@ public class PostService {
     }
 
     public PostDto update(PostDto postDto) {
-        log.info("start PostService  update Post: " + postDto.toString());
         Post post = postRepository.findById(postDto.getId()).get();
         post.setPostText(postDto.getPostText());
         post.setTags(tagService.create(postDto.getTags()));
@@ -88,16 +89,6 @@ public class PostService {
 
     public void deleteById(Long id) {
         postRepository.deleteById(id);
-        log.info("start PostService deleteById Post: " + id);
-
-    }
-//TODO не нужен, реализуется через create и SpecificationUtil.between(Post_.publishDate....) по сваггеру PUT /api/v1/post/delayed
-    public void delayedPost(PostDto postDto) {
-        Post post = postMapper.createEntity(postDto);
-        post.setTags(tagService.create(postDto.getTags()));
-        postRepository.save(post);
-
-        log.info("start PostService delayedPost: " + postDto.toString());
     }
 
     private Specification<Post> getPostSpecification(PostSearchDto postSearchDto) {
@@ -105,7 +96,9 @@ public class PostService {
                 .and(SpecificationUtil.in(Post_.id, postSearchDto.getIds(), true))
                 .and(SpecificationUtil.in(Post_.authorId, postSearchDto.getAccountIds(), true))
                 .and(SpecificationUtil.notIn(Post_.authorId, postSearchDto.getBlockedIds(), true))
-                .and(SpecificationUtil.between(Post_.publishDate, postSearchDto.getDateFrom(), postSearchDto.getDateTo(), true))
+                .and(SpecificationUtil.between(Post_.publishDate,
+                        postSearchDto.getDateFrom() == null ? null : postSearchDto.getDateFrom()
+                        , postSearchDto.getDateTo() == null ? null : postSearchDto.getDateTo(), true))
                 .and(getContainsTag(postSearchDto.getTags())).and(SpecificationUtil.equal(Post_.isDeleted, false, true))
                 .and(getSpecificationSearchRequest(Post_.title, postSearchDto.getText()))
                 .or(getSpecificationSearchRequest(Post_.postText, postSearchDto.getText()));
@@ -137,5 +130,10 @@ public class PostService {
             predicates = predicateList.toArray(predicates);
             return criteriaBuilder.or(predicates);
         };
+    }
+
+    private Post updateTypePost(Post post) {
+        post.setType(Type.POSTED);
+        return postRepository.save(post);
     }
 }
