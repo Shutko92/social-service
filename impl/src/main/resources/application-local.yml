@@ -3,7 +3,7 @@ spring:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
-    password: testtest
+    password: skillbox
   jpa:
     properties:
       hibernate:
@@ -21,14 +21,16 @@ spring:
     multipart:
       max-file-size: 10MB
 
+  kafka:
+    bootstrap-servers: ${BOOTSTRAP-SERVERS:localhost:9092}
+    consumer:
+      group-id: ${GROUP-ID:group-1}
+
 vars:
   captchaCharStr: 0123456789
 
 endpoints:
-  admin:
-      /api/v1/admin/**,
-      /admin/**,
-      /api/v1/admin-console/**
+  admin: /api/v1/admin/**
   public:
     /api/v1/auth/**,
     /swagger-ui/**,
@@ -65,4 +67,5 @@ cloudinary:
   cloud_name: dmcmd4g2s
   api_key: 358825755328599
   api_secret: NoYeSddTS8z06a5Dga_wQZO6RZU
+
 

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+<!--                        schemaName="public"-->
+        <changeSet id="create_dialog_table" author="rostislav">
+            <createTable tableName="dialog">
+                <column name="id" type="bigint" autoIncrement="true">
+                    <constraints primaryKey="true" nullable="false"/>
+                </column>
+                <column name="is_deleted" type="boolean">
+                </column>
+                <column name="unread_count" type="int">
+                </column>
+                <column name="conversation_partner1" type="bigint">
+                </column>
+                <column name="conversation_partner2" type="bigint">
+                </column>
+
+            </createTable>
+        </changeSet>
+
+</databaseChangeLog>

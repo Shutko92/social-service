@@ -3,6 +3,7 @@ package ru.skillbox.diplom.group42.social.service.entity.post.like;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import ru.skillbox.diplom.group42.social.service.dto.post.like.ReactionType;
 import ru.skillbox.diplom.group42.social.service.dto.post.like.TypeLike;
 import ru.skillbox.diplom.group42.social.service.entity.base.BaseEntity;
 
@@ -29,7 +30,8 @@ public class Like extends BaseEntity {
     @Column(name = "type")
     private TypeLike type;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "reaction_type")
-    private String reactionType;
+    private ReactionType reactionType;
 
 }

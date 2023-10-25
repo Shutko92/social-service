@@ -65,8 +65,10 @@ public class CommentService {
         dto.setCommentType(CommentType.COMMENT);
         CommentDto parentComment = commentMapper.convertToDto(commentRepository.findById(commentId).orElseThrow(CommentFoundException::new));
         parentComment.setCommentCount(parentComment.getCommentCount() + 1);
+        Comment comment = commentMapper.createEntity(dto);
+        comment.setPostId(id);
         commentRepository.save(commentMapper.convertToEntity(parentComment));
-        return commentMapper.convertToDto(commentRepository.save(commentMapper.createEntity(dto)));
+        return commentMapper.convertToDto(commentRepository.save(comment));
     }
 
 

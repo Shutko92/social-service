@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.skillbox.diplom.group42.social.service.dto.post.ReactionDto;
 import ru.skillbox.diplom.group42.social.service.dto.post.like.LikeDto;
+import ru.skillbox.diplom.group42.social.service.dto.post.like.ReactionType;
 import ru.skillbox.diplom.group42.social.service.dto.post.like.TypeLike;
 import ru.skillbox.diplom.group42.social.service.entity.post.Post;
 import ru.skillbox.diplom.group42.social.service.entity.post.comment.Comment;
@@ -22,6 +23,7 @@ import ru.skillbox.diplom.group42.social.service.utils.security.SecurityUtil;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
@@ -42,7 +44,7 @@ public class LikeService {
             like.setType(typeLike);
             setLikeAmount(typeLike, id, 1);
         } else {
-            like.setReactionType(likeDto.getReactionType());
+            like.setReactionType(convertReactionType(likeDto.getReactionType()));
             like.setTime(ZonedDateTime.now());
             if (like.getIsDeleted()) {
                 like.setIsDeleted(false);
@@ -55,7 +57,7 @@ public class LikeService {
     public void deleteLike(Long id, TypeLike typeLike) {
         Like like = likeRepository.findByAuthorIdAndItemIdAndTypeLike(SecurityUtil.getJwtUserIdFromSecurityContext(), id, typeLike)
                 .orElseThrow(() -> new ResourceFoundException(HttpStatus.NOT_FOUND, "like with id " + id + " not found"));
-        if (like.getId() != null || !like.getIsDeleted()) {
+        if (!like.getIsDeleted()) {
             like.setReactionType(null);
             setLikeAmount(typeLike, id, -1);
             likeRepository.deleteById(like.getId());
@@ -80,8 +82,10 @@ public class LikeService {
         Set<ReactionDto> reactionDtoList = new HashSet<>();
         likeList.forEach(like -> {
             ReactionDto reactionDto = new ReactionDto();
-            reactionDto.setReactionType(like.getReactionType());
-            reactionDto.setCount(likeRepository.countByItemIdAndReactionType(like.getItemId(), like.getReactionType()));
+            if (like.getReactionType() != null) {
+                reactionDto.setReactionType(like.getReactionType().name().toLowerCase());
+                reactionDto.setCount(likeRepository.countByItemIdAndReactionType(like.getItemId(), like.getReactionType()));
+            }
             reactionDto.setType(like.getType());
             reactionDtoList.add(reactionDto);
         });
@@ -90,14 +94,14 @@ public class LikeService {
 
     public String getMyReaction(Long itemId, TypeLike typeLike) {
         Like like = likeRepository.findByAuthorIdAndItemIdAndTypeLike(SecurityUtil.getJwtUserIdFromSecurityContext(), itemId, typeLike).orElse(null);
-        if (like != null) {
-            return like.getReactionType();
+        if (like != null && like.getReactionType() != null) {
+            return like.getReactionType().name().toLowerCase();
         } else {
             return null;
         }
     }
 
-    public boolean isThereMyLikeToComment(Long itemId, TypeLike typeLike){
+    public boolean isThereMyLikeToComment(Long itemId, TypeLike typeLike) {
         Like like = likeRepository.findByAuthorIdAndItemIdAndTypeLike(SecurityUtil.getJwtUserIdFromSecurityContext(), itemId, typeLike).orElse(null);
         if (like != null && !like.getIsDeleted()) {
             return true;
@@ -105,6 +109,22 @@ public class LikeService {
             return false;
         }
 
+    }
+
+    public static ReactionType convertReactionType(String reaction) {
+        if (reaction != null) {
+            return switch (reaction.toUpperCase()) {
+                case "HEART" -> ReactionType.HEART;
+                case "FUNNY" -> ReactionType.FUNNY;
+                case "WOW" -> ReactionType.WOW;
+                case "DELIGHT" -> ReactionType.DELIGHT;
+                case "SADNESS" -> ReactionType.SADNESS;
+                case "MALICE" -> ReactionType.MALICE;
+                default -> null;
+            };
+        } else {
+            return null;
+        }
     }
 
 }

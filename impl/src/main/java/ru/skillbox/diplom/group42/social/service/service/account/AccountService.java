@@ -45,8 +45,7 @@ public class AccountService {
     }
 
     public Page<AccountDto> searchAccount(AccountSearchDto accountSearchDto, Pageable page) {
-        log.info("AccountService method search(AccountSearchDto accountSearchDto, Pageable page) executed");
-
+        log.info("AccountService method search(AccountSearchDto accountSearchDto, Pageable page) executed" + accountSearchDto.toString()) ;
         if (accountSearchDto.getAuthor() != null) {
             return accountRepository.findAll(getSpecificationByAuthor(accountSearchDto), page).map(accountMapper::convertToDto);
         } else {

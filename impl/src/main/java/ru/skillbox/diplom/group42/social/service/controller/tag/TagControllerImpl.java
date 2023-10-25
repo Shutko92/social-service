@@ -21,9 +21,9 @@ public class TagControllerImpl implements TagController {
     }
 
     @Override
-    public ResponseEntity<TagDto> getAll(TagSearchDto tagSearchDto) {
+    public ResponseEntity<TagDto> getTag(TagSearchDto tagSearchDto) {
         log.info("Start TagControllerImpl  getAll " + tagSearchDto.toString());
-        return ResponseEntity.ok(tagService.getAll(tagSearchDto));
+        return ResponseEntity.ok(tagService.getTag(tagSearchDto));
     }
 
     @Override

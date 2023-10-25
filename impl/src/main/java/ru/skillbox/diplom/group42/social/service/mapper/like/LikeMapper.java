@@ -13,8 +13,10 @@ public interface LikeMapper {
     @Mapping(target = "isDeleted", constant = "false")
     @Mapping(target = "authorId", expression = "java(ru.skillbox.diplom.group42.social.service.utils.security.SecurityUtil.getJwtUserIdFromSecurityContext())")
     @Mapping(target = "time", expression = "java(ZonedDateTime.now())")
+    @Mapping(target = "reactionType", expression = "java(ru.skillbox.diplom.group42.social.service.service.like.LikeService.convertReactionType(likeDto.getReactionType()))")
     Like createEntity(LikeDto likeDto);
 
+    @Mapping(target = "reactionType", expression = "java(like.getReactionType() != null ? like.getReactionType().name().toLowerCase() : \"\")")
     LikeDto convertToDto(Like like);
 
 }

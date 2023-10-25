@@ -51,7 +51,7 @@ public class TagServiceTest {
     @Test
     public void getAllTest(){
         when(tagSearchDto.getName()).thenReturn("test name");
-        tagService.getAll(tagSearchDto);
+        tagService.getTag(tagSearchDto);
         verify(tagRepository).findByName(anyString());
     }
     @Test
