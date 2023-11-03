@@ -1,7 +1,9 @@
 package ru.skillbox.diplom.group42.social.service.entity.post.comment;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import ru.skillbox.diplom.group42.social.service.dto.post.comment.CommentType;
 import ru.skillbox.diplom.group42.social.service.entity.base.BaseEntity;
 
@@ -11,6 +13,8 @@ import java.time.ZonedDateTime;
 @Entity
 @Getter
 @Setter
+@EqualsAndHashCode
+@ToString
 @Table(name = "comment")
 public class Comment extends BaseEntity {
 

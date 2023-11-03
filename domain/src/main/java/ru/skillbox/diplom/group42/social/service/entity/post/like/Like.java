@@ -1,5 +1,6 @@
 package ru.skillbox.diplom.group42.social.service.entity.post.like;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import ru.skillbox.diplom.group42.social.service.dto.post.like.TypeLike;
@@ -12,6 +13,7 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 @Table(name = "`like`")
+@EqualsAndHashCode
 public class Like extends BaseEntity {
 
     @Column(name = "author_id")

@@ -1,10 +1,7 @@
 package ru.skillbox.diplom.group42.social.service.dto.account;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ru.skillbox.diplom.group42.social.service.dto.auth.UserDto;
 
 import java.time.ZonedDateTime;
@@ -14,6 +11,7 @@ import java.time.ZonedDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 @Schema(description = "Данные аккаунта")
 public class AccountDto extends UserDto {
 

@@ -1,9 +1,6 @@
 package ru.skillbox.diplom.group42.social.service.entity.account;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ru.skillbox.diplom.group42.social.service.entity.auth.User;
 
 import javax.persistence.Column;
@@ -14,8 +11,10 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 @Entity
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 @Table(name = "account")
 public class Account extends User {
 

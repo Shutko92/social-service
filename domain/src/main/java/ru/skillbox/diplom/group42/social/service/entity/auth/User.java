@@ -1,9 +1,6 @@
 package ru.skillbox.diplom.group42.social.service.entity.auth;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ru.skillbox.diplom.group42.social.service.entity.base.BaseEntity;
 
 import javax.persistence.*;
@@ -11,7 +8,9 @@ import java.util.List;
 
 @Getter
 @Setter
+@ToString
 @Entity
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "\"user\"")

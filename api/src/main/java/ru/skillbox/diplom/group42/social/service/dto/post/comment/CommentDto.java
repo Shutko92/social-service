@@ -1,5 +1,6 @@
 package ru.skillbox.diplom.group42.social.service.dto.post.comment;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import ru.skillbox.diplom.group42.social.service.dto.base.BaseDto;
@@ -8,6 +9,7 @@ import java.time.ZonedDateTime;
 
 @Getter
 @Setter
+@EqualsAndHashCode
 public class CommentDto extends BaseDto {
 
     private CommentType commentType;
