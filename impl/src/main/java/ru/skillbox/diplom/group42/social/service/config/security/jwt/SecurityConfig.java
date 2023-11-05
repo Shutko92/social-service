@@ -21,14 +21,14 @@ import ru.skillbox.diplom.group42.social.service.security.JwtTokenProvider;
 @RequiredArgsConstructor
 @EnableMethodSecurity
 public class SecurityConfig {
-    @Value("${endpoints.admin}")
-    private String ADMIN_ENDPOINT;
+    @Value("#{'${endpoints.admin}'.split(', ')}")
+    private String[] adminEndpoints;
 
     @Value("#{'${endpoints.public}'.split(', ')}")
     private  String[] publicEndpoints;
 
     @Value("${roles.admin}")
-    public static final String ROLE = "admin";
+    public String ROLE;
 
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -54,7 +54,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers(publicEndpoints).permitAll()
-                .antMatchers(ADMIN_ENDPOINT).hasRole(ROLE)
+                .antMatchers(adminEndpoints).hasAuthority(ROLE)
                 .anyRequest().authenticated()
                 .and()
                 .logout()
