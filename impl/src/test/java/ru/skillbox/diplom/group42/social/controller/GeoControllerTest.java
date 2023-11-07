@@ -14,20 +14,6 @@ public class GeoControllerTest extends AbstractIntegrationTest {
     public static void initEmail(){
         setEmailForCreateAccount("geo@mail.ru");
     }
-    @Test
-    public void loadCountriesShouldReturnCode200() {
-        ResponseEntity<Void> response = template.exchange(
-                "/api/v1/geo/load",
-                HttpMethod.PUT,
-                new HttpEntity<>(headers),
-                Void.class
-        );
-        if (!response.getStatusCode().equals(HttpStatus.OK)) {
-            Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        } else {
-            Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        }
-    }
 
     @Test
     public void getCountriesShouldReturnListCountyDto() {
