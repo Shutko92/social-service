@@ -18,6 +18,12 @@ public class StorageService {
 
     private final Cloudinary cloudinary;
 
+    /**
+     * Метод загружает файл на сервер с помощью Cloudinary.
+     * @param imageFile файл для загрузки.
+     * @return название файла.
+     * @throws IOException при проблемах с определением файла.
+     */
     public StorageDto sendingToStorage(MultipartFile imageFile) throws IOException {
         log.debug("Entering StorageService method sendingToStorage(MultipartFile imageFile)");
         Map uploadResult = cloudinary

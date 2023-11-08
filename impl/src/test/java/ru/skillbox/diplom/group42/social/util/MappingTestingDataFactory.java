@@ -3,6 +3,11 @@ package ru.skillbox.diplom.group42.social.util;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import ru.skillbox.diplom.group42.social.service.dto.account.AccountDto;
 import ru.skillbox.diplom.group42.social.service.dto.account.AccountOnlineDto;
+import ru.skillbox.diplom.group42.social.service.dto.admin.console.response.AccountCountPerAgeDto;
+import ru.skillbox.diplom.group42.social.service.dto.admin.console.response.AccountStatisticResponseDto;
+import ru.skillbox.diplom.group42.social.service.dto.admin.console.response.StatisticPerDateDto;
+import ru.skillbox.diplom.group42.social.service.dto.admin.console.response.StatisticResponseDto;
+import ru.skillbox.diplom.group42.social.service.dto.notification.*;
 import ru.skillbox.diplom.group42.social.service.dto.post.PostDto;
 import ru.skillbox.diplom.group42.social.service.dto.post.Type;
 import ru.skillbox.diplom.group42.social.service.dto.post.comment.CommentDto;
@@ -13,8 +18,11 @@ import ru.skillbox.diplom.group42.social.service.dto.post.like.TypeLike;
 import ru.skillbox.diplom.group42.social.service.dto.tag.TagDto;
 import ru.skillbox.diplom.group42.social.service.entity.account.Account;
 import ru.skillbox.diplom.group42.social.service.entity.auth.User;
+import ru.skillbox.diplom.group42.social.service.entity.friend.Friend;
 import ru.skillbox.diplom.group42.social.service.entity.geo.City;
 import ru.skillbox.diplom.group42.social.service.entity.geo.Country;
+import ru.skillbox.diplom.group42.social.service.entity.notification.Notification;
+import ru.skillbox.diplom.group42.social.service.entity.notification.NotificationSettings;
 import ru.skillbox.diplom.group42.social.service.entity.post.Post;
 import ru.skillbox.diplom.group42.social.service.entity.post.comment.Comment;
 import ru.skillbox.diplom.group42.social.service.entity.post.like.Like;
@@ -26,8 +34,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static ru.skillbox.diplom.group42.social.util.TestingConstant.TEST_ID;
-import static ru.skillbox.diplom.group42.social.util.TestingConstant.TIME_TEST;
+import static ru.skillbox.diplom.group42.social.util.ServiceTestingDataFactory.createAccountCountPerAgeDto;
+import static ru.skillbox.diplom.group42.social.util.ServiceTestingDataFactory.createStatisticPerDateDto;
+import static ru.skillbox.diplom.group42.social.util.TestingConstant.*;
 
 public class MappingTestingDataFactory {
 
@@ -243,6 +252,119 @@ public class MappingTestingDataFactory {
         post.setImagePath("test image path");
         post.setPublishDate(TIME_TEST);
         return post;
+    }
+
+    public static StatisticResponseDto createStatisticResponseDto() {
+        StatisticResponseDto response = new StatisticResponseDto();
+        List<StatisticPerDateDto> perDate = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            perDate.add(createStatisticPerDateDto());
+        }
+        response.setCount(TEST_SIZE);
+        response.setDate(TIME_TEST);
+        response.setCountPerHours(perDate);
+        response.setCountPerMonth(perDate);
+        return  response;
+    }
+
+    public static AccountStatisticResponseDto createAccountStatisticResponseDto() {
+        AccountStatisticResponseDto accountResponse = new AccountStatisticResponseDto();
+        List<StatisticPerDateDto> perDate = new ArrayList<>();
+        List<AccountCountPerAgeDto> accountPerAge = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            perDate.add(createStatisticPerDateDto());
+        }
+        for (int i = 0; i < 10; i++) {
+            accountPerAge.add(createAccountCountPerAgeDto());
+        }
+        accountResponse.setCount(TEST_SIZE);
+        accountResponse.setDate(TIME_TEST);
+        accountResponse.setCountPerMonth(perDate);
+        accountResponse.setCountPerAge(accountPerAge);
+        return accountResponse;
+    }
+
+    public static Friend createTestFriend() {
+        Friend friend = new Friend();
+        friend.setId(TEST_ACCOUNT_ID);
+        friend.setPhoto("some photo");
+        friend.setCity("some city");
+        friend.setCountry("some country");
+        friend.setFirstName(TEST_FIRST_NAME);
+        friend.setLastName(TEST_LAST_NAME);
+        friend.setOnline(false);
+        friend.setBirthDate(TIME_TEST);
+        friend.setIdFrom(TEST_SECOND_ID);
+        friend.setIdTo(TEST_ID);
+        friend.setPreviousStatusCode(null);
+        friend.setStatusCode(null);
+        friend.setRating(TEST_SIZE);
+        friend.setIsDeleted(false);
+        return friend;
+    }
+
+    public static Notification createTestNotification() {
+        Notification notification = new Notification();
+        notification.setAuthorId(TEST_ACCOUNT_ID);
+        notification.setNotificationType(NotificationType.POST);
+        notification.setId(TEST_ID);
+        notification.setContent("Test Text");
+        notification.setRecipientId(TEST_SECOND_ID);
+        notification.setSentTime(TIME_TEST);
+        notification.setIsDeleted(false);
+        return notification;
+    }
+
+    public static NotificationDto createNotificationDto() {
+        NotificationDto notification = new NotificationDto();
+        notification.setAuthorId(TEST_ACCOUNT_ID);
+        notification.setNotificationType(NotificationType.POST);
+        notification.setId(TEST_ID);
+        notification.setContent("Test Text");
+        notification.setSentTime(TIME_TEST);
+        return notification;
+    }
+
+    public static EventNotificationDto createEventNotificationDto() {
+        EventNotificationDto dto = new EventNotificationDto();
+        dto.setNotificationType(NotificationType.POST);
+        dto.setContent("Test Text");
+        dto.setAuthorId(TEST_ID);
+        dto.setReceiverId(TEST_SECOND_ID);
+        return dto;
+    }
+
+    public static NotificationSettingDto createNotificationSettingDto() {
+        NotificationSettingDto dto = new NotificationSettingDto();
+        dto.setId(TEST_ID);
+        dto.setEnablePost(true);
+        dto.setEnableMessage(true);
+        dto.setEnableCommentComment(true);
+        dto.setEnableFriendRequest(true);
+        dto.setEnableFriendBirthday(true);
+        dto.setEnablePostComment(true);
+        dto.setEnableSendEmailMessage(true);
+        return dto;
+    }
+
+    public static NotificationSettings createTestNotificationSettings() {
+        NotificationSettings dto = new NotificationSettings();
+        dto.setId(TEST_ID);
+        dto.setEnablePost(true);
+        dto.setEnableMessage(true);
+        dto.setEnableCommentComment(true);
+        dto.setEnableFriendRequest(true);
+        dto.setEnableFriendBirthday(true);
+        dto.setEnablePostComment(true);
+        dto.setEnableSendEmailMessage(true);
+        return dto;
+    }
+
+    public static NotificationSettingsUpdateDto createNotificationSettingsUpdateDto() {
+        NotificationSettingsUpdateDto dto = new NotificationSettingsUpdateDto();
+        dto.setNotificationType(NotificationType.POST);
+        dto.setEnable(true);
+        return dto;
     }
 }
 

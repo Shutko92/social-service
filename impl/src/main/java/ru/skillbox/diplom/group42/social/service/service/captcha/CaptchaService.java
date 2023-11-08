@@ -30,6 +30,10 @@ public class CaptchaService {
         this.captchaRepository = captchaRepository;
     }
 
+    /**
+     * Метод инициализирует генератор капчи, формирует фон и содержание, собирает капчу.
+     * @return капча.
+     */
     public Captcha generateCaptcha(){
         CaptchaBuilder builder = new CaptchaBuilder();
         BufferedImage captchaImage = builder.setBackgroundColor(Color.ORANGE).build();
@@ -37,6 +41,11 @@ public class CaptchaService {
         return captcha;
     }
 
+    /**
+     * Метод вызывает другой метод, берет его результат, сохраняет капчу через репозиторий, форматирует информацию о ней,
+     * формирует ответ.
+     * @return информация о капче.
+     */
     public CaptchaDto getCaptcha() {
         Captcha captcha= generateCaptcha();
         captchaRepository.save(captcha);

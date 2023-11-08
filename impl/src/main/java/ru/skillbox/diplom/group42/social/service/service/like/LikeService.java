@@ -23,7 +23,6 @@ import ru.skillbox.diplom.group42.social.service.utils.security.SecurityUtil;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
@@ -35,6 +34,14 @@ public class LikeService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
 
+    /**
+     * Метод ищет реакцю по параметрам запроса. Если поиск не находит объект, создается и сохраняется новая реакция по параметрам.
+     * В противном случае реакция обновляется и изменения сохраняются. Результат конвертируется в ответ.
+     * @param id идентификатор элемента поиска.
+     * @param likeDto параметры запроса для поиска.
+     * @param typeLike указатель типа.
+     * @return информация о реакции.
+     */
     public LikeDto addLike(Long id, LikeDto likeDto, TypeLike typeLike) {
         Like like = likeRepository.findByAuthorIdAndItemIdAndTypeLike(SecurityUtil.getJwtUserIdFromSecurityContext(), id, typeLike).orElse(new Like());
 
@@ -54,6 +61,12 @@ public class LikeService {
         return likeMapper.convertToDto(likeRepository.save(like));
     }
 
+    /**
+     * Метод ищет реакцю по параметрам запроса.  Если не находится объект, выбрасывается исключение. Если у реакции негативный маркер удаления,
+     * она удаляется.
+     * @param id идентификатор элемента поиска.
+     * @param typeLike указатель типа.
+     */
     public void deleteLike(Long id, TypeLike typeLike) {
         Like like = likeRepository.findByAuthorIdAndItemIdAndTypeLike(SecurityUtil.getJwtUserIdFromSecurityContext(), id, typeLike)
                 .orElseThrow(() -> new ResourceFoundException(HttpStatus.NOT_FOUND, "like with id " + id + " not found"));
@@ -63,6 +76,7 @@ public class LikeService {
             likeRepository.deleteById(like.getId());
         }
     }
+
 
     private void setLikeAmount(TypeLike typeLike, Long itemId, int value) {
         if (typeLike.equals(TypeLike.COMMENT)) {
@@ -77,6 +91,12 @@ public class LikeService {
         }
     }
 
+    /**
+     *Метод ищет реакции по отношениям к публикациям и комментариям. Из результата поиска формируется ответ из списка
+     * реакций, которые содержат тип.
+     * @param postId идентификатор публикации.
+     * @return список реакций.
+     */
     public Set<ReactionDto> getSetReactionDto(Long postId) {
         List<Like> likeList = likeRepository.findAllByItemIdAndTypeLikeAndIsDeletedFalse(postId, TypeLike.POST);
         Set<ReactionDto> reactionDtoList = new HashSet<>();
@@ -92,6 +112,12 @@ public class LikeService {
         return reactionDtoList;
     }
 
+    /**
+     * Метод ищет реакцию пользователя. Если объект находится, то конвертируется в строку.
+     * @param itemId идентификатор элемента поиска.
+     * @param typeLike указатель типа.
+     * @return тип реакции.
+     */
     public String getMyReaction(Long itemId, TypeLike typeLike) {
         Like like = likeRepository.findByAuthorIdAndItemIdAndTypeLike(SecurityUtil.getJwtUserIdFromSecurityContext(), itemId, typeLike).orElse(null);
         if (like != null && like.getReactionType() != null) {
@@ -101,6 +127,13 @@ public class LikeService {
         }
     }
 
+    /**
+     * Метод ищет реакцию пользователя через репозиторий п параметрам запроса. Если реакция находится и ее маркер удаления негативный,
+     * возвращается положительный ответ, иначе отрицательный.
+     * @param itemId идентификатор элемента поиска.
+     * @param typeLike указатель типа.
+     * @return boolean ответ.
+     */
     public boolean isThereMyLikeToComment(Long itemId, TypeLike typeLike) {
         Like like = likeRepository.findByAuthorIdAndItemIdAndTypeLike(SecurityUtil.getJwtUserIdFromSecurityContext(), itemId, typeLike).orElse(null);
         if (like != null && !like.getIsDeleted()) {
@@ -111,6 +144,11 @@ public class LikeService {
 
     }
 
+    /**
+     *Метод сравнивает запрос с вариантами типа реакции и возвращает совпадение.
+     * @param reaction тип реакции.
+     * @return тип реакции.
+     */
     public static ReactionType convertReactionType(String reaction) {
         if (reaction != null) {
             return switch (reaction.toUpperCase()) {

@@ -82,7 +82,7 @@ public class VkConnector {
 
                 saveCities(cities);
                 offset += count;
-                Thread.sleep(2000);
+                Thread.sleep(3000);
             } while (cityResponse.getCount()>0);
         }
         log.info("Method collectCities finished in {}", this.getClass().getName());

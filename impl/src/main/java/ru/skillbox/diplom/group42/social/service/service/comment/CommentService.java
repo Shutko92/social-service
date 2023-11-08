@@ -37,6 +37,14 @@ public class CommentService {
     private final LikeService likeService;
     private final NotificationHandler notificationHandler;
 
+    /**
+     * Метод ищет все совпадающие комментарии по спецификации и идентификатору из параметров. Полученные комментарии
+     * конвертируются в страничный список dto используя обращение к сервису реакций.
+     * @param postId идентификатор публикации.
+     * @param commentSearchDto не используется.
+     * @param pageable парамерт разделения на страницы.
+     * @return страничная информация о комментариях.
+     */
     public Page<CommentDto> getAllCommentsToPost(Long postId, CommentSearchDto commentSearchDto, Pageable pageable) {
         Page<Comment> commentPage = commentRepository.findAll(getSpecificationForComment(postId), pageable);
         return new PageImpl<>(commentPage.map(comment -> {
@@ -46,11 +54,27 @@ public class CommentService {
         }).toList(), pageable, commentPage.getTotalElements());
     }
 
+    /**
+     * Метод ищет все совпадающие комментарии по спецификации и идентификатору из параметров. Результат конвертируется в ответ.
+     * @param postId не используется.
+     * @param commentId идентификатор комментария.
+     * @param commentSearchDto не используется.
+     * @param pageable парамерт разделения на страницы.
+     * @return страничная информация о комментариях.
+     */
     public Page<CommentDto> getSubcomment(Long postId, Long commentId, CommentSearchDto commentSearchDto, Pageable pageable) {
         Page<Comment> commentPage = commentRepository.findAll(getSpecificationForSubcomment(commentId), pageable);
         return new PageImpl<>(commentPage.map(commentMapper::convertToDto).toList(), pageable, commentPage.getTotalElements());
     }
 
+    /**
+     * Метод выставляет тип комментаия и идентификатор, если имеется идентификатор публикации. Также ищет публикацию по
+     * идентификатору, или выбрасывает исключение. Добавляет комментарий и сохраняет публикацию. Сохраняет комментарий, формирует
+     * ответ, отправляет нотификацию. Если идентификатора публикации нет, вызывает другой метод и возвращает результат.
+     * @param postId идентификатор публикации.
+     * @param dto параметры комментария.
+     * @return
+     */
     public CommentDto create(Long postId, CommentDto dto) {
         if (dto.getParentId() == null) {
             dto.setCommentType(CommentType.POST);
@@ -66,6 +90,15 @@ public class CommentService {
         }
     }
 
+    /**
+     * Метод выставляет тип комментария в параметры, ищет комментарий по идентификатору или выбрасывает исключение, конвертирует
+     * информацию и актуализирует счетчик, создает комментарий из параметров, сохраняет комментарий и саб-комментарий,
+     * отправляет нотификацию.
+     * @param id идентификатор комментария.
+     * @param commentId идентификатор комментария.
+     * @param dto параметры комметария.
+     * @return информация о комментарии.
+     */
     public CommentDto createSubComment(Long id, Long commentId, CommentDto dto) {
         dto.setCommentType(CommentType.COMMENT);
         CommentDto parentComment = commentMapper.convertToDto(commentRepository.findById(commentId).orElseThrow(CommentFoundException::new));
@@ -78,7 +111,12 @@ public class CommentService {
         return dto;
     }
 
-
+    /**
+     * Метод ищет комментарий по идентификатору или выбрасывает исключение, обновляет его, сохраняет, конвертирует в ответ.
+     * @param id не используется.
+     * @param dto параметры комметария.
+     * @return информация о комментарии.
+     */
     public CommentDto update(Long id, CommentDto dto) {
         Comment comment = commentRepository.findById(dto.getId()).orElseThrow(CommentFoundException::new);
         comment.setCommentText(dto.getCommentText());
@@ -86,6 +124,12 @@ public class CommentService {
         return commentMapper.convertToDto(commentRepository.save(comment));
     }
 
+    /**
+     * Метод ищет комментарий через репозиторий по идентификатору. Если есть идентификатор публикации, ищет ее через репозиторий,
+     * удаляет комментарий у публикации, сохраняет результат. Иначе, удаляет комментарий, сохраняет результат.
+     * @param id идентификатор комментария.
+     * @param commentId идентификатор комментария.
+     */
     public void deleteById(Long id, Long commentId) {
         Comment comment = commentRepository.findById(commentId).get();
         if (comment.getParentId() == null) {

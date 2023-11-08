@@ -26,7 +26,6 @@ import ru.skillbox.diplom.group42.social.service.service.notification.Notificati
 import ru.skillbox.diplom.group42.social.service.utils.SpecificationUtil;
 import ru.skillbox.diplom.group42.social.service.utils.security.SecurityUtil;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -44,6 +43,13 @@ public class DialogService {
     private final MessageMapper messageMapper;
     private final NotificationHandler notificationHandler;
 
+
+    /**
+     * Метод делает с передаваемым идентификатором пользователя форму поиска, по которой ищет через репозиторий подходящие диалоги.
+     * Если ничего не находится, создается новый диалог и сохраняется. В противном случае достается первый диалог и конвертируется в ответ.
+     * @param id идентификатор пользователя.
+     * @return информация о диалоге.
+     */
     public DialogDto getDialogBetweenUsers(Long id) {
         DialogSearchDto dialogSearchDto = new DialogSearchDto();
         dialogSearchDto.setConversationPartner1(SecurityUtil.getJwtUserIdFromSecurityContext());
@@ -69,7 +75,13 @@ public class DialogService {
         }
     }
 
-
+    /**
+     * Метод делает с переданным идентификатором пользователя форму поиска, по которой ищет подходящие сообщения
+     * с помощью репозитория. Результат конвертируется в ответ.
+     * @param recipientId идентификатор пользователя.
+     * @param pageable параметр для разделения информации на страницы.
+     * @return постраничная информация о сообщениях.
+     */
     public Page<MessageShortDto> getMessagesToDialog(Long recipientId, Pageable pageable) {
         MessageSearchDto messageSearchDto = new MessageSearchDto();
         messageSearchDto.setConversationPartner1(SecurityUtil.getJwtUserIdFromSecurityContext());
@@ -81,6 +93,12 @@ public class DialogService {
         return messageShortDtoPage;
     }
 
+    /**
+     * Метод делает форму поиска, по которой ищет через репозиторий подходящие диалоги. Результат обрабатывается,
+     * сортируется и конвертируется в ответ.
+     * @param pageable параметр для разделения информации на страницы.
+     * @return постраничная информация о диалогах.
+     */
     public Page<DialogDto> getAllDialogs(Pageable pageable) {
         DialogSearchDto dialogSearchDto = new DialogSearchDto();
         dialogSearchDto.setConversationPartner1(SecurityUtil.getJwtUserIdFromSecurityContext());
@@ -94,7 +112,12 @@ public class DialogService {
 
     }
 
-    @Transactional
+    /**
+     * Метод ищет диалог через репозиторийпо идентификатору. Если ничего не найдено, выбрасывается исключение.
+     * Для каждого найденного сообщения, если оно со статусом "отправлено", и один из партнеров - конкретный пользователь,
+     * проставляется статус "прочитано" и актуализируется счетчик.
+     * @param dialogId идентификатор диалога.
+     */
     public void updateStatusMessage(Long dialogId) {
         AtomicInteger count = new AtomicInteger();
         Dialog dialog = dialogRepository.findById(dialogId)
@@ -110,14 +133,17 @@ public class DialogService {
         updateCountUnreadMessageToDialog(dialogId, count.get());
     }
 
-    public void updateCountUnreadMessageToDialog(Long dialogId, int count) {
+    private void updateCountUnreadMessageToDialog(Long dialogId, int count) {
         Dialog dialog = dialogRepository.findById(dialogId)
                 .orElseThrow(() -> new ResourceFoundException(HttpStatus.NOT_FOUND, "dialog with id " + dialogId + "not found"));
         dialog.setUnreadCount(dialog.getUnreadCount() + count);
         dialogRepository.save(dialog);
     }
 
-
+    /**
+     * Метод считает сообщения пользователя по статусу "отправлено" через репозиторий.
+     * @return количество сообщений.
+     */
     public UnreadCountDto getCountUnreadMessage() {
         UnreadCountDto unreadCountDto = new UnreadCountDto();
         unreadCountDto.setCount(messageRepository
@@ -126,6 +152,13 @@ public class DialogService {
         return unreadCountDto;
     }
 
+    /**
+     * Метод конвертирует параметры поиска в сущность, ищет через репозиторий диалог, соответствующий идентификатору
+     * поиска, актуализирует счетчик непрочитанных сообщений, отправляет нотификацию партнеру диалога, сохраняет его
+     * и конвертирует в ответ.
+     * @param messageDto параметры поиска сообщений.
+     * @return информация о диалоге.
+     */
     public MessageDto createMessage(MessageDto messageDto) {
         Message messageEntity = messageMapper.convertToEntity(messageDto);
         Dialog dialog = dialogRepository.getById(messageDto.getDialogId());

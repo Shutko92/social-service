@@ -42,6 +42,13 @@ public class StatisticService {
     private final AccountRepository accountRepository;
     private final AdminConsoleMapper adminConsoleMapper;
 
+    /**
+     * Метод обрабатывает данные трех возможных видов в зависимости от указателя, делая запрос в базу данных,
+     * и преобразуя их в статистику за последние 12 часов и по месяцам.
+     * @param request dto запроса на статистику за определенный период.
+     * @param type указатель, определяющий какой тип данных запрашивается в конкретном случае: post, comment, или like.
+     * @return результат обработкт статистики.
+     */
     public StatisticResponseDto postLikeCommentStatistic(StatisticRequestDto request, StatisticType type) {
         ZonedDateTime firstMonth = ZonedDateTime.parse(request.getFirstMonth());
         ZonedDateTime lastMonth = ZonedDateTime.parse(request.getLastMonth());
@@ -54,6 +61,12 @@ public class StatisticService {
         return adminConsoleMapper.dataToStatisticResponse(date, dataList.size(), monthly, perHour);
     }
 
+    /**
+     * Метод обрабатывает данные аккаунтов, делая запрос в базу данных, и преобразуя их в статистику по возрастным
+     * категориям и месяцам.
+     * @param request dto запроса на статистику за определенный период.
+     * @return результат обработкт статистики.
+     */
     public AccountStatisticResponseDto accountStatistic(StatisticRequestDto request) {
         ZonedDateTime firstMonth = ZonedDateTime.parse(request.getFirstMonth());
         ZonedDateTime lastMonth = ZonedDateTime.parse(request.getLastMonth());
@@ -89,7 +102,7 @@ public class StatisticService {
         for (int i = 1; i <= 12; i++) {
             StatisticPerDateDto statisticPerDate = new StatisticPerDateDto();
             statisticPerDate.setDate(date.plusMonths(i-1));
-            statisticPerDate.setCount(monthToAmountMap.containsKey(i) ? monthToAmountMap.get(i) : 0);
+            statisticPerDate.setCount(monthToAmountMap.getOrDefault(i, 0));
             statisticList.add(statisticPerDate);
         }
         return statisticList;
@@ -106,7 +119,7 @@ public class StatisticService {
             for (int i = 1; i <= 12;i++) {
                 StatisticPerDateDto statisticPerDate = new StatisticPerDateDto();
                 statisticPerDate.setDate(functionDate.plusHours(i-1));
-                statisticPerDate.setCount(monthToAmountMap.containsKey(hour) ? monthToAmountMap.get(hour) : 0);
+                statisticPerDate.setCount(monthToAmountMap.getOrDefault(hour, 0));
                 statisticList.add(statisticPerDate);
                 if (hour== 23) {
                     hour=-1;
@@ -117,6 +130,9 @@ public class StatisticService {
     }
 
     private List<AccountCountPerAgeDto> calculateAgeRatio(List<Account> accountList) {
+        if (accountList.stream().noneMatch(account -> account.getBirthDate() != null)) {
+            return List.of(new AccountCountPerAgeDto(0,0));
+        }
         Map<Integer, Integer> ageGrouped = accountList.stream().collect(Collectors.groupingBy(Account::getBirthDate))
                 .entrySet().stream().collect(Collectors.toMap(entry -> Period.between(entry.getKey().toLocalDate(), LocalDate.now()).getYears(),
                         entry -> entry.getValue().size()));

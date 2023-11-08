@@ -2,15 +2,11 @@ package ru.skillbox.diplom.group42.social.service.service.post;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import ru.skillbox.diplom.group42.social.service.dto.notification.EventNotificationDto;
 import ru.skillbox.diplom.group42.social.service.dto.notification.NotificationType;
 import ru.skillbox.diplom.group42.social.service.dto.post.PostDto;
 import ru.skillbox.diplom.group42.social.service.dto.post.PostSearchDto;
@@ -23,12 +19,10 @@ import ru.skillbox.diplom.group42.social.service.entity.tag.Tag_;
 import ru.skillbox.diplom.group42.social.service.exception.PostFoundException;
 import ru.skillbox.diplom.group42.social.service.mapper.post.PostMapper;
 import ru.skillbox.diplom.group42.social.service.mapper.tag.TagMapper;
-import ru.skillbox.diplom.group42.social.service.repository.account.AccountRepository;
 import ru.skillbox.diplom.group42.social.service.repository.post.LikeRepository;
 import ru.skillbox.diplom.group42.social.service.repository.post.PostRepository;
 import ru.skillbox.diplom.group42.social.service.service.like.LikeService;
 import ru.skillbox.diplom.group42.social.service.service.notification.NotificationHandler;
-import ru.skillbox.diplom.group42.social.service.service.notification.NotificationService;
 import ru.skillbox.diplom.group42.social.service.service.tag.TagService;
 import ru.skillbox.diplom.group42.social.service.utils.SpecificationUtil;
 import ru.skillbox.diplom.group42.social.service.utils.security.SecurityUtil;
@@ -54,11 +48,21 @@ public class PostService {
     private final LikeService likeService;
     private final NotificationHandler notificationHandler;
 
-
+    /**
+     *Метод ищет публикацию по идентификатору и возвращает конвертированную информацию о ней, если публикация находится.
+     * @param id идентификатор публикации.
+     * @return информация о публикации.
+     */
     public PostDto getById(Long id) {
         return postMapper.convertToDTO(postRepository.findById(id).orElseThrow(PostFoundException::new));
     }
 
+    /**
+     *Метод проводит поиск по параметрам запроса и конвертирует информацию в ответ.
+     * @param postSearchDto параметры запроса для поиска публикации.
+     * @param pageable пагинация для постраничного формирования ответа.
+     * @return информация о публикациях, разделенная на страницы.
+     */
     public Page<PostDto> getAll(PostSearchDto postSearchDto, Pageable pageable) {
         Page<Post> postList = postRepository.findAll(getPostSpecification(postSearchDto), pageable);
         return new PageImpl<>(postList.map(post -> {
@@ -74,6 +78,11 @@ public class PostService {
         }).toList(), pageable, postList.getTotalElements());
     }
 
+    /**
+     *Метод конвертирует параметры запроса в сущность, которую сохраняет. Отправляет нотификацию об отправленной публикации.
+     * @param postDto параметры запроса для создания публикации.
+     * @return информация о публикации.
+     */
     public PostDto create(PostDto postDto) {
         Post post = postMapper.createEntity(postDto);
         post.setTags(tagService.create(postDto.getTags()));
@@ -85,6 +94,11 @@ public class PostService {
         return postDto1;
     }
 
+    /**
+     * Метод ищет публикацию по параметрам запроса, обновляет данные, сохраняет изменения.
+     * @param postDto параметры запроса для обновления публикации.
+     * @return информация о публикации.
+     */
     public PostDto update(PostDto postDto) {
         Post post = postRepository.findById(postDto.getId()).get();
         post.setPostText(postDto.getPostText());
@@ -97,6 +111,10 @@ public class PostService {
         return postDto1;
     }
 
+    /**
+     * Метод удаляет публикацию по указанному идентификатору.
+     * @param id идентификатор публикации
+     */
     public void deleteById(Long id) {
         postRepository.deleteById(id);
     }
