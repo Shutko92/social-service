@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.diplom.group42.social.service.dto.auth.AuthenticateDto;
 import ru.skillbox.diplom.group42.social.service.dto.auth.AuthenticateResponseDto;
+import ru.skillbox.diplom.group42.social.service.dto.auth.PasswordChangeDto;
 import ru.skillbox.diplom.group42.social.service.dto.auth.RegistrationDto;
 import ru.skillbox.diplom.group42.social.service.entity.auth.Role;
 import ru.skillbox.diplom.group42.social.service.entity.auth.User;
@@ -19,11 +20,14 @@ import ru.skillbox.diplom.group42.social.service.mapper.auth.AuthMapper;
 import ru.skillbox.diplom.group42.social.service.repository.auth.RoleRepository;
 import ru.skillbox.diplom.group42.social.service.repository.auth.UserRepository;
 import ru.skillbox.diplom.group42.social.service.security.JwtTokenProvider;
+import ru.skillbox.diplom.group42.social.service.security.JwtUser;
 import ru.skillbox.diplom.group42.social.service.service.account.AccountService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static ru.skillbox.diplom.group42.social.service.utils.security.SecurityUtil.getJwtUserFromSecurityContext;
 
 
 @Slf4j
@@ -43,11 +47,11 @@ public class AuthService {
         log.info("ENTERED register(User user) in AuthService");
         Optional<User> optionalUser = userRepository.findByEmail(registrationDto.getEmail());
         log.info("Looking for previously registered user with such email");
-        if(optionalUser.isPresent()){
+        if (optionalUser.isPresent()) {
             log.warn("User already exists");
             throw new RegisteringExistingUserException();
         }
-        if(!passCaptcha(registrationDto)){
+        if (!passCaptcha(registrationDto)) {
             log.warn("In AuthService register: captcha failed");
             throw new InvalidCaptchaException();
         }
@@ -88,10 +92,20 @@ public class AuthService {
             throw new BadCredentialsException("Invalid email or password");
         }
     }
-    private boolean passCaptcha(RegistrationDto registrationDto){
+
+    public void changePassword(PasswordChangeDto dto) {
+        JwtUser jwtUser = getJwtUserFromSecurityContext();
+        User user = userRepository.findById(jwtUser.getId()).orElse(null);
+        String newPassword = new BCryptPasswordEncoder().encode(dto.getNewPassword1());
+        user.setPassword(newPassword);
+        userRepository.save(user);
+    }
+
+    private boolean passCaptcha(RegistrationDto registrationDto) {
         return registrationDto.getCaptchaCode().equals(registrationDto.getCaptchaSecret());
     }
-    private void newUserCreation(RegistrationDto registrationDto){
+
+    private void newUserCreation(RegistrationDto registrationDto) {
         Role roleUser = roleRepository.findByName(ROLE_USER);
         List<Role> userRoles = new ArrayList<>();
         userRoles.add(roleUser);

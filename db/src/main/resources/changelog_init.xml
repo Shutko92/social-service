@@ -21,4 +21,5 @@
     <include file="classpath:liquibase/create-like-table.xml"/>
     <include file="classpath:liquibase/create-dialog-table.xml"/>
     <include file="classpath:liquibase/create-message-table.xml"/>
+    <include file="classpath:liquibase/create-recovery-link-table.xml"/>
 </databaseChangeLog>
