@@ -5,13 +5,19 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skillbox.diplom.group42.social.service.dto.auth.AuthenticateDto;
 import ru.skillbox.diplom.group42.social.service.dto.auth.AuthenticateResponseDto;
+import ru.skillbox.diplom.group42.social.service.dto.auth.PasswordChangeDto;
 import ru.skillbox.diplom.group42.social.service.dto.auth.RegistrationDto;
 import ru.skillbox.diplom.group42.social.service.dto.captcha.CaptchaDto;
+import ru.skillbox.diplom.group42.social.service.dto.email.recovery.EmailRecoveryDto;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Tag(name = "Аутентификация", description = "Регистрация и авторизация пользователя")
 @RestController
@@ -51,4 +57,25 @@ public interface AuthController {
     })
     @GetMapping("captcha")
     ResponseEntity<CaptchaDto> getCaptchaImage();
+
+    @Operation(summary = "Запрос на изменение почты", description = "Отправляет запрос на изменение почты")
+    @ApiResponse(responseCode = "200", description = "Запрос на изменение почты отправлен",content = @Content)
+    @ApiResponse(responseCode = "500", description = "Ошибка сервера при отправке почтового сообщения",content = @Content)
+    @SecurityRequirement(name = "JWT")
+    @PostMapping("change-email-link")
+    void handlerRequestChangeEmail();
+
+    @Operation(summary = "Подтверждение изменения почты по ссылке", description = "Получает подверждение о смене почты")
+    @ApiResponse(responseCode = "200", description = "Email успешно обновлен",content = @Content)
+    @ApiResponse(responseCode = "406", description = "Ссылка на смену email не действительна",content = @Content)
+    @SecurityRequirement(name = "JWT")
+    @PutMapping("email")
+    HttpStatus confirmChangeEmail(HttpServletRequest request, @RequestBody EmailRecoveryDto dto);
+
+
+    @Operation(summary = "Запрос на изменение пароля", description = "Отправляет запрос на изменение пароля")
+    @ApiResponse(responseCode = "200", description = "Запрос на изменение пароля отправлен",content = @Content)
+    @SecurityRequirement(name = "JWT")
+    @PostMapping("change-password-link")
+    void handlerRequestChangePassword(@RequestBody PasswordChangeDto dto);
 }

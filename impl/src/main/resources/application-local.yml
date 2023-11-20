@@ -25,9 +25,16 @@ spring:
     bootstrap-servers: ${BOOTSTRAP-SERVERS:localhost:9092}
     consumer:
       group-id: ${GROUP-ID:group-1}
+  mail:
+    host: smtp.yandex.ru
+    port: 465
+    username: javapro42@yandex.ru
+    password: mjysuhedahhswnef
 
 vars:
   captchaCharStr: 0123456789
+host:
+  local: http://localhost:8099
 
 endpoints:
   admin: /api/v1/admin/**

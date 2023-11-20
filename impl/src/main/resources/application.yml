@@ -24,9 +24,16 @@ spring:
     bootstrap-servers: ${BOOTSTRAP-SERVERS:kafka-service:9092}
     consumer:
       group-id: ${GROUP-ID:group-1}
+  mail:
+    host: smtp.yandex.ru
+    port: 465
+    username: javapro42@yandex.ru
+    password: mjysuhedahhswnef
 
 vars:
   captchaCharStr: 0123456789
+host:
+  local: http://212.22.70.159:1111
 
 endpoints:
   admin:
