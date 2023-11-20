@@ -8,6 +8,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.skillbox.diplom.group42.social.service.dto.post.like.LikeDto;
+import ru.skillbox.diplom.group42.social.service.dto.post.like.ReactionType;
 import ru.skillbox.diplom.group42.social.service.dto.post.like.TypeLike;
 import ru.skillbox.diplom.group42.social.service.entity.post.Post;
 import ru.skillbox.diplom.group42.social.service.entity.post.like.Like;
@@ -173,7 +174,7 @@ public class LikeServiceTest {
         when(likeRepository.findAllByItemIdAndTypeLikeAndIsDeletedFalse(anyLong(), any(TypeLike.class))).thenReturn(likeList);
         likeService.getSetReactionDto(TEST_ID);
         verify(likeRepository).findAllByItemIdAndTypeLikeAndIsDeletedFalse(anyLong(), any(TypeLike.class));
-        verify(likeRepository).countByItemIdAndReactionType(anyLong(), any(String.class));
+        verify(likeRepository).countByItemIdAndReactionType(anyLong(), any(ReactionType.class));
     }
 
     @Test

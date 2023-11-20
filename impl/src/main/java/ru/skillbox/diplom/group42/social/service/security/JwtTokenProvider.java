@@ -10,15 +10,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.WebSocketSession;
 import ru.skillbox.diplom.group42.social.service.entity.auth.Role;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -42,7 +40,7 @@ public class JwtTokenProvider {
 
         ZonedDateTime now = ZonedDateTime.now();
 
-             return Jwts.builder()
+        return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(Date.from(now.toInstant()))
                 .setExpiration(Date.from(now.plusDays(30L).toInstant()))
@@ -98,4 +96,14 @@ public class JwtTokenProvider {
 
         return result;
     }
+
+    public Long getUserIdFromToken(WebSocketSession session) {
+        String jwt = Objects.requireNonNull(session.getHandshakeHeaders()
+                .get("cookie")).get(0).substring(4);
+        Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwt).getBody();
+        Long userId = claims.get("id",Long.class);
+        return userId;
+    }
+
+
 }

@@ -38,7 +38,7 @@ public interface TagController {
             @ApiResponse(responseCode = "400", description = "Неправильный запрос"
                     , content = @Content(mediaType = "", schema = @Schema(nullable = true)))})
     @GetMapping
-    ResponseEntity<TagDto> getAll(@Parameter(name = "TagSearchDto") TagSearchDto tagSearchDto);
+    ResponseEntity getTag(@Parameter(name = "TagSearchDto") TagSearchDto tagSearchDto);
 
     @Operation(summary = "Обновление тега"
             , responses = {

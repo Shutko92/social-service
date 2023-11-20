@@ -43,7 +43,7 @@ public class TagService {
         return tagMapper.convertToDto(tagRepository.save(tagMapper.convertToEntity(tagDto)));
     }
 
-    public TagDto getAll(TagSearchDto tagSearchDto) {
+    public TagDto getTag(TagSearchDto tagSearchDto) {
         return tagMapper.convertToDto(tagRepository.findByName(tagSearchDto.getName()));
     }
 

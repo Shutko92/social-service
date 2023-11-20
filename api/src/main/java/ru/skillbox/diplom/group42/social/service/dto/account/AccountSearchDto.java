@@ -25,4 +25,20 @@ public class AccountSearchDto extends BaseSearchDto {
     private Integer ageTo;
     private Integer ageFrom;
 
+    @Override
+    public String toString() {
+        return "AccountSearchDto{" +
+                "ids=" + ids +
+                ", blockedByIds=" + blockedByIds +
+                ", author='" + author + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", city='" + city + '\'' +
+                ", country='" + country + '\'' +
+                ", isBlocked=" + isBlocked +
+                ", statusCode=" + statusCode +
+                ", ageTo=" + ageTo +
+                ", ageFrom=" + ageFrom +
+                '}';
+    }
 }

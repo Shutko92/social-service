@@ -20,6 +20,10 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB
+  kafka:
+    bootstrap-servers: ${BOOTSTRAP-SERVERS:kafka-service:9092}
+    consumer:
+      group-id: ${GROUP-ID:group-1}
 
 vars:
   captchaCharStr: 0123456789

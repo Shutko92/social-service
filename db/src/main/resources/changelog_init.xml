@@ -19,4 +19,6 @@
     <include file="classpath:liquibase/create-tag-table.xml"/>
     <include file="classpath:liquibase/create-tags-post-table.xml"/>
     <include file="classpath:liquibase/create-like-table.xml"/>
+    <include file="classpath:liquibase/create-dialog-table.xml"/>
+    <include file="classpath:liquibase/create-message-table.xml"/>
 </databaseChangeLog>

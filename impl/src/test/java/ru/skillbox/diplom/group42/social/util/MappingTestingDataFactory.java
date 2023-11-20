@@ -8,6 +8,7 @@ import ru.skillbox.diplom.group42.social.service.dto.post.Type;
 import ru.skillbox.diplom.group42.social.service.dto.post.comment.CommentDto;
 import ru.skillbox.diplom.group42.social.service.dto.post.comment.CommentType;
 import ru.skillbox.diplom.group42.social.service.dto.post.like.LikeDto;
+import ru.skillbox.diplom.group42.social.service.dto.post.like.ReactionType;
 import ru.skillbox.diplom.group42.social.service.dto.post.like.TypeLike;
 import ru.skillbox.diplom.group42.social.service.dto.tag.TagDto;
 import ru.skillbox.diplom.group42.social.service.entity.account.Account;
@@ -196,7 +197,7 @@ public class MappingTestingDataFactory {
         like.setTime(TIME_TEST);
         like.setItemId(2000L);
         like.setType(TypeLike.COMMENT);
-        like.setReactionType("test reaction");
+        like.setReactionType(ReactionType.FUNNY);
         return like;
     }
     public static LikeDto createLikeDto(Long authorId){
@@ -207,7 +208,7 @@ public class MappingTestingDataFactory {
         like.setTime(TIME_TEST);
         like.setItemId(2000L);
         like.setType(TypeLike.COMMENT);
-        like.setReactionType("test reaction");
+        like.setReactionType("funny");
         return like;
     }
     public static Post createPost(Long authorID){
