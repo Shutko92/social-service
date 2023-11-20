@@ -11,6 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.kafka.core.KafkaTemplate;
+import ru.skillbox.diplom.group42.social.service.dto.notification.EventNotificationDto;
 import ru.skillbox.diplom.group42.social.service.dto.post.PostDto;
 import ru.skillbox.diplom.group42.social.service.dto.post.PostSearchDto;
 import ru.skillbox.diplom.group42.social.service.entity.post.Post;
@@ -19,6 +21,8 @@ import ru.skillbox.diplom.group42.social.service.mapper.tag.TagMapper;
 import ru.skillbox.diplom.group42.social.service.repository.post.LikeRepository;
 import ru.skillbox.diplom.group42.social.service.repository.post.PostRepository;
 import ru.skillbox.diplom.group42.social.service.service.like.LikeService;
+import ru.skillbox.diplom.group42.social.service.service.notification.NotificationHandler;
+import ru.skillbox.diplom.group42.social.service.service.notification.NotificationService;
 import ru.skillbox.diplom.group42.social.service.service.post.PostService;
 import ru.skillbox.diplom.group42.social.service.service.tag.TagService;
 import ru.skillbox.diplom.group42.social.service.utils.security.SecurityUtil;
@@ -51,19 +55,24 @@ public class PostServiceTest {
     private LikeRepository likeRepository;
     @Mock
     private LikeService likeService;
+    @Mock
+    private  NotificationHandler notificationHandler;
     private PostService postService;
+
     @BeforeEach
-    public void beforeMethod(){
-        postService = new PostService(postRepository, postMapper, tagMapper, tagService, likeRepository, likeService);
+    public void beforeMethod() {
+        postService = new PostService(postRepository, postMapper, tagMapper, tagService, likeRepository, likeService, notificationHandler);
     }
+
     @Test
-    public void funGetByIdShouldInvokePostRepositoryFindById(){
+    public void funGetByIdShouldInvokePostRepositoryFindById() {
         when(postRepository.findById(anyLong())).thenReturn(Optional.of(new Post()));
         postService.getById(TEST_ID);
         verify(postRepository).findById(anyLong());
     }
+
     @Test
-    public void funGetAllShouldInvokeAllNeedFunction(){
+    public void funGetAllShouldInvokeAllNeedFunction() {
         try (MockedStatic<SecurityUtil> utilities = Mockito.mockStatic(SecurityUtil.class)) {
             utilities.when(SecurityUtil::getJwtUserIdFromSecurityContext).thenReturn(TEST_ACCOUNT_ID);
 
@@ -77,19 +86,21 @@ public class PostServiceTest {
             verify(postRepository).findAll(any(Specification.class), any(Pageable.class));
         }
     }
+
     @Test
-    public void funCreateShouldInvokePostRepositorySave(){
+    public void funCreateShouldInvokePostRepositorySave() {
         PostDto postDto = createPostDto(TEST_ID);
-        Post post =createPost(TEST_ID);
+        Post post = createPost(TEST_ID);
         when(postMapper.createEntity(any(PostDto.class))).thenReturn(post);
         when(postMapper.convertToDTO(any(Post.class))).thenReturn(postDto);
         when(postRepository.save(any(Post.class))).thenReturn(post);
         postService.create(postDto);
         verify(postRepository).save(any(Post.class));
     }
+
     @Test
-    public void funUpdateShouldInvokePostRepositorySave(){
-        Post post =createPost(TEST_ID);
+    public void funUpdateShouldInvokePostRepositorySave() {
+        Post post = createPost(TEST_ID);
         PostDto postDto = createPostDto(TEST_ID);
         when(postRepository.findById(anyLong())).thenReturn(Optional.of(post));
         when(postMapper.convertToDTO(any(Post.class))).thenReturn(postDto);
@@ -97,8 +108,9 @@ public class PostServiceTest {
         postService.update(postDto);
         verify(postRepository).save(any(Post.class));
     }
+
     @Test
-    public void deleteByIdTest(){
+    public void deleteByIdTest() {
         postService.deleteById(TEST_ID);
         verify(postRepository).deleteById(anyLong());
     }

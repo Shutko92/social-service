@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import ru.skillbox.diplom.group42.social.service.dto.notification.NotificationType;
 import ru.skillbox.diplom.group42.social.service.dto.post.comment.CommentDto;
 import ru.skillbox.diplom.group42.social.service.dto.post.comment.CommentSearchDto;
 import ru.skillbox.diplom.group42.social.service.dto.post.comment.CommentType;
@@ -20,6 +21,7 @@ import ru.skillbox.diplom.group42.social.service.mapper.comment.CommentMapper;
 import ru.skillbox.diplom.group42.social.service.repository.post.CommentRepository;
 import ru.skillbox.diplom.group42.social.service.repository.post.PostRepository;
 import ru.skillbox.diplom.group42.social.service.service.like.LikeService;
+import ru.skillbox.diplom.group42.social.service.service.notification.NotificationHandler;
 import ru.skillbox.diplom.group42.social.service.utils.SpecificationUtil;
 
 import java.time.ZonedDateTime;
@@ -33,13 +35,14 @@ public class CommentService {
     private final PostRepository postRepository;
     private final CommentMapper commentMapper;
     private final LikeService likeService;
+    private final NotificationHandler notificationHandler;
 
     public Page<CommentDto> getAllCommentsToPost(Long postId, CommentSearchDto commentSearchDto, Pageable pageable) {
         Page<Comment> commentPage = commentRepository.findAll(getSpecificationForComment(postId), pageable);
         return new PageImpl<>(commentPage.map(comment -> {
             CommentDto commentDto = commentMapper.convertToDto(comment);
             commentDto.setMyLike(likeService.isThereMyLikeToComment(comment.getId(), TypeLike.COMMENT));
-         return commentDto;
+            return commentDto;
         }).toList(), pageable, commentPage.getTotalElements());
     }
 
@@ -55,7 +58,9 @@ public class CommentService {
             Post post = postRepository.findById(postId).orElseThrow(PostFoundException::new);
             post.setCommentsCount(post.getCommentsCount() + 1);
             postRepository.save(post);
-            return commentMapper.convertToDto(commentRepository.save(commentMapper.createEntity(dto)));
+            dto = commentMapper.convertToDto(commentRepository.save(commentMapper.createEntity(dto)));
+            notificationHandler.sendNotifications(dto.getAuthorId(), NotificationType.POST_COMMENT, "Оставлен комментарий на пост!");
+            return dto;
         } else {
             return createSubComment(postId, dto.getParentId(), dto);
         }
@@ -68,7 +73,9 @@ public class CommentService {
         Comment comment = commentMapper.createEntity(dto);
         comment.setPostId(id);
         commentRepository.save(commentMapper.convertToEntity(parentComment));
-        return commentMapper.convertToDto(commentRepository.save(comment));
+        dto = commentMapper.convertToDto(commentRepository.save(comment));
+        notificationHandler.sendNotifications(dto.getAuthorId(), NotificationType.POST_COMMENT, "Оставлен ответ на комментарий к посту");
+        return dto;
     }
 
 
@@ -94,17 +101,17 @@ public class CommentService {
 
     private Specification<Comment> getSpecificationForComment(Long postId) {
         return SpecificationUtil.getBaseSpecification(new CommentSearchDto())
-                .and(SpecificationUtil.equal(Comment_.parentId,null,true))
+                .and(SpecificationUtil.equal(Comment_.parentId, null, true))
                 .and(SpecificationUtil.equal(Comment_.postId, postId, true))
-                .and(SpecificationUtil.equal(Comment_.commentType,CommentType.POST, true))
+                .and(SpecificationUtil.equal(Comment_.commentType, CommentType.POST, true))
                 .and(SpecificationUtil.equal(Comment_.isDeleted, false, true));
     }
 
-    private Specification<Comment> getSpecificationForSubcomment(Long parentId){
+    private Specification<Comment> getSpecificationForSubcomment(Long parentId) {
         return SpecificationUtil.getBaseSpecification(new CommentSearchDto())
-                .and(SpecificationUtil.equal(Comment_.parentId,parentId,true))
+                .and(SpecificationUtil.equal(Comment_.parentId, parentId, true))
                 .and(SpecificationUtil.equal(Comment_.commentType, CommentType.COMMENT, true))
-                .and(SpecificationUtil.equal(Comment_.isDeleted,false,true));
+                .and(SpecificationUtil.equal(Comment_.isDeleted, false, true));
     }
 
 }

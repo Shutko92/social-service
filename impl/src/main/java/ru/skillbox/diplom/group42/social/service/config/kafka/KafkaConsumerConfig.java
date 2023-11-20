@@ -11,6 +11,9 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import ru.skillbox.diplom.group42.social.service.dto.message.MessageDto;
+import ru.skillbox.diplom.group42.social.service.dto.message.streamingMessag.StreamingMessageDto;
+import ru.skillbox.diplom.group42.social.service.dto.notification.EventNotificationDto;
+import ru.skillbox.diplom.group42.social.service.dto.notification.NotificationDto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,22 +29,56 @@ public class KafkaConsumerConfig {
     private String groupId;
 
     @Bean
-    public ConsumerFactory<String, MessageDto> consumerFactory(){
+    public ConsumerFactory<String, MessageDto> consumerMessageFactory() {
         Map<String, Object> consumerFactoryConfig = new HashMap<>();
         consumerFactoryConfig.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         consumerFactoryConfig.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         consumerFactoryConfig.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         consumerFactoryConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-    return new DefaultKafkaConsumerFactory<>(consumerFactoryConfig, new StringDeserializer(),new JsonDeserializer<>(MessageDto.class));
+        return new DefaultKafkaConsumerFactory<>(consumerFactoryConfig, new StringDeserializer(), new JsonDeserializer<>(MessageDto.class));
     }
 
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, MessageDto> kafkaListenerContainerFactory(){
+    public ConcurrentKafkaListenerContainerFactory<String, MessageDto> kafkaListenerMessageContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, MessageDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory());
+        factory.setConsumerFactory(consumerMessageFactory());
         return factory;
     }
 
+
+    @Bean
+    public ConsumerFactory<String, EventNotificationDto> eventNotificationDtoConsumerFactory() {
+        Map<String, Object> consumerFactoryConfig = new HashMap<>();
+        consumerFactoryConfig.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+        consumerFactoryConfig.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        consumerFactoryConfig.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        consumerFactoryConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        return new DefaultKafkaConsumerFactory<>(consumerFactoryConfig, new StringDeserializer(), new JsonDeserializer<>(EventNotificationDto.class));
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, EventNotificationDto> concurrentKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, EventNotificationDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(eventNotificationDtoConsumerFactory());
+        return factory;
+    }
+
+    @Bean
+    public ConsumerFactory<String, StreamingMessageDto<NotificationDto>> sendNotificationDtoConsumerFactory() {
+        Map<String, Object> consumerFactoryConfig = new HashMap<>();
+        consumerFactoryConfig.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+        consumerFactoryConfig.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        consumerFactoryConfig.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        consumerFactoryConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        return new DefaultKafkaConsumerFactory<>(consumerFactoryConfig, new StringDeserializer(), new JsonDeserializer<>(StreamingMessageDto.class));
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, StreamingMessageDto<NotificationDto>> sendKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, StreamingMessageDto<NotificationDto>> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(sendNotificationDtoConsumerFactory());
+        return factory;
+    }
 
 }

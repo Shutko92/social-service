@@ -21,6 +21,7 @@ import ru.skillbox.diplom.group42.social.service.entity.account.Account;
 import ru.skillbox.diplom.group42.social.service.entity.auth.User;
 import ru.skillbox.diplom.group42.social.service.mapper.account.AccountMapper;
 import ru.skillbox.diplom.group42.social.service.repository.account.AccountRepository;
+import ru.skillbox.diplom.group42.social.service.repository.notification.NotificationSettingsRepository;
 import ru.skillbox.diplom.group42.social.service.security.JwtUser;
 import ru.skillbox.diplom.group42.social.service.service.account.AccountService;
 import ru.skillbox.diplom.group42.social.service.utils.security.SecurityUtil;
@@ -46,13 +47,15 @@ public class AccountServiceTest {
     private AccountRepository accountRepository;
     @Mock
     private AccountMapper accountMapper;
+    @Mock
+    private NotificationSettingsRepository notificationSettingsRepository;
     private AccountService accountService;
     private final Account account = MappingTestingDataFactory.createTestAccount(TEST_ACCOUNT_ID);
 
 
     @BeforeEach
     public void beforeMethod(TestInfo info) {
-        accountService = new AccountService(accountRepository, accountMapper);
+        accountService = new AccountService(accountRepository, accountMapper, notificationSettingsRepository);
         if (
                 info.getDisplayName().equals("getAccountByIdShouldThrowException") ||
                         info.getDisplayName().equals("updateAccountShouldInvokeAccountRepositoryFindById") ||

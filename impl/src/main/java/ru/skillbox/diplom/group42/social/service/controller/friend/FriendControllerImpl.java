@@ -33,7 +33,7 @@ public class FriendControllerImpl implements FriendController{
     public ResponseEntity<Page<FriendShortDto>> getAll(
             FriendSearchDto friendSearchDto
             ,Pageable pageable) {
-        return ResponseEntity.ok(friendService.searchAccount(friendSearchDto,pageable));
+        return ResponseEntity.ok(friendService.getFriends(friendSearchDto,pageable));
     }
 
     @Override

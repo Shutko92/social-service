@@ -16,7 +16,7 @@ spring:
   liquibase:
     change-log: classpath:changelog_init.xml
     enabled: true
-    drop-first: true
+    drop-first: false
   servlet:
     multipart:
       max-file-size: 10MB

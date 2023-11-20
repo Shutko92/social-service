@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import ru.skillbox.diplom.group42.social.service.dto.friend.CountDto;
 import ru.skillbox.diplom.group42.social.service.dto.friend.FriendSearchDto;
 import ru.skillbox.diplom.group42.social.service.dto.friend.FriendShortDto;
+import ru.skillbox.diplom.group42.social.service.dto.notification.NotificationType;
 import ru.skillbox.diplom.group42.social.service.entity.account.Account;
 import ru.skillbox.diplom.group42.social.service.entity.account.StatusCode;
 import ru.skillbox.diplom.group42.social.service.entity.friend.Friend;
@@ -17,6 +18,7 @@ import ru.skillbox.diplom.group42.social.service.entity.friend.Friend_;
 import ru.skillbox.diplom.group42.social.service.mapper.friend.FriendMapper;
 import ru.skillbox.diplom.group42.social.service.repository.account.AccountRepository;
 import ru.skillbox.diplom.group42.social.service.repository.friend.FriendRepository;
+import ru.skillbox.diplom.group42.social.service.service.notification.NotificationHandler;
 import ru.skillbox.diplom.group42.social.service.utils.security.SecurityUtil;
 
 import java.util.Collections;
@@ -28,17 +30,16 @@ import static ru.skillbox.diplom.group42.social.service.utils.SpecificationUtil.
 @Slf4j
 @Service
 @RequiredArgsConstructor
+//TODO переписать все на мапперы
 public class FriendService {
 
     private final FriendRepository friendRepository;
     private final AccountRepository accountRepository;
     private final FriendMapper friendMapper;
+    private final NotificationHandler notificationHandler;
 
 
-
-
-
-    public Page<FriendShortDto> searchAccount(FriendSearchDto friendSearchDto, Pageable page) {
+    public Page<FriendShortDto> getFriends(FriendSearchDto friendSearchDto, Pageable page) {
 
         log.info("FriendService method search(FriendSearchDto friendSearchDto, Pageable page) executed");
         return friendRepository.findAll(getFriendSpecification(friendSearchDto)
@@ -46,31 +47,28 @@ public class FriendService {
     }
 
 
-
     public FriendShortDto friendRequest(Long id) {
         Long myId = SecurityUtil.getJwtUserIdFromSecurityContext();
-            Account account = accountRepository.findById(id)
-                    .orElseThrow(() -> new BadCredentialsException("User with id " + id + " does not exist"));
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new BadCredentialsException("User with id " + id + " does not exist"));
         Account accountFrom = accountRepository.findById(SecurityUtil.getJwtUserIdFromSecurityContext())
                 .orElseThrow(() -> new BadCredentialsException("User with id " + id + " does not exist"));
         Friend friendTo;
         Friend friendFrom;
-        if(!shouldCreateNewEntries(id)){
+        if (!shouldCreateNewEntries(id)) {
             log.info("Previous records found");
-            friendTo  = friendRepository.findFriendByIdFromAndIdToAndIsDeletedFalse(SecurityUtil.getJwtUserIdFromSecurityContext(),id);
+            friendTo = friendRepository.findFriendByIdFromAndIdToAndIsDeletedFalse(SecurityUtil.getJwtUserIdFromSecurityContext(), id);
             friendTo.setIsDeleted(false);
-            friendFrom = friendRepository.findFriendByIdFromAndIdToAndIsDeletedFalse(id,SecurityUtil.getJwtUserIdFromSecurityContext());
+            friendFrom = friendRepository.findFriendByIdFromAndIdToAndIsDeletedFalse(id, SecurityUtil.getJwtUserIdFromSecurityContext());
             friendFrom.setIsDeleted(false);
             friendTo.setStatusCode(StatusCode.REQUEST_TO.toString());
             friendFrom.setStatusCode(StatusCode.REQUEST_FROM.toString());
-        }
-
-        else{
+        } else {
             friendTo = friendMapper.convertToFriend(account);
             friendTo.setStatusCode(StatusCode.REQUEST_TO.toString());
             friendTo.setIdFrom(myId);
             friendTo.setIdTo(id);
-            friendTo.setPreviousStatusCode(account.getStatusCode()!=null?account.getStatusCode().toString():null);
+            friendTo.setPreviousStatusCode(account.getStatusCode() != null ? account.getStatusCode().toString() : null);
             friendTo.setRating(0);
             friendTo.setOnline(account.isOnline());
 
@@ -79,48 +77,47 @@ public class FriendService {
             friendFrom.setStatusCode(StatusCode.REQUEST_FROM.toString());
             friendFrom.setIdFrom(id);
             friendFrom.setIdTo(myId);
-            friendFrom.setPreviousStatusCode(account.getStatusCode()!=null?account.getStatusCode().toString():null);
+            friendFrom.setPreviousStatusCode(account.getStatusCode() != null ? account.getStatusCode().toString() : null);
             friendFrom.setRating(0);
             friendFrom.setOnline(account.isOnline());
-
+            notificationHandler.sendNotifications(id, NotificationType.FRIEND_REQUEST, "Поступила заявка в друзья!");
         }
 
-            friendRepository.save(friendTo);
-            friendRepository.save(friendFrom);
+        friendRepository.save(friendTo);
+        friendRepository.save(friendFrom);
 
 
-            return friendMapper.convertToFriendShortDto(friendTo);
+        return friendMapper.convertToFriendShortDto(friendTo);
     }
 
-    public FriendShortDto friendApprove(Long id){
-        Friend friend = friendRepository.findFriendByIdFromAndIdToAndIsDeletedFalse(id,SecurityUtil.getJwtUserIdFromSecurityContext());
+    public FriendShortDto friendApprove(Long id) {
+        Friend friend = friendRepository.findByIdFromAndIdToAndStatusCode(id, SecurityUtil.getJwtUserIdFromSecurityContext(), "REQUEST_TO");
         friend.setStatusCode(StatusCode.FRIEND.toString());
         friendRepository.save(friend);
-        Friend friend2 = friendRepository.findFriendByIdFromAndIdToAndIsDeletedFalse(SecurityUtil.getJwtUserIdFromSecurityContext(),id);
+        Friend friend2 = friendRepository.findByIdFromAndIdToAndStatusCode(SecurityUtil.getJwtUserIdFromSecurityContext(), id, "REQUEST_FROM");
         friend2.setStatusCode(StatusCode.FRIEND.toString());
         friendRepository.save(friend2);
         return friendMapper.convertToFriendShortDto(friend);
     }
+
     private static Specification<Friend> getFriendSpecification(FriendSearchDto friendSearchDto) {
         log.debug("Entering getFriendSpecification method");
 
-        System.out.println("IdFrom: "+friendSearchDto.getIdFrom()+", and IdTo: "+friendSearchDto.getIdTo());
-        System.out.println("For id: "+SecurityUtil.getJwtUserFromSecurityContext().getId()+" : "+isItself(friendSearchDto));
+        System.out.println("IdFrom: " + friendSearchDto.getIdFrom() + ", and IdTo: " + friendSearchDto.getIdTo());
+        System.out.println("For id: " + SecurityUtil.getJwtUserFromSecurityContext().getId() + " : " + isItself(friendSearchDto));
 
 
-                    return getBaseSpecification(friendSearchDto)
-                            .and(equal(Friend_.isDeleted,false,true))
-                            .and(equal(Friend_.idFrom, friendSearchDto.getIdFrom(), true))
-                            .and(equal(Friend_.statusCode,friendSearchDto.getStatusCode(),true))
-                            //.and(equal(Friend_.idTo, friendSearchDto.getIdTo(), true))
-                            .and(equal(Friend_.previousStatusCode,friendSearchDto.getPreviousStatusCode(),true))
-                            .and(equal(Friend_.idFrom, SecurityUtil.getJwtUserFromSecurityContext().getId(),true))
-                            .and(notIn(Friend_.idTo, Collections.singleton(SecurityUtil.getJwtUserFromSecurityContext().getId()), true))
-                            ;
-                    
+        return getBaseSpecification(friendSearchDto)
+                .and(equal(Friend_.isDeleted, false, true))
+                .and(equal(Friend_.idFrom, friendSearchDto.getIdFrom(), true))
+                .and(equal(Friend_.statusCode, friendSearchDto.getStatusCode(), true))
+                //.and(equal(Friend_.idTo, friendSearchDto.getIdTo(), true))
+                .and(equal(Friend_.previousStatusCode, friendSearchDto.getPreviousStatusCode(), true))
+                .and(equal(Friend_.idFrom, SecurityUtil.getJwtUserFromSecurityContext().getId(), true))
+                .and(notIn(Friend_.idTo, Collections.singleton(SecurityUtil.getJwtUserFromSecurityContext().getId()), true))
+                ;
+
     }
-
-
 
 
     public CountDto getCountRequests() {
@@ -136,16 +133,16 @@ public class FriendService {
                 .orElseThrow(() -> new BadCredentialsException("User with id " + SecurityUtil.getJwtUserFromSecurityContext().getId() + " does not exist"));
         Friend friend;
         Friend friendTo;
-        if(!shouldCreateNewEntries(id)){
-            friend = friendRepository.findFriendByIdFromAndIdToAndIsDeletedFalse(SecurityUtil.getJwtUserFromSecurityContext().getId(),id);
-            friend.setPreviousStatusCode(account.getStatusCode()!=null?account.getStatusCode().toString():null);
+        if (!shouldCreateNewEntries(id)) {
+            friend = friendRepository.findFriendByIdFromAndIdToAndIsDeletedFalse(SecurityUtil.getJwtUserFromSecurityContext().getId(), id);
+            friend.setPreviousStatusCode(account.getStatusCode() != null ? account.getStatusCode().toString() : null);
             friend.setStatusCode(StatusCode.WATCHING.toString());
             friend.setIdFrom(SecurityUtil.getJwtUserFromSecurityContext().getId());
             friend.setIdTo(id);
             friend.setIsDeleted(false);
 
-            friendTo = friendRepository.findFriendByIdFromAndIdToAndIsDeletedFalse(id,SecurityUtil.getJwtUserFromSecurityContext().getId());
-            friendTo.setPreviousStatusCode(account.getStatusCode()!=null?account.getStatusCode().toString():null);
+            friendTo = friendRepository.findFriendByIdFromAndIdToAndIsDeletedFalse(id, SecurityUtil.getJwtUserFromSecurityContext().getId());
+            friendTo.setPreviousStatusCode(account.getStatusCode() != null ? account.getStatusCode().toString() : null);
             friendTo.setStatusCode(StatusCode.SUBSCRIBED.toString());
             friendTo.setIdFrom(id);
             friendTo.setIdTo(SecurityUtil.getJwtUserFromSecurityContext().getId());
@@ -166,17 +163,17 @@ public class FriendService {
 //                    0
 //            );
 
-        else{
+        else {
             friend = friendMapper.convertToFriend(account);
-            friendTo=friendMapper.convertToFriend(accountTo);
-            friend.setPreviousStatusCode(account.getStatusCode()!=null?account.getStatusCode().toString():null);
+            friendTo = friendMapper.convertToFriend(accountTo);
+            friend.setPreviousStatusCode(account.getStatusCode() != null ? account.getStatusCode().toString() : null);
             friend.setStatusCode(StatusCode.WATCHING.toString());
             friend.setIdFrom(SecurityUtil.getJwtUserFromSecurityContext().getId());
             friend.setIdTo(id);
             friend.setRating(0);
             friend.setOnline(account.isOnline());
             friend.setIsDeleted(false);
-            friendTo.setPreviousStatusCode(account.getStatusCode()!=null?account.getStatusCode().toString():null);
+            friendTo.setPreviousStatusCode(account.getStatusCode() != null ? account.getStatusCode().toString() : null);
             friendTo.setStatusCode(StatusCode.SUBSCRIBED.toString());
             friendTo.setIdFrom(id);
             friendTo.setIdTo(SecurityUtil.getJwtUserFromSecurityContext().getId());
@@ -191,9 +188,9 @@ public class FriendService {
     }
 
     public FriendShortDto deleteById(Long id) {
-        Friend friend = friendRepository.findFriendByIdFromAndIdToAndIsDeletedFalse(SecurityUtil.getJwtUserFromSecurityContext().getId(),id);
+        Friend friend = friendRepository.findFriendByIdFromAndIdToAndIsDeletedFalse(SecurityUtil.getJwtUserFromSecurityContext().getId(), id);
 
-        Friend friend2 = friendRepository.findFriendByIdFromAndIdToAndIsDeletedFalse(id,SecurityUtil.getJwtUserFromSecurityContext().getId());
+        Friend friend2 = friendRepository.findFriendByIdFromAndIdToAndIsDeletedFalse(id, SecurityUtil.getJwtUserFromSecurityContext().getId());
         friend.setStatusCode(StatusCode.NONE.toString());
 
         friend2.setStatusCode(StatusCode.NONE.toString());
@@ -204,8 +201,8 @@ public class FriendService {
 
     }
 
-    private static boolean isItself(FriendSearchDto friendSearchDto){
-        if( friendSearchDto.getIdTo()!=SecurityUtil.getJwtUserFromSecurityContext().getId() && friendSearchDto.getIdFrom()!=SecurityUtil.getJwtUserFromSecurityContext().getId()){
+    private static boolean isItself(FriendSearchDto friendSearchDto) {
+        if (friendSearchDto.getIdTo() != SecurityUtil.getJwtUserFromSecurityContext().getId() && friendSearchDto.getIdFrom() != SecurityUtil.getJwtUserFromSecurityContext().getId()) {
             return false;
         }
         return true;
@@ -214,75 +211,79 @@ public class FriendService {
     public List<FriendShortDto> recommended(FriendSearchDto friendSearchDto) {
 
         log.info("FriendService method recommended(FriendSearchDto friendSearchDto) executed");
-        if(hasConnections()>0){
+        if (hasConnections() > 0) {
             System.out.println("Has connections");
             System.out.println(hasConnections());
-           // createRandomConnections(3-hasConnections()<0?0:3-hasConnections());
+            // createRandomConnections(3-hasConnections()<0?0:3-hasConnections());
             return friendRepository.findAll(getRecommendationsSpecification(friendSearchDto)).stream()
                     .map(friendMapper::convertToFriendShortDto).collect(Collectors.toList());
         }
         System.out.println("No connections");
 
         createRandomConnections(3);
-       // createConnections(listId);
+        // createConnections(listId);
         return friendRepository.findAll(getRecommendationsSpecification(friendSearchDto)).stream()
                 .map(friendMapper::convertToFriendShortDto).collect(Collectors.toList());
     }
 
     private Specification<Friend> getRecommendationsSpecification(FriendSearchDto friendSearchDto) {
         return getBaseSpecification(friendSearchDto)
-                .and(equal(Friend_.isDeleted,false,true))
-                .and(in(Friend_.id,friendRepository.getListOfRecommendedUserId(SecurityUtil.getJwtUserFromSecurityContext().getId()),true));
+                .and(equal(Friend_.isDeleted, false, true))
+                .and(in(Friend_.id, friendRepository.getListOfRecommendedUserId(SecurityUtil.getJwtUserFromSecurityContext().getId()), true));
     }
 
     private Specification<Friend> getDefaultRecommendationsSpecification(FriendSearchDto friendSearchDto) {
         return getBaseSpecification(friendSearchDto)
-                .and(equal(Friend_.isDeleted,false,true))
+                .and(equal(Friend_.isDeleted, false, true))
                 .and(equal(Friend_.idFrom, friendSearchDto.getIdFrom(), true))
-                .and(equal(Friend_.statusCode,friendSearchDto.getStatusCode(),true))
+                .and(equal(Friend_.statusCode, friendSearchDto.getStatusCode(), true))
                 //.and(equal(Friend_.idTo, friendSearchDto.getIdTo(), true))
-                .and(equal(Friend_.previousStatusCode,friendSearchDto.getPreviousStatusCode(),true))
-                .and(equal(Friend_.idFrom, SecurityUtil.getJwtUserFromSecurityContext().getId(),true))
+                .and(equal(Friend_.previousStatusCode, friendSearchDto.getPreviousStatusCode(), true))
+                .and(equal(Friend_.idFrom, SecurityUtil.getJwtUserFromSecurityContext().getId(), true))
                 .and(notIn(Friend_.idTo, Collections.singleton(SecurityUtil.getJwtUserFromSecurityContext().getId()), true))
                 ;
 
 
     }
-    private void createRecommendationConnections(){
+
+    private void createRecommendationConnections() {
 
     }
 
-    private void updateStatus(Friend friend,StatusCode statusCode){
+    private void updateStatus(Friend friend, StatusCode statusCode) {
         friend.setPreviousStatusCode(friend.getStatusCode());
         friend.setStatusCode(statusCode.toString());
 
     }
 
-    private Integer hasConnections(){
+    private Integer hasConnections() {
         return friendRepository.getCountRelations(SecurityUtil.getJwtUserFromSecurityContext().getId());
     }
 
-    private boolean shouldCreateNewEntries(Long friendId){
+    private boolean shouldCreateNewEntries(Long friendId) {
         Long myId = SecurityUtil.getJwtUserFromSecurityContext().getId();
-        if(friendRepository.findFriendByIdFromAndIdToAndIsDeletedFalse(myId,friendId)!=null
-                && friendRepository.findFriendByIdFromAndIdToAndIsDeletedFalse(friendId,myId)!=null){
-           return false;
+        if (friendRepository.findFriendByIdFromAndIdToAndIsDeletedFalse(myId, friendId) != null
+                && friendRepository.findFriendByIdFromAndIdToAndIsDeletedFalse(friendId, myId) != null) {
+            return false;
 
         }
         return true;
     }
 
-    private void createRandomConnections(int number){
-        List<Long> listId = accountRepository.getRandomIds(SecurityUtil.getJwtUserFromSecurityContext().getId(),number);
-        for(int i=0; i<number;i++){
-            Account account= accountRepository.findById(listId.get(i))
-                    .orElseThrow(() -> new BadCredentialsException("User with id " + listId.get(0) + " does not exist"));
-            Friend friend = friendMapper.convertToFriend(account);
-            friend.setRating(1);
-            friend.setStatusCode(StatusCode.RECOMMENDATION.toString());
-            friend.setIdFrom(SecurityUtil.getJwtUserFromSecurityContext().getId());
-            friend.setIdTo(account.getId());
-            friendRepository.save(friend);
+    private void createRandomConnections(int number) {
+        List<Long> listId = accountRepository.getRandomIds(SecurityUtil.getJwtUserFromSecurityContext().getId(), number);
+        //TODO Добавил проверку на null и 0
+        if (!listId.isEmpty()) {
+            for (int i = 0; i < listId.size() && i <= number; i++) {
+                Account account = accountRepository.findById(listId.get(i))
+                        .orElseThrow(() -> new BadCredentialsException("User with id " + listId.get(0) + " does not exist"));
+                Friend friend = friendMapper.convertToFriend(account);
+                friend.setRating(1);
+                friend.setStatusCode(StatusCode.RECOMMENDATION.toString());
+                friend.setIdFrom(SecurityUtil.getJwtUserFromSecurityContext().getId());
+                friend.setIdTo(account.getId());
+                friendRepository.save(friend);
+            }
         }
 //        Account account1 = accountRepository.findById(listId.get(0))
 //                .orElseThrow(() -> new BadCredentialsException("User with id " + listId.get(0) + " does not exist"));
@@ -315,5 +316,6 @@ public class FriendService {
 //        friendRepository.save(friend2);
 //        friendRepository.save(friend3);
     }
+
 
 }
