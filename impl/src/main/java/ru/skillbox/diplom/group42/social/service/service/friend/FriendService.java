@@ -70,7 +70,7 @@ public class FriendService {
             friendTo.setIdTo(id);
             friendTo.setPreviousStatusCode(account.getStatusCode() != null ? account.getStatusCode().toString() : null);
             friendTo.setRating(0);
-            friendTo.setOnline(account.isOnline());
+            friendTo.setOnline(account.getIsOnline());
 
 
             friendFrom = friendMapper.convertToFriend(accountFrom);
@@ -79,7 +79,7 @@ public class FriendService {
             friendFrom.setIdTo(myId);
             friendFrom.setPreviousStatusCode(account.getStatusCode() != null ? account.getStatusCode().toString() : null);
             friendFrom.setRating(0);
-            friendFrom.setOnline(account.isOnline());
+            friendFrom.setOnline(account.getIsOnline());
             notificationHandler.sendNotifications(id, NotificationType.FRIEND_REQUEST, "Поступила заявка в друзья!");
         }
 
@@ -171,14 +171,14 @@ public class FriendService {
             friend.setIdFrom(SecurityUtil.getJwtUserFromSecurityContext().getId());
             friend.setIdTo(id);
             friend.setRating(0);
-            friend.setOnline(account.isOnline());
+            friend.setOnline(account.getIsOnline());
             friend.setIsDeleted(false);
             friendTo.setPreviousStatusCode(account.getStatusCode() != null ? account.getStatusCode().toString() : null);
             friendTo.setStatusCode(StatusCode.SUBSCRIBED.toString());
             friendTo.setIdFrom(id);
             friendTo.setIdTo(SecurityUtil.getJwtUserFromSecurityContext().getId());
             friendTo.setRating(0);
-            friendTo.setOnline(account.isOnline());
+            friendTo.setOnline(account.getIsOnline());
             friendTo.setIsDeleted(false);
 
         }

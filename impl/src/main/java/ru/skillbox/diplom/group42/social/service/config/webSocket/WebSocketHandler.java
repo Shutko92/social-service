@@ -19,6 +19,7 @@ import ru.skillbox.diplom.group42.social.service.dto.notification.NotificationDt
 import ru.skillbox.diplom.group42.social.service.dto.notification.NotificationType;
 import ru.skillbox.diplom.group42.social.service.mapper.message.MessageMapper;
 import ru.skillbox.diplom.group42.social.service.security.JwtTokenProvider;
+import ru.skillbox.diplom.group42.social.service.service.account.AccountService;
 import ru.skillbox.diplom.group42.social.service.service.dialog.DialogService;
 import ru.skillbox.diplom.group42.social.service.utils.security.SecurityUtil;
 import ru.skillbox.diplom.group42.social.service.utils.websocket.WebSocketUtil;
@@ -35,6 +36,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final DialogService dialogService;
     private final ObjectMapper objectMapper;
     private final KafkaTemplate<String, MessageDto> messageDtoKafkaTemplate;
+    private final AccountService accountService;
 
 
     public void sendMessage(StreamingMessageDto<StreamMessageDataDto> dto) throws Exception {
@@ -76,12 +78,13 @@ public class WebSocketHandler extends TextWebSocketHandler {
         log.info("afterConnectionEstablished add webSocketSession id"
                 + tokenProvider.getUserIdFromToken(session) + " webSocketSession " + session);
         session.sendMessage(new TextMessage("Hello, i am websocket"));
-
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         log.info("afterConnectionClosed " + session + " id" + tokenProvider.getUserIdFromToken(session));
+        Long userId  = tokenProvider.getUserIdFromToken(session);
+        accountService.setAccountOnlineStatus(userId,false);
 
         WebSocketUtil.deleteSession(tokenProvider.getUserIdFromToken(session));
     }

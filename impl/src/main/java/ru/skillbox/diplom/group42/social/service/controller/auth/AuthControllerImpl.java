@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.webjars.NotFoundException;
 import ru.skillbox.diplom.group42.social.service.dto.auth.AuthenticateDto;
 import ru.skillbox.diplom.group42.social.service.dto.auth.AuthenticateResponseDto;
 import ru.skillbox.diplom.group42.social.service.dto.auth.PasswordChangeDto;
@@ -64,8 +65,12 @@ public class AuthControllerImpl implements AuthController {
         return emailService.changeEmailByLink(request, dto);
     }
     @Override
-    @ResponseStatus(HttpStatus.OK)
-    public void handlerRequestChangePassword(@RequestBody PasswordChangeDto dto){
-         authService.changePassword(dto);
+    public HttpStatus handlerRequestChangePassword(@RequestBody PasswordChangeDto dto){
+        try {
+            authService.changePassword(dto);
+            return HttpStatus.OK;
+        } catch (NotFoundException exception){
+            return HttpStatus.FORBIDDEN;
+        }
     }
 }

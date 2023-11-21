@@ -36,8 +36,8 @@ public class Account extends User {
     @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime lastOnlineTime;
 
-    private boolean isOnline;
-    private boolean isBlocked;
+    private Boolean isOnline;
+    private Boolean isBlocked;
     private String emojiStatus;
 
     @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
