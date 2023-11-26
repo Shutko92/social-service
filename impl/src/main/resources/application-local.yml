@@ -16,7 +16,7 @@ spring:
   liquibase:
     change-log: classpath:changelog_init.xml
     enabled: true
-    drop-first: false
+    drop-first: true
   servlet:
     multipart:
       max-file-size: 10MB
@@ -39,7 +39,7 @@ host:
 endpoints:
   admin: /api/v1/admin/**
   public:
-    /api/v1/auth/**,
+    /api/v1/**,
     /swagger-ui/**,
     /swagger-ui**,
     /api-docs/**,

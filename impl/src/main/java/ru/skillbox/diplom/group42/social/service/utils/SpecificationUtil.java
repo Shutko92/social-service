@@ -97,5 +97,7 @@ public class SpecificationUtil {
                 (root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.lower(root.get(attribute)), "%" + value.toLowerCase() + "%")
         );
     }
+
+
 }
 
