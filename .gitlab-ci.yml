@@ -16,6 +16,7 @@
 # This specific template is located at:
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
 
+
 stages:
   - build
   - deploy_docker
@@ -43,7 +44,7 @@ sonarqube-check:
     paths:
       - .sonar/cache
   script:
-    - mvn verify sonar:sonar
+    - mvn verify sonar:sonar -Dnet.bytebuddy.experimental=true
   allow_failure: true
   only:
     - develop
@@ -52,7 +53,7 @@ sonarqube-vulnerability-report:
   stage: build
   image: maven:latest
   script:
-    - curl -u "${SONAR_TOKEN}:" "${SONAR_HOST_URL}/api/issues/gitlab_sast_export?projectKey=social-service&branch=${CI_COMMIT_BRANCH}&pullRequest=${CI_MERGE_REQUEST_IID}" -o gl-sast-sonar-report.json
+    - 'curl -u "${SONAR_TOKEN}:" "${SONAR_HOST_URL}/api/issues/gitlab_sast_export?projectKey=social-service&branch=${CI_COMMIT_BRANCH}&pullRequest=${CI_MERGE_REQUEST_IID}" -o gl-sast-sonar-report.json'
   allow_failure: true
   only:
     - develop

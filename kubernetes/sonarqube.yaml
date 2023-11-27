@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: sonarqube
-          image: sonarqube:latest
+          image: sonarqube:lts
           ports:
             - containerPort: 9000
           env:
@@ -29,18 +29,35 @@ spec:
                 secretKeyRef:
                    name: sonarqube-secret
                    key: sonarqube.token
+          volumeMounts:
+            - name: sonarqube-data
+              mountPath: /opt/sonarqube/data
+            - name: sonarqube-extensions
+              mountPath: /opt/sonarqube/extensions
+            - name: sonarqube-logs
+              mountPath: /opt/sonarqube/logs
+      volumes:
+        - name: sonarqube-data
+          persistentVolumeClaim:
+            claimName: sonarqube-pv-claim
+        - name: sonarqube-extensions
+          emptyDir: { }
+        - name: sonarqube-logs
+          emptyDir: { }
 
 
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: sonarqube-service
-spec:
-  selector:
-    app: sonarqube
-  ports:
-    - protocol: TCP
-      port: 9000
-      targetPort: 9000
-      nodePort: 30300
+
+#---
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: sonarqube-service
+#spec:
+#  selector:
+#    app: sonarqube
+#  type: NodePort
+#  ports:
+#    - protocol: TCP
+#      port: 9000
+#      targetPort: 9000
+#      nodePort: 30300

@@ -22,6 +22,10 @@
 		<compiler-plugin.version>3.8.1</compiler-plugin.version>
 		<lombok.version>1.18.30</lombok.version>
 		<lombok-mapstruct.version>0.2.0</lombok-mapstruct.version>
+		<jacoco.version>0.8.7</jacoco.version>
+		<sonar.coverage.exclusions>
+			**/api/**, **/db/**, **/domain/**, **/aop/**, **/utils/**, **/repository/**, **/exception/**
+		</sonar.coverage.exclusions>
 	</properties>
 
 	<dependencies>
@@ -110,10 +114,24 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.kafka</groupId>
 			<artifactId>spring-kafka</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.jacoco</groupId>
+			<artifactId>jacoco-maven-plugin</artifactId>
+			<version>0.8.7</version>
+		</dependency>
 
 	</dependencies>
 
@@ -168,6 +186,33 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.version}</version>
+				<executions>
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>3.9.1.2184</version>
 			</plugin>
 		</plugins>
 	</build>
