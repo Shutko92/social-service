@@ -30,7 +30,6 @@ import static ru.skillbox.diplom.group42.social.service.utils.SpecificationUtil.
 @Slf4j
 @Service
 @RequiredArgsConstructor
-//TODO переписать все на мапперы
 public class FriendService {
 
     private final FriendRepository friendRepository;
@@ -272,7 +271,7 @@ public class FriendService {
 
     private void createRandomConnections(int number) {
         List<Long> listId = accountRepository.getRandomIds(SecurityUtil.getJwtUserFromSecurityContext().getId(), number);
-        //TODO Добавил проверку на null и 0
+
         if (!listId.isEmpty()) {
             for (int i = 0; i < listId.size() && i <= number; i++) {
                 Account account = accountRepository.findById(listId.get(i))

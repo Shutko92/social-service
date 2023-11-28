@@ -7,11 +7,12 @@ import ru.skillbox.diplom.group42.social.service.controller.base.BaseController;
 import ru.skillbox.diplom.group42.social.service.dto.friend.CountDto;
 import ru.skillbox.diplom.group42.social.service.dto.friend.FriendSearchDto;
 import ru.skillbox.diplom.group42.social.service.dto.friend.FriendShortDto;
+import ru.skillbox.diplom.group42.social.service.util.ConstantURL;
 
 import java.util.List;
 
 
-@RequestMapping("/api/v1/friends")
+@RequestMapping(ConstantURL.BASE_URL + "/friends")
 public interface FriendController extends BaseController<FriendShortDto, FriendSearchDto> {
 
 //    @GetMapping("/status")

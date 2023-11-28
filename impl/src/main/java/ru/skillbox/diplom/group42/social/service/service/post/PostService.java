@@ -81,7 +81,7 @@ public class PostService {
         PostDto postDto1 = postMapper.convertToDTO(postRepository.save(post));
         postDto1.setIsBlocked(false);
         postDto1.setTags(tagMapper.convertSetToDto(post.getTags()));
-        notificationHandler.sendNotifications(post.getAuthorId(), NotificationType.POST, "Опубликован новый пост!");
+        notificationHandler.sendNotifications(post.getAuthorId(), NotificationType.POST, postDto1.getTitle());
         return postDto1;
     }
 

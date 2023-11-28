@@ -16,12 +16,13 @@ import ru.skillbox.diplom.group42.social.service.dto.auth.PasswordChangeDto;
 import ru.skillbox.diplom.group42.social.service.dto.auth.RegistrationDto;
 import ru.skillbox.diplom.group42.social.service.dto.captcha.CaptchaDto;
 import ru.skillbox.diplom.group42.social.service.dto.email.recovery.EmailRecoveryDto;
+import ru.skillbox.diplom.group42.social.service.util.ConstantURL;
 
 import javax.servlet.http.HttpServletRequest;
 
 @Tag(name = "Аутентификация", description = "Регистрация и авторизация пользователя")
 @RestController
-@RequestMapping("/api/v1/auth/")
+@RequestMapping(ConstantURL.BASE_URL + "/auth/")
 public interface AuthController {
 
     @Operation(summary = "Регистрация пользователя", description = "Позволяет зарегистрировать пользователя")

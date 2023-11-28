@@ -6,8 +6,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import ru.skillbox.diplom.group42.social.service.dto.admin.console.request.StatisticRequestDto;
 import ru.skillbox.diplom.group42.social.service.dto.admin.console.response.AccountStatisticResponseDto;
 import ru.skillbox.diplom.group42.social.service.dto.admin.console.response.StatisticResponseDto;
+import ru.skillbox.diplom.group42.social.service.util.ConstantURL;
 
-@RequestMapping("/api/v1/admin-console/statistic")
+@RequestMapping( ConstantURL.BASE_URL + "/admin-console/statistic")
 public interface AdminConsoleController {
 
     @GetMapping("/post")

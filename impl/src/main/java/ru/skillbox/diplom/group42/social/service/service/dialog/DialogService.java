@@ -131,7 +131,7 @@ public class DialogService {
         Dialog dialog = dialogRepository.getById(messageDto.getDialogId());
         messageEntity.setDialogId(dialog);
         updateCountUnreadMessageToDialog(dialog.getId(), 1);
-        notificationHandler.sendNotifications(messageDto.getConversationPartner1(),messageDto.getConversationPartner2(), NotificationType.MESSAGE, "Поступило сообщение");
+        notificationHandler.sendNotifications(messageDto.getConversationPartner1(),messageDto.getConversationPartner2(), NotificationType.MESSAGE, messageEntity.getMessageText());
         return messageMapper.convertToDto(messageRepository.save(messageEntity));
     }
 

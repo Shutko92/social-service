@@ -12,7 +12,7 @@ public class NotificationsDto {
 
     private ZonedDateTime timeStamp;
 
-    private List<NotificationDto> data;
+    private NotificationDto data;
 
 
 }
