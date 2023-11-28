@@ -73,8 +73,8 @@ public class MappingTestingDataFactory {
         ac.setBirthDate(ZonedDateTime.now());
         ac.setMessagePermission("messagePermission");
         ac.setLastOnlineTime(ZonedDateTime.now());
-        ac.setOnline(true);
-        ac.setBlocked(false);
+        ac.setIsOnline(true);
+        ac.setIsBlocked(false);
         ac.setEmojiStatus("Emoji");
         ac.setCreatedOn(ZonedDateTime.now());
         ac.setUpdatedOn(ZonedDateTime.now());
@@ -95,8 +95,8 @@ public class MappingTestingDataFactory {
         ac.setBirthDate(ZonedDateTime.now());
         ac.setMessagePermission("messagePermission");
         ac.setLastOnlineTime(ZonedDateTime.now());
-        ac.setOnline(true);
-        ac.setBlocked(false);
+        ac.setIsOnline(true);
+        ac.setIsBlocked(false);
         ac.setEmojiStatus("Emoji");
         ac.setCreatedOn(ZonedDateTime.now());
         ac.setUpdatedOn(ZonedDateTime.now());

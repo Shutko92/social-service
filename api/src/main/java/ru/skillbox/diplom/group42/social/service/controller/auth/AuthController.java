@@ -77,5 +77,5 @@ public interface AuthController {
     @ApiResponse(responseCode = "200", description = "Запрос на изменение пароля отправлен",content = @Content)
     @SecurityRequirement(name = "JWT")
     @PostMapping("change-password-link")
-    void handlerRequestChangePassword(@RequestBody PasswordChangeDto dto);
+    HttpStatus handlerRequestChangePassword(@RequestBody PasswordChangeDto dto);
 }

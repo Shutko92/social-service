@@ -37,8 +37,8 @@ public class AccountDto extends UserDto {
     private String messagePermission;
     @Schema(description = "Дата последнего пребывания в сети")
     private ZonedDateTime lastOnlineTime;
-    private boolean isOnline;
-    private boolean isBlocked;
+    private Boolean isOnline;
+    private Boolean isBlocked;
     @Schema(description = "Смайлик статуса")
     private String emojiStatus;
     @Schema(description = "Дата создания")

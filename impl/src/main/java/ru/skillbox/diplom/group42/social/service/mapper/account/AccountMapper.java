@@ -19,10 +19,9 @@ public interface AccountMapper {
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "lastOnlineTime", source = "lastOnlineTime")
-    @Mapping(target = "online", source = "isOnline")
     AccountDto convertToAccountDto(AccountOnlineDto accountOnlineDto, @MappingTarget AccountDto accountDto);
 
-    @Mapping(target = "blocked", constant = "false")
+    @Mapping(target = "isBlocked", constant = "false")
     @Mapping(target = "regDate", expression = "java(ZonedDateTime.now())")
     @Mapping(target = "createdOn", expression = "java(ZonedDateTime.now())")
     @Mapping(target = "updatedOn", expression = "java(ZonedDateTime.now())")

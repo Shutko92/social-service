@@ -24,7 +24,7 @@ public class AccountMapperTest {
         AccountDto accountDto = accountMapper.convertToAccountDto(accountOnlineDto, testAccountDto);
         Assertions.assertEquals(accountOnlineDto.getId(), accountDto.getId());
         Assertions.assertEquals(accountOnlineDto.getLastOnlineTime(), accountDto.getLastOnlineTime());
-        Assertions.assertEquals(accountOnlineDto.getIsOnline(), accountDto.isOnline());
+        Assertions.assertEquals(accountOnlineDto.getIsOnline(), accountDto.getIsOnline());
     }
 
     @Test
@@ -32,7 +32,7 @@ public class AccountMapperTest {
         User user = createUser("TEST_USER");
         Account expectedAccount = accountCloneFromUser(user);
         Account mappedAccount = accountMapper.userToAccount(user);
-        expectedAccount.setBlocked(mappedAccount.isBlocked());
+        expectedAccount.setIsBlocked(mappedAccount.getIsBlocked());
         expectedAccount.setRegDate(mappedAccount.getRegDate());
         expectedAccount.setCreatedOn(mappedAccount.getCreatedOn());
         expectedAccount.setUpdatedOn(mappedAccount.getUpdatedOn());

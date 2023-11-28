@@ -21,6 +21,7 @@ import ru.skillbox.diplom.group42.social.service.utils.security.SecurityUtil;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.Optional;
 
 import static ru.skillbox.diplom.group42.social.service.utils.SpecificationUtil.*;
 
@@ -35,14 +36,13 @@ public class AccountService {
     public AccountDto getAccount() {
         Long id = SecurityUtil.getJwtUserIdFromSecurityContext();
         log.info("AccountService method getAccount() executed. Account id: {}", id);
-
+        setAccountOnlineStatus(id,true);
         return getAccountById(id);
     }
 
     public AccountDto getAccountById(Long id) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new BadCredentialsException("AccountService method getAccountById(): User with id " + id + " does not exist"));
-
         log.info("AccountService method getAccountById(Long id): Getting account with id: {}", account.getId());
         return accountMapper.convertToDto(account);
     }
@@ -69,6 +69,14 @@ public class AccountService {
 
         log.info("AccountService method update(AccountDto accountDto) executed. Account " + accountToSave + " updated");
         return accountMapper.convertToDto(accountToSave);
+    }
+
+    public void setAccountOnlineStatus(Long userId, boolean status){
+        Optional<Account> account = accountRepository.findById(userId);
+        if(!account.isPresent()) return;
+        account.get().setIsOnline(status);
+        account.get().setLastOnlineTime(ZonedDateTime.now());
+        accountRepository.save(account.get());
     }
 
     public void createAccount(User user) {

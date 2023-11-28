@@ -12,6 +12,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @Schema(description = "Данные для смены пароля пользователя")
 public class PasswordChangeDto {
+    @Schema(description = "старый пароль")
+    String oldPassword;
     @Schema(description = "новый пароль")
     String newPassword1;
     @Schema(description = "подтверждение нового пароля")

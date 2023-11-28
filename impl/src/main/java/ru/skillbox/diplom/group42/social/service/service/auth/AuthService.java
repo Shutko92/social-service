@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 import ru.skillbox.diplom.group42.social.service.dto.auth.AuthenticateDto;
 import ru.skillbox.diplom.group42.social.service.dto.auth.AuthenticateResponseDto;
 import ru.skillbox.diplom.group42.social.service.dto.auth.PasswordChangeDto;
@@ -95,6 +96,11 @@ public class AuthService {
 
     public void changePassword(PasswordChangeDto dto) {
         JwtUser jwtUser = getJwtUserFromSecurityContext();
+        boolean isOldPasswordCorrect = new BCryptPasswordEncoder().matches(dto.getOldPassword(),jwtUser.getPassword());
+        log.info("User password is correct " + isOldPasswordCorrect);
+        if(!isOldPasswordCorrect){
+            throw new NotFoundException("User password is not correct");
+        }
         User user = userRepository.findById(jwtUser.getId()).orElse(null);
         String newPassword = new BCryptPasswordEncoder().encode(dto.getNewPassword1());
         user.setPassword(newPassword);
