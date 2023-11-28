@@ -1,0 +1,44 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation=" http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+<!--                        schemaName="public"-->
+        <changeSet id="create_notification_settings_table" author="rostislav">
+            <createTable tableName="notification_settings">
+                <column autoIncrement="true" name="id" type="bigint">
+                    <constraints primaryKey="true" nullable="false"/>
+                </column>
+                <column name="is_deleted" type="boolean">
+                    <constraints nullable="false"/>
+                </column>
+                <column name="account_id" type="bigint">
+                    <constraints nullable="false"/>
+                </column>
+                <column name="enable_post" type="boolean">
+                    <constraints nullable="false"/>
+                </column>
+                <column name="enable_post_comment" type="boolean">
+                    <constraints nullable="false"/>
+                </column>
+                <column name="enable_comment_comment" type="boolean">
+                    <constraints nullable="false"/>
+                </column>
+                <column name="enable_message" type="boolean">
+                    <constraints nullable="false"/>
+                </column>
+                <column name="enable_friend_request" type="boolean">
+                    <constraints nullable="false"/>
+                </column>
+                <column name="enable_friend_birthday" type="boolean">
+                    <constraints nullable="false"/>
+                </column>
+                <column name="enable_send_email_message" type="boolean">
+                    <constraints nullable="false"/>
+                </column>
+            </createTable>
+        </changeSet>
+
+</databaseChangeLog>

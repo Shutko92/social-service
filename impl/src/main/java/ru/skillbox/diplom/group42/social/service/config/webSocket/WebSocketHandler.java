@@ -14,10 +14,16 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import ru.skillbox.diplom.group42.social.service.dto.message.MessageDto;
 import ru.skillbox.diplom.group42.social.service.dto.message.streamingMessag.StreamMessageDataDto;
 import ru.skillbox.diplom.group42.social.service.dto.message.streamingMessag.StreamingMessageDto;
+import ru.skillbox.diplom.group42.social.service.dto.notification.EventNotificationDto;
+import ru.skillbox.diplom.group42.social.service.dto.notification.NotificationDto;
+import ru.skillbox.diplom.group42.social.service.dto.notification.NotificationType;
 import ru.skillbox.diplom.group42.social.service.mapper.message.MessageMapper;
 import ru.skillbox.diplom.group42.social.service.security.JwtTokenProvider;
 import ru.skillbox.diplom.group42.social.service.service.dialog.DialogService;
+import ru.skillbox.diplom.group42.social.service.utils.security.SecurityUtil;
 import ru.skillbox.diplom.group42.social.service.utils.websocket.WebSocketUtil;
+
+import java.time.ZonedDateTime;
 
 @Component
 @Slf4j
@@ -30,11 +36,23 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final ObjectMapper objectMapper;
     private final KafkaTemplate<String, MessageDto> messageDtoKafkaTemplate;
 
+
     public void sendMessage(StreamingMessageDto<StreamMessageDataDto> dto) throws Exception {
         if (WebSocketUtil.containsSession(dto.getData().getConversationPartner2())) {
             WebSocketUtil.getSession(dto.getRecipientId()).sendMessage(new TextMessage(objectMapper.writeValueAsString(dto)));
             log.info("sendMessage dto ->  " + dto);
         }
+
+    }
+
+    @KafkaListener(topics = "sending-notifications", containerFactory = "sendKafkaListenerContainerFactory")
+    public void sendNotifications(StreamingMessageDto<NotificationDto> streamingMessageDto) throws Exception {
+        log.info("sendNotifications   streamingMessageDto " + streamingMessageDto.toString());
+        if (WebSocketUtil.containsSession(streamingMessageDto.getRecipientId())) {
+            log.info("sendNotifications   streamingMessageDto " + streamingMessageDto.toString());
+            WebSocketUtil.getSession(streamingMessageDto.getRecipientId()).sendMessage(new TextMessage(objectMapper.writeValueAsString(streamingMessageDto)));
+        }
+
 
     }
 
@@ -78,7 +96,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         return streamingMessageDto;
     }
 
-    @KafkaListener(topics = "send-message", groupId = "group-1")
+    @KafkaListener(topics = "send-message", containerFactory = "kafkaListenerMessageContainerFactory")
     private void ConsumerListenerKafka(MessageDto messageDto) {
         log.info("ConsumerListenerKafka " + messageDto.toString());
     }

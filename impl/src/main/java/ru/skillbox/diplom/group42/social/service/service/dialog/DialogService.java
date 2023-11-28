@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import ru.skillbox.diplom.group42.social.service.dto.dialog.DialogDto;
 import ru.skillbox.diplom.group42.social.service.dto.dialog.DialogSearchDto;
 import ru.skillbox.diplom.group42.social.service.dto.message.*;
+import ru.skillbox.diplom.group42.social.service.dto.notification.NotificationType;
 import ru.skillbox.diplom.group42.social.service.entity.dialog.Dialog;
 import ru.skillbox.diplom.group42.social.service.entity.dialog.Dialog_;
 import ru.skillbox.diplom.group42.social.service.entity.message.Message;
@@ -21,6 +22,7 @@ import ru.skillbox.diplom.group42.social.service.mapper.dialog.DialogMapper;
 import ru.skillbox.diplom.group42.social.service.mapper.message.MessageMapper;
 import ru.skillbox.diplom.group42.social.service.repository.dialog.DialogRepository;
 import ru.skillbox.diplom.group42.social.service.repository.message.MessageRepository;
+import ru.skillbox.diplom.group42.social.service.service.notification.NotificationHandler;
 import ru.skillbox.diplom.group42.social.service.utils.SpecificationUtil;
 import ru.skillbox.diplom.group42.social.service.utils.security.SecurityUtil;
 
@@ -40,6 +42,7 @@ public class DialogService {
     private final DialogMapper dialogMapper;
     private final MessageRepository messageRepository;
     private final MessageMapper messageMapper;
+    private final NotificationHandler notificationHandler;
 
     public DialogDto getDialogBetweenUsers(Long id) {
         DialogSearchDto dialogSearchDto = new DialogSearchDto();
@@ -73,7 +76,7 @@ public class DialogService {
         messageSearchDto.setConversationPartner2(recipientId);
         messageSearchDto.setIsDeleted(false);
         Page<Message> messagePage = messageRepository.findAll(getSpecificationMessage(messageSearchDto)
-                ,PageRequest.of(pageable.getPageNumber(), Integer.MAX_VALUE, pageable.getSort()));
+                , PageRequest.of(pageable.getPageNumber(), Integer.MAX_VALUE, pageable.getSort()));
         Page<MessageShortDto> messageShortDtoPage = messagePage.map(messageMapper::convertToShortDto);
         return messageShortDtoPage;
     }
@@ -128,6 +131,7 @@ public class DialogService {
         Dialog dialog = dialogRepository.getById(messageDto.getDialogId());
         messageEntity.setDialogId(dialog);
         updateCountUnreadMessageToDialog(dialog.getId(), 1);
+        notificationHandler.sendNotifications(messageDto.getConversationPartner1(),messageDto.getConversationPartner2(), NotificationType.MESSAGE, "Поступило сообщение");
         return messageMapper.convertToDto(messageRepository.save(messageEntity));
     }
 

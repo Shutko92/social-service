@@ -13,8 +13,10 @@ import ru.skillbox.diplom.group42.social.service.entity.account.Account;
 import ru.skillbox.diplom.group42.social.service.entity.account.Account_;
 import ru.skillbox.diplom.group42.social.service.entity.auth.User;
 import ru.skillbox.diplom.group42.social.service.entity.auth.User_;
+import ru.skillbox.diplom.group42.social.service.entity.notification.NotificationSettings;
 import ru.skillbox.diplom.group42.social.service.mapper.account.AccountMapper;
 import ru.skillbox.diplom.group42.social.service.repository.account.AccountRepository;
+import ru.skillbox.diplom.group42.social.service.repository.notification.NotificationSettingsRepository;
 import ru.skillbox.diplom.group42.social.service.utils.security.SecurityUtil;
 
 import java.time.ZonedDateTime;
@@ -28,6 +30,7 @@ import static ru.skillbox.diplom.group42.social.service.utils.SpecificationUtil.
 public class AccountService {
     private final AccountRepository accountRepository;
     private final AccountMapper accountMapper;
+    private final NotificationSettingsRepository notificationSettingsRepository;
 
     public AccountDto getAccount() {
         Long id = SecurityUtil.getJwtUserIdFromSecurityContext();
@@ -45,7 +48,7 @@ public class AccountService {
     }
 
     public Page<AccountDto> searchAccount(AccountSearchDto accountSearchDto, Pageable page) {
-        log.info("AccountService method search(AccountSearchDto accountSearchDto, Pageable page) executed" + accountSearchDto.toString()) ;
+        log.info("AccountService method search(AccountSearchDto accountSearchDto, Pageable page) executed" + accountSearchDto.toString());
         if (accountSearchDto.getAuthor() != null) {
             return accountRepository.findAll(getSpecificationByAuthor(accountSearchDto), page).map(accountMapper::convertToDto);
         } else {
@@ -72,7 +75,9 @@ public class AccountService {
         log.debug("Entering AccountService method createAccount(User user)");
         log.info("AccountService method createAccount(User user)");
         Account account = accountMapper.userToAccount(user);
-        accountRepository.save(account);
+         accountRepository.save(account);
+
+        createNotificationsSettings(account.getId());
 
         log.info("AccountService method createAccount(User user): Account {} successfully saved",
                 user.toString()
@@ -125,5 +130,19 @@ public class AccountService {
     }
 
 
+    private void createNotificationsSettings(Long accountId) {
+        NotificationSettings notificationSettings = new NotificationSettings();
+        notificationSettings.setAccountId(accountId);
+        notificationSettings.setEnableMessage(true);
+        notificationSettings.setEnablePost(true);
+        notificationSettings.setEnableFriendBirthday(true);
+        notificationSettings.setEnableSendEmailMessage(true);
+        notificationSettings.setEnableCommentComment(true);
+        notificationSettings.setEnableFriendRequest(true);
+        notificationSettings.setEnablePostComment(true);
+        notificationSettings.setIsDeleted(false);
+        notificationSettingsRepository.save(notificationSettings);
+
+    }
 
 }

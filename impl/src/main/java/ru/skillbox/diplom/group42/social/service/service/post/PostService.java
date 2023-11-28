@@ -2,11 +2,16 @@ package ru.skillbox.diplom.group42.social.service.service.post;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import ru.skillbox.diplom.group42.social.service.dto.notification.EventNotificationDto;
+import ru.skillbox.diplom.group42.social.service.dto.notification.NotificationType;
 import ru.skillbox.diplom.group42.social.service.dto.post.PostDto;
 import ru.skillbox.diplom.group42.social.service.dto.post.PostSearchDto;
 import ru.skillbox.diplom.group42.social.service.dto.post.Type;
@@ -18,9 +23,12 @@ import ru.skillbox.diplom.group42.social.service.entity.tag.Tag_;
 import ru.skillbox.diplom.group42.social.service.exception.PostFoundException;
 import ru.skillbox.diplom.group42.social.service.mapper.post.PostMapper;
 import ru.skillbox.diplom.group42.social.service.mapper.tag.TagMapper;
+import ru.skillbox.diplom.group42.social.service.repository.account.AccountRepository;
 import ru.skillbox.diplom.group42.social.service.repository.post.LikeRepository;
 import ru.skillbox.diplom.group42.social.service.repository.post.PostRepository;
 import ru.skillbox.diplom.group42.social.service.service.like.LikeService;
+import ru.skillbox.diplom.group42.social.service.service.notification.NotificationHandler;
+import ru.skillbox.diplom.group42.social.service.service.notification.NotificationService;
 import ru.skillbox.diplom.group42.social.service.service.tag.TagService;
 import ru.skillbox.diplom.group42.social.service.utils.SpecificationUtil;
 import ru.skillbox.diplom.group42.social.service.utils.security.SecurityUtil;
@@ -44,6 +52,7 @@ public class PostService {
     private final TagService tagService;
     private final LikeRepository likeRepository;
     private final LikeService likeService;
+    private final NotificationHandler notificationHandler;
 
 
     public PostDto getById(Long id) {
@@ -72,6 +81,7 @@ public class PostService {
         PostDto postDto1 = postMapper.convertToDTO(postRepository.save(post));
         postDto1.setIsBlocked(false);
         postDto1.setTags(tagMapper.convertSetToDto(post.getTags()));
+        notificationHandler.sendNotifications(post.getAuthorId(), NotificationType.POST, "Опубликован новый пост!");
         return postDto1;
     }
 
@@ -136,4 +146,6 @@ public class PostService {
         post.setType(Type.POSTED);
         return postRepository.save(post);
     }
+
+
 }

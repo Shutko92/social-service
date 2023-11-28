@@ -5,7 +5,6 @@ import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.KafkaAdmin;
 
 import java.util.HashMap;
@@ -26,6 +25,16 @@ public class KafkaConfig {
     @Bean
     NewTopic sendMessage(){
         return new NewTopic("send-message",1, (short) 1);
+    }
+
+    @Bean
+    NewTopic notificationsHandler(){
+        return new NewTopic("notifications-handler", 1,(short) 1);
+    }
+
+    @Bean
+    NewTopic sendingNotifications(){
+        return new NewTopic("sending-notifications", 1,(short) 1);
     }
 
 
