@@ -15,9 +15,6 @@ import java.util.List;
 @RequestMapping(ConstantURL.BASE_URL + "/friends")
 public interface FriendController extends BaseController<FriendShortDto, FriendSearchDto> {
 
-//    @GetMapping("/status")
-//    ResponseEntity<List<FriendShortDto>> getAllByStatus(@RequestParam String status);
-
     @PostMapping("/{id}/request")
     ResponseEntity<FriendShortDto> friendRequest(@PathVariable Long id);
 
@@ -33,6 +30,8 @@ public interface FriendController extends BaseController<FriendShortDto, FriendS
 
     @GetMapping("/recommendations")
     ResponseEntity<List<FriendShortDto>> recommendations(FriendSearchDto friendSearchDto);
-
-
+    @PutMapping("/block/{id}")
+    ResponseEntity<FriendShortDto> friendBlock(@PathVariable Long id);
+    @PutMapping("/unblock/{id}")
+    ResponseEntity<FriendShortDto> friendUnBlock(@PathVariable Long id);
 }
