@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.Query;
 import ru.skillbox.diplom.group42.social.service.entity.friend.Friend;
 import ru.skillbox.diplom.group42.social.service.repository.base.BaseRepository;
 
+import java.util.List;
 import java.util.Set;
 
 public interface FriendRepository extends BaseRepository<Friend> {
@@ -11,6 +12,9 @@ public interface FriendRepository extends BaseRepository<Friend> {
     Friend findFriendByIdFromAndIdToAndIsDeletedFalse(Long idFrom, Long idTo);
 
     Friend findByIdFromAndIdToAndStatusCode(Long idFrom, Long idTo, String status);
+
+    List<Friend> findByIdFromOrIdToAndStatusCode(Long idFrom, Long idTo, String status);
+    List<Friend> findAllByIsDeletedAndStatusCodeAndAndBirthDateIsNotNull(Boolean isDeleted, String status);
 
     @Query(value = "SELECT COUNT(*) FROM friend WHERE id_to = ?1 AND status_code='REQUEST_TO' AND is_deleted=false", nativeQuery = true)
     Long getCountRequest(Long id);

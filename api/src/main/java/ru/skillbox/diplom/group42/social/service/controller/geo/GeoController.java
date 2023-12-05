@@ -7,12 +7,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 import ru.skillbox.diplom.group42.social.service.dto.geo.CityDto;
 import ru.skillbox.diplom.group42.social.service.dto.geo.CountryDto;
+import ru.skillbox.diplom.group42.social.service.util.ConstantURL;
 
 import java.util.List;
 
 @Tag(name = "Страны", description = "Определение страны пользователя")
 @RestController
-@RequestMapping(value = "/api/v1/geo")
+@RequestMapping(value = ConstantURL.BASE_URL + "/geo")
 public interface GeoController {
 
     @Operation(summary = "Загрузка стран", description = "Страны загружаются с внешнего источника. Проходит по расписанию")

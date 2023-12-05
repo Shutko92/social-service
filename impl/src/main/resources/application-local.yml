@@ -13,6 +13,7 @@ spring:
           use_jdbc_metadata_defaults: false
         hbm2ddl:
           auto: none
+
   liquibase:
     change-log: classpath:changelog_init.xml
     enabled: true
@@ -30,6 +31,7 @@ spring:
     port: 465
     username: javapro42@yandex.ru
     password: mjysuhedahhswnef
+
 
 vars:
   captchaCharStr: 0123456789
@@ -75,4 +77,10 @@ cloudinary:
   api_key: 358825755328599
   api_secret: NoYeSddTS8z06a5Dga_wQZO6RZU
 
+logging:
+  level:
+    org:
+     apache:
+      kafka: OFF
 
+kafka-enable: true

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
@@ -29,6 +31,7 @@ import java.time.ZonedDateTime;
 @Component
 @Slf4j
 @RequiredArgsConstructor
+@ConditionalOnProperty(value = "kafka-enable", havingValue = "true", matchIfMissing = true)
 public class WebSocketHandler extends TextWebSocketHandler {
 
     private final JwtTokenProvider tokenProvider;
@@ -50,6 +53,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @KafkaListener(topics = "sending-notifications", containerFactory = "sendKafkaListenerContainerFactory")
     public void sendNotifications(StreamingMessageDto<NotificationDto> streamingMessageDto) throws Exception {
         log.info("sendNotifications   streamingMessageDto " + streamingMessageDto.toString());
+
         if (WebSocketUtil.containsSession(streamingMessageDto.getRecipientId())) {
             log.info("sendNotifications   streamingMessageDto " + streamingMessageDto.toString());
             WebSocketUtil.getSession(streamingMessageDto.getRecipientId()).sendMessage(new TextMessage(objectMapper.writeValueAsString(streamingMessageDto)));

@@ -14,10 +14,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.skillbox.diplom.group42.social.service.controller.base.BaseController;
 import ru.skillbox.diplom.group42.social.service.dto.account.AccountDto;
 import ru.skillbox.diplom.group42.social.service.dto.account.AccountSearchDto;
+import ru.skillbox.diplom.group42.social.service.util.ConstantURL;
 
 @Tag(name = "Аккаунт", description = "Операций с аккаунтом")
 @RestController
-@RequestMapping("/api/v1/account/")
+@RequestMapping( ConstantURL.BASE_URL +"/account/")
 public interface AccountController extends BaseController<AccountDto, AccountSearchDto> {
 
     @Operation(summary = "Получение аккаунта", description = "Позволяет получить аккаунт")

@@ -59,7 +59,7 @@ public class CommentService {
             post.setCommentsCount(post.getCommentsCount() + 1);
             postRepository.save(post);
             dto = commentMapper.convertToDto(commentRepository.save(commentMapper.createEntity(dto)));
-            notificationHandler.sendNotifications(dto.getAuthorId(), NotificationType.POST_COMMENT, "Оставлен комментарий на пост!");
+            notificationHandler.sendNotifications(dto.getAuthorId(), NotificationType.POST_COMMENT, dto.getCommentText());
             return dto;
         } else {
             return createSubComment(postId, dto.getParentId(), dto);
@@ -74,7 +74,7 @@ public class CommentService {
         comment.setPostId(id);
         commentRepository.save(commentMapper.convertToEntity(parentComment));
         dto = commentMapper.convertToDto(commentRepository.save(comment));
-        notificationHandler.sendNotifications(dto.getAuthorId(), NotificationType.POST_COMMENT, "Оставлен ответ на комментарий к посту");
+        notificationHandler.sendNotifications(dto.getAuthorId(), NotificationType.COMMENT_COMMENT, dto.getCommentText());
         return dto;
     }
 

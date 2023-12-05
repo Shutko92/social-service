@@ -15,12 +15,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skillbox.diplom.group42.social.service.dto.storage.StorageDto;
+import ru.skillbox.diplom.group42.social.service.util.ConstantURL;
 
 import java.io.IOException;
 
 @Tag(name = "Хранилище", description = "Операций с хранилищем")
 @RestController
-@RequestMapping(value = "/api/v1/storage",
+@RequestMapping(value = ConstantURL.BASE_URL + "/storage",
         consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE)
 public interface StorageController {

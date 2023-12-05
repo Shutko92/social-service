@@ -67,3 +67,11 @@ cloudinary:
   cloud_name: dmcmd4g2s
   api_key: 358825755328599
   api_secret: NoYeSddTS8z06a5Dga_wQZO6RZU
+
+logging:
+  level:
+    org:
+      apache:
+        kafka: OFF
+
+kafka-enable: true

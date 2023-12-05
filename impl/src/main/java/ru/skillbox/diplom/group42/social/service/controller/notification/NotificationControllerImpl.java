@@ -1,6 +1,7 @@
 package ru.skillbox.diplom.group42.social.service.controller.notification;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import ru.skillbox.diplom.group42.social.service.service.notification.Notificati
 
 @RestController
 @RequiredArgsConstructor
+@ConditionalOnProperty(value = "kafka-enable", havingValue = "true", matchIfMissing = true)
 public class NotificationControllerImpl implements NotificationController {
 
     private final NotificationService notificationService;
@@ -25,28 +27,25 @@ public class NotificationControllerImpl implements NotificationController {
         return ResponseEntity.ok().build();
     }
 
-    //TODO не нужен?
     @Override
     public ResponseEntity setAllNotificationsReadStatus() {
-        return null;
+        notificationService.updateStatusRead();
+        return ResponseEntity.ok().build();
     }
 
-    //TODO не нужен?
     @Override
     public ResponseEntity<Boolean> createSettingsNotifications(Long id) {
         return null;
     }
 
-    //TODO не нужен
     @Override
     public ResponseEntity addNotifications(EventNotificationDto eventNotificationDto) {
-      notificationService.addNotifications(eventNotificationDto);
-      return ResponseEntity.ok().build();
+        notificationService.createNotifications(eventNotificationDto);
+        return ResponseEntity.ok().build();
     }
 
     @Override
-    public  ResponseEntity<Page<NotificationsDto>> getNotifications(Pageable pageable) {
-
+    public ResponseEntity<Page<NotificationsDto>> getNotifications(Pageable pageable) {
         return ResponseEntity.ok(notificationService.getNotifications(pageable));
     }
 
