@@ -23,25 +23,17 @@ public class LoggingAspect {
 
     @Around("loggingAllControllers()")
     public Object aroundAdviceFromLoggingAllControllers(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        Object[] args = proceedingJoinPoint.getArgs();
-        MethodSignature signature = (MethodSignature) proceedingJoinPoint.getSignature();
-        StringBuilder stringBuilder = new StringBuilder();
-        for (Object ar : args) {
-            stringBuilder.append(ar.toString()).append(" ");
-        }
-        String className = proceedingJoinPoint.getSourceLocation().getWithinType().getName();
-        log.info("Start " + className.substring(className.lastIndexOf(".") + 1) + ", Method - " + signature.getName()
-                + ", MethodArgs - " + stringBuilder);
-        Object proceed = proceedingJoinPoint.proceed();
-        String proceedInfo = proceed == null ? "" : proceed.toString();
-        log.info("Finish " + className.substring(className.lastIndexOf(".") + 1) + ", Method - " + signature.getName()
-                + ", Proceed - " + proceedInfo);
-        return proceed;
+        return getLoggingInfo(proceedingJoinPoint);
     }
 
 
     @Around("loggingAllService()")
     public Object aroundAdviceFromLoggingAllServices(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        return getLoggingInfo(proceedingJoinPoint);
+
+    }
+
+    private Object getLoggingInfo(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         Object[] args = proceedingJoinPoint.getArgs();
         MethodSignature signature = (MethodSignature) proceedingJoinPoint.getSignature();
         StringBuilder stringBuilder = new StringBuilder();
@@ -49,16 +41,14 @@ public class LoggingAspect {
             stringBuilder.append(ar.toString()).append(" ");
         }
         String className = proceedingJoinPoint.getSourceLocation().getWithinType().getName();
-        log.info("Start " + className.substring(className.lastIndexOf(".") + 1) + ", Method - " + signature.getName()
+        log.debug("Start " + className.substring(className.lastIndexOf(".") + 1) + ", Method - " + signature.getName()
                 + ", MethodArgs - " + stringBuilder);
 
         Object proceed = proceedingJoinPoint.proceed();
         String proceedInfo = proceed == null ? "" : proceed.toString();
-        log.info("Finish " + className.substring(className.lastIndexOf(".") + 1) + ", Method - " + signature.getName()
+        log.debug("Finish " + className.substring(className.lastIndexOf(".") + 1) + ", Method - " + signature.getName()
                 + ", Proceed - " + proceedInfo);
-
         return proceed;
-
     }
 
 

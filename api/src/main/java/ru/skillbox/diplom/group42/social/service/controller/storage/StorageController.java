@@ -29,8 +29,8 @@ public interface StorageController {
     @Operation(summary = "Отправка файлов в хранилище", description = "Позволяет отправить файлы в хранилище")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Файл успешно загружен",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = StorageDto.class)) }),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = StorageDto.class))}),
             @ApiResponse(responseCode = "400", description = "Неварный тип файла", content = @Content),
             @ApiResponse(responseCode = "403", description = "Доступ запрещен", content = @Content),
             @ApiResponse(responseCode = "413", description = "Объект запроса слишком большой", content = @Content)

@@ -19,7 +19,7 @@ public class AccountControllerImpl implements AccountController {
 
     @Override
     public ResponseEntity<AccountDto> getAccount() {
-        return ResponseEntity.ok(accountService.getAccount()); // Получение
+        return ResponseEntity.ok(accountService.getAccount());
     }
 
     @Override
@@ -38,9 +38,10 @@ public class AccountControllerImpl implements AccountController {
         return ResponseEntity.ok(accountService.searchAccount(dto, pageable));
     }
 
+
     @Override
     public ResponseEntity<Page<AccountDto>> searchByStatus(AccountSearchDto dto, Pageable pageable) {
-        return null;
+        return ResponseEntity.noContent().build();
     }
 
     @Override

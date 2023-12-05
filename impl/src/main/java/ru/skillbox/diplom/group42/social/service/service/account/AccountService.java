@@ -39,7 +39,6 @@ public class AccountService {
      */
     public AccountDto getAccount() {
         Long id = SecurityUtil.getJwtUserIdFromSecurityContext();
-        log.info("AccountService method getAccount() executed. Account id: {}", id);
         setAccountOnlineStatus(id,true);
         return getAccountById(id);
     }
@@ -53,7 +52,6 @@ public class AccountService {
     public AccountDto getAccountById(Long id) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new BadCredentialsException("AccountService method getAccountById(): User with id " + id + " does not exist"));
-        log.info("AccountService method getAccountById(Long id): Getting account with id: {}", account.getId());
         return accountMapper.convertToDto(account);
     }
 
@@ -65,7 +63,6 @@ public class AccountService {
      * @return постраничная информация об аккаунтах.
      */
     public Page<AccountDto> searchAccount(AccountSearchDto accountSearchDto, Pageable page) {
-        log.info("AccountService method search(AccountSearchDto accountSearchDto, Pageable page) executed" + accountSearchDto.toString());
         if (accountSearchDto.getAuthor() != null) {
             return accountRepository.findAll(getSpecificationByAuthor(accountSearchDto), page).map(accountMapper::convertToDto);
         } else {
@@ -80,7 +77,6 @@ public class AccountService {
      * @return инфотмация о аккаунте.
      */
     public AccountDto updateAccount(AccountDto accountDto) {
-        log.debug("Entering AccountService method Account updateAccount");
         Long userId = SecurityUtil.getJwtUserIdFromSecurityContext();
 
         Account accountToSave = accountMapper.convertToAccount(
@@ -90,7 +86,6 @@ public class AccountService {
                 ));
         accountRepository.save(accountToSave);
 
-        log.info("AccountService method update(AccountDto accountDto) executed. Account " + accountToSave + " updated");
         return accountMapper.convertToDto(accountToSave);
     }
 
@@ -113,22 +108,12 @@ public class AccountService {
      * @param user пользователь
      */
     public void createAccount(User user) {
-        log.debug("Entering AccountService method createAccount(User user)");
-        log.info("AccountService method createAccount(User user)");
         Account account = accountMapper.userToAccount(user);
          accountRepository.save(account);
-
         createNotificationsSettings(account.getId());
-
-        log.info("AccountService method createAccount(User user): Account {} successfully saved",
-                user.toString()
-        );
-
-        log.debug("Exiting AccountService method createAccount(User user)");
     }
 
     private static Specification<Account> getSpecificationByAuthor(AccountSearchDto accountSearchDto) {
-        log.debug("Entering getSpecificationByAuthor method");
         return getBaseSpecification(accountSearchDto)
                 .and(notIn(Account_.id, accountSearchDto.getBlockedByIds(), true))
                 .and(likeToLower(Account_.firstName, accountSearchDto.getAuthor(), true)
@@ -139,8 +124,6 @@ public class AccountService {
     }
 
     private static Specification<Account> getSpecificationByOtherFields(AccountSearchDto dto) {
-        log.debug("Entering AccountService getSpecificationByAuthor method");
-
         return getBaseSpecification(dto)
                 .and(notIn(Account_.id, dto.getBlockedByIds(), true))
                 .and(in(Account_.id, dto.getIds(), true))
@@ -159,8 +142,6 @@ public class AccountService {
      * @param id идентификатор аккаунта.
      */
     public void deleteById(Long id) {
-        log.debug("Entering AccountService method deleteById(), id: {}", id);
-        log.info("AccountService method deleteById(Long id) executed, id: {}", id);
         accountRepository.deleteById(id);
     }
 
@@ -169,12 +150,9 @@ public class AccountService {
      * @return сообщение об удалении.
      */
     public String deleteAccount() {
-        log.debug("Entering AccountService method deleteAccount()");
         Long id = SecurityUtil.getJwtUserIdFromSecurityContext();
         Account account = accountRepository.findById(id).get();
         deleteById(account.getId());
-
-        log.info("AccountService method deleteAccount(), Account with id: {} deleted.", id);
         return "Account with id: " + id + " deleted.";
     }
 

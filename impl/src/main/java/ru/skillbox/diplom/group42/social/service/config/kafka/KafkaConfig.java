@@ -27,11 +27,6 @@ public class KafkaConfig {
     }
 
     @Bean
-    NewTopic sendMessage(){
-        return new NewTopic("send-message",1, (short) 1);
-    }
-
-    @Bean
     NewTopic notificationsHandler(){
         return new NewTopic("notifications-handler", 1,(short) 1);
     }

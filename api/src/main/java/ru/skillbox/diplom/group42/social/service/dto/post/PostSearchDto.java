@@ -28,9 +28,9 @@ public class PostSearchDto extends BaseSearchDto {
      private List<String> tags;
      private List<String> reaction;
      @Schema(description = "Дата от")
-     private ZonedDateTime dateFrom;
+     private String dateFrom;
      @Schema(description = "Дата до")
-     private ZonedDateTime dateTo;
+     private String dateTo;
      @Schema(description = "Данные запроса поиска по тексту")
      private String text;
 

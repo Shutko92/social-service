@@ -9,13 +9,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @UtilityClass
 @Slf4j
 public class WebSocketUtil {
-
     private static final ConcurrentHashMap<Long, WebSocketSession> webSocketSession = new ConcurrentHashMap<>();
-
 
     public static void addSession(Long id, WebSocketSession session) {
         webSocketSession.put(id, session);
-
     }
 
     public static void deleteSession(Long id) {
@@ -26,7 +23,7 @@ public class WebSocketUtil {
         return webSocketSession.get(id);
     }
 
-    public boolean containsSession(Long id){
+    public boolean containsSession(Long id) {
         return webSocketSession.containsKey(id);
     }
 

@@ -25,14 +25,11 @@ public class StorageService {
      * @throws IOException при проблемах с определением файла.
      */
     public StorageDto sendingToStorage(MultipartFile imageFile) throws IOException {
-        log.debug("Entering StorageService method sendingToStorage(MultipartFile imageFile)");
         Map uploadResult = cloudinary
                 .uploader()
                 .upload(imageFile.getBytes(), ObjectUtils.asMap("folder", "my-folder",
                         "public_id", imageFile.getOriginalFilename()));
 
-        log.info("StorageService method sendingToStorage(MultipartFile imageFile) executed. File "
-                + imageFile.getOriginalFilename() + " sent to storage");
         return new StorageDto(uploadResult.get("secure_url").toString());
     }
 }

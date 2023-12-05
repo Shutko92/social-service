@@ -9,9 +9,9 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import ru.skillbox.diplom.group42.social.service.dto.email.recovery.EmailDetailsDto;
 import ru.skillbox.diplom.group42.social.service.dto.email.recovery.EmailRecoveryDto;
 import ru.skillbox.diplom.group42.social.service.entity.auth.User;
-import ru.skillbox.diplom.group42.social.service.entity.email.recovery.EmailDetails;
 import ru.skillbox.diplom.group42.social.service.entity.email.recovery.RecoveryLink;
 import ru.skillbox.diplom.group42.social.service.repository.auth.UserRepository;
 import ru.skillbox.diplom.group42.social.service.repository.email_recovery.EmailRecoveryRepository;
@@ -54,7 +54,7 @@ public class EmailServiceImpl {
             JwtUser user = getJwtUserFromSecurityContext();
             UUID uuid = UUID.randomUUID();
             String confirmLink = createLink(LOCAL_HOST, uuid);
-            EmailDetails email = new EmailDetails(
+            EmailDetailsDto email = new EmailDetailsDto(
                     user.getEmail(),
                     buildEmailBody(confirmLink),
                     THEME_EMAIL
@@ -95,7 +95,7 @@ public class EmailServiceImpl {
         }
     }
 
-    private void sendSimpleMail(EmailDetails details) throws IOException {
+    private void sendSimpleMail(EmailDetailsDto details) throws IOException {
         try {
 
             SimpleMailMessage mailMessage = new SimpleMailMessage();
@@ -110,7 +110,7 @@ public class EmailServiceImpl {
         }
     }
 
-    private void sendMailWithAttachment(EmailDetails details) throws IOException {
+    private void sendMailWithAttachment(EmailDetailsDto details) throws IOException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper;
         try {
@@ -138,7 +138,8 @@ public class EmailServiceImpl {
         recoveryLink.setUserId(user_id);
         emailRecoveryRepository.save(recoveryLink);
     }
-    private void deleteRecoveryLinkInDataBase(Long user_id){
+
+    private void deleteRecoveryLinkInDataBase(Long user_id) {
         RecoveryLink currentRecoveryLink = emailRecoveryRepository.findByUserIdAndIsDeleted(
                 user_id,
                 false

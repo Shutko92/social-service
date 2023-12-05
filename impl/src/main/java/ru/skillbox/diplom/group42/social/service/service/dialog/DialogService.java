@@ -148,7 +148,6 @@ public class DialogService {
         UnreadCountDto unreadCountDto = new UnreadCountDto();
         unreadCountDto.setCount(messageRepository
                 .countByConversationPartner2AndReadStatusIs(SecurityUtil.getJwtUserIdFromSecurityContext(), ReadStatus.SENT));
-        log.info("getCountUnreadMessage  " + unreadCountDto.getCount());
         return unreadCountDto;
     }
 

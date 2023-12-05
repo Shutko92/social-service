@@ -21,10 +21,66 @@ spec:
           ports:
             - containerPort: 8080
           env:
-          - name: POSTGRES_USER
-            value: postgres
-          - name: POSTGRES_PASSWORD
-            value: skillbox
+          - name: DB_HOST
+            valueFrom:
+              secretKeyRef:
+                name: backend-secret
+                key: DB_HOST
+          - name: DB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: backend-secret
+                key: DB_USERNAME
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: backend-secret
+                key: DB_PASSWORD
+          - name: BOOTSTRAP-SERVERS
+            valueFrom:
+              secretKeyRef:
+                name: backend-secret
+                key: BOOTSTRAP-SERVERS
+          - name: GROUP-ID
+            valueFrom:
+              secretKeyRef:
+                name: backend-secret
+                key: GROUP-ID
+          - name: MAIL_HOST
+            valueFrom:
+              secretKeyRef:
+                name: backend-secret
+                key: MAIL_HOST
+          - name: MAIL_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: backend-secret
+                key: MAIL_USERNAME
+          - name: MAIL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: backend-secret
+                key: MAIL_PASSWORD
+          - name: KAFKA_LOGGER
+            valueFrom:
+              secretKeyRef:
+                name: backend-secret
+                key: KAFKA_LOGGER
+          - name: ROOT_LOGGER
+            valueFrom:
+              secretKeyRef:
+                name: backend-secret
+                key: ROOT_LOGGER
+          - name: PROJECT_LOGGER
+            valueFrom:
+              secretKeyRef:
+                name: backend-secret
+                key: PROJECT_LOGGER
+          - name: PROD_HOST
+            valueFrom:
+              secretKeyRef:
+                name: backend-secret
+                key: PROD_HOST
 ---
 apiVersion: v1
 kind: Service

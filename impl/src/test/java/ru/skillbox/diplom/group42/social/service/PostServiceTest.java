@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -18,8 +19,11 @@ import ru.skillbox.diplom.group42.social.service.dto.post.PostSearchDto;
 import ru.skillbox.diplom.group42.social.service.entity.post.Post;
 import ru.skillbox.diplom.group42.social.service.mapper.post.PostMapper;
 import ru.skillbox.diplom.group42.social.service.mapper.tag.TagMapper;
+import ru.skillbox.diplom.group42.social.service.repository.auth.UserRepository;
+import ru.skillbox.diplom.group42.social.service.repository.friend.FriendRepository;
 import ru.skillbox.diplom.group42.social.service.repository.post.LikeRepository;
 import ru.skillbox.diplom.group42.social.service.repository.post.PostRepository;
+import ru.skillbox.diplom.group42.social.service.service.friend.FriendService;
 import ru.skillbox.diplom.group42.social.service.service.like.LikeService;
 import ru.skillbox.diplom.group42.social.service.service.notification.NotificationHandler;
 import ru.skillbox.diplom.group42.social.service.service.notification.NotificationService;
@@ -57,11 +61,17 @@ public class PostServiceTest {
     private LikeService likeService;
     @Mock
     private  NotificationHandler notificationHandler;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private FriendService friendService;
+
     private PostService postService;
 
     @BeforeEach
     public void beforeMethod() {
-        postService = new PostService(postRepository, postMapper, tagMapper, tagService, likeRepository, likeService, notificationHandler);
+        postService = new PostService(postRepository, postMapper, tagMapper, tagService, likeRepository, likeService, notificationHandler, userRepository, friendService);
+
     }
 
     @Test

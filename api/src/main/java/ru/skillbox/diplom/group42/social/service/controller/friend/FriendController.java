@@ -18,7 +18,7 @@ public interface FriendController extends BaseController<FriendShortDto, FriendS
     @PostMapping("/{id}/request")
     ResponseEntity<FriendShortDto> friendRequest(@PathVariable Long id);
 
-    @PutMapping ("/{id}/approve")
+    @PutMapping("/{id}/approve")
     ResponseEntity<FriendShortDto> friendApprove(@PathVariable Long id);
 
     @GetMapping("/count")

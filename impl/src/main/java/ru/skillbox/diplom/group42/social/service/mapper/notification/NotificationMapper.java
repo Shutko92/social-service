@@ -13,15 +13,9 @@ public interface NotificationMapper {
 
     NotificationDto convertToDTO(Notification notification);
 
-    Notification convertToEntity(NotificationDto notificationDto);
-
-    EventNotificationDto convertToEventDTO(Notification notification);
-
     @Mapping(target = "recipientId", source = "receiverId")
     @Mapping(target = "isDeleted", constant = "false")
     @Mapping(target = "sentTime", expression = "java(ZonedDateTime.now())")
     Notification convertFromEventToEntity(EventNotificationDto eventNotificationDto);
 
-    @Mapping(target = "sentTime", expression = "java(ZonedDateTime.now())")
-    NotificationDto convertFromEventToDTO(EventNotificationDto eventNotificationDto);
 }

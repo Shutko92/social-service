@@ -12,8 +12,6 @@ import java.time.ZonedDateTime;
 public interface AccountMapper {
     AccountDto convertToDto(Account account);
 
-    Account convertToAccount(Account accountDto);
-
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Account convertToAccount(AccountDto accountDto, @MappingTarget Account account);
 

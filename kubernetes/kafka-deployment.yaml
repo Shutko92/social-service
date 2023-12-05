@@ -23,7 +23,7 @@ spec:
             - name: KAFKA_CFG_ZOOKEEPER_CONNECT
               value: 10.244.0.154:2181
             - name: KAFKA_CFG_ADVERTISED_LISTENERS
-              value: PLAINTEXT://localhost:9092
+              value: PLAINTEXT://kafka-service:9092
           image: bitnami/kafka:latest
           name: kafka-broker
           ports:

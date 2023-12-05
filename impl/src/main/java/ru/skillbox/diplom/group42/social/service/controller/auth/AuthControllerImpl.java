@@ -61,15 +61,16 @@ public class AuthControllerImpl implements AuthController {
 
     @Override
     @ResponseStatus(HttpStatus.OK)
-    public HttpStatus confirmChangeEmail(HttpServletRequest request, @RequestBody EmailRecoveryDto dto){
+    public HttpStatus confirmChangeEmail(HttpServletRequest request, @RequestBody EmailRecoveryDto dto) {
         return emailService.changeEmailByLink(request, dto);
     }
+
     @Override
-    public HttpStatus handlerRequestChangePassword(@RequestBody PasswordChangeDto dto){
+    public HttpStatus handlerRequestChangePassword(@RequestBody PasswordChangeDto dto) {
         try {
             authService.changePassword(dto);
             return HttpStatus.OK;
-        } catch (NotFoundException exception){
+        } catch (NotFoundException exception) {
             return HttpStatus.FORBIDDEN;
         }
     }

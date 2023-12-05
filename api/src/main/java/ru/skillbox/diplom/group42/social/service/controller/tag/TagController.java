@@ -51,6 +51,7 @@ public interface TagController {
                     , content = @Content(mediaType = "", schema = @Schema(nullable = true)))})
     @PutMapping
     ResponseEntity<TagDto> update(@RequestBody @Parameter(name = "TagDto") TagDto tagDto);
+
     @Operation(summary = "Удаление тега"
             , responses = {
             @ApiResponse(responseCode = "200", description = "Тег удален"),

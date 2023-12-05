@@ -13,7 +13,7 @@ import ru.skillbox.diplom.group42.social.service.service.tag.TagService;
 @RequiredArgsConstructor
 public class TagControllerImpl implements TagController {
 
-     private final TagService tagService;
+    private final TagService tagService;
 
     @Override
     public ResponseEntity<TagDto> create(TagDto tagDto) {
@@ -22,7 +22,6 @@ public class TagControllerImpl implements TagController {
 
     @Override
     public ResponseEntity<TagDto> getTag(TagSearchDto tagSearchDto) {
-        log.info("Start TagControllerImpl  getAll " + tagSearchDto.toString());
         return ResponseEntity.ok(tagService.getTag(tagSearchDto));
     }
 
