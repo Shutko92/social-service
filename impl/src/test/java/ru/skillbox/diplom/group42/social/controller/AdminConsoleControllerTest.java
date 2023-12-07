@@ -21,7 +21,7 @@ class AdminConsoleControllerTest extends AbstractIntegrationTest {
     void returnPostShouldReturnStatisticResponse() {
         ResponseEntity<StatisticResponseDto> response = template.exchange(
                 "/api/v1/admin-console/statistic/post?date=2023-10-26T00:00:00.735Z&firstMonth=2023-01-01T00:00:00.735Z&lastMonth=2023-12-31T00:00:00.735Z",
-                HttpMethod.GET, new HttpEntity<>(StatisticRequestDto.class), StatisticResponseDto.class);
+                HttpMethod.GET, new HttpEntity<>(StatisticRequestDto.class, headers), StatisticResponseDto.class);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertEquals(MediaType.APPLICATION_JSON_VALUE,
                 Objects.requireNonNull(response.getHeaders().getContentType()).toString());
@@ -32,7 +32,7 @@ class AdminConsoleControllerTest extends AbstractIntegrationTest {
     void returnLikeShouldReturnStatisticResponse() {
         ResponseEntity<StatisticResponseDto> response = template.exchange(
                 "/api/v1/admin-console/statistic/like?date=2023-10-26T00:00:00.735Z&firstMonth=2023-01-01T00:00:00.735Z&lastMonth=2023-12-31T00:00:00.735Z",
-                HttpMethod.GET, new HttpEntity<>(StatisticRequestDto.class), StatisticResponseDto.class);
+                HttpMethod.GET, new HttpEntity<>(StatisticRequestDto.class, headers), StatisticResponseDto.class);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertEquals(MediaType.APPLICATION_JSON_VALUE,
                 Objects.requireNonNull(response.getHeaders().getContentType()).toString());
@@ -43,7 +43,7 @@ class AdminConsoleControllerTest extends AbstractIntegrationTest {
     void returnCommentShouldReturnStatisticResponse() {
         ResponseEntity<StatisticResponseDto> response = template.exchange(
                 "/api/v1/admin-console/statistic/comment?date=2023-10-26T00:00:00.735Z&firstMonth=2023-01-01T00:00:00.735Z&lastMonth=2023-12-31T00:00:00.735Z",
-                HttpMethod.GET, new HttpEntity<>(StatisticRequestDto.class), StatisticResponseDto.class);
+                HttpMethod.GET, new HttpEntity<>(StatisticRequestDto.class, headers), StatisticResponseDto.class);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertEquals(MediaType.APPLICATION_JSON_VALUE,
                 Objects.requireNonNull(response.getHeaders().getContentType()).toString());
@@ -54,7 +54,7 @@ class AdminConsoleControllerTest extends AbstractIntegrationTest {
     void returnAccountShouldReturnAccountStatisticResponse() {
         ResponseEntity<AccountStatisticResponseDto> response = template.exchange(
                 "/api/v1/admin-console/statistic/account?date=2023-10-26T00:00:00.735Z&firstMonth=2023-01-01T00:00:00.735Z&lastMonth=2023-12-31T00:00:00.735Z",
-                HttpMethod.GET, new HttpEntity<>(StatisticRequestDto.class), AccountStatisticResponseDto.class);
+                HttpMethod.GET, new HttpEntity<>(StatisticRequestDto.class, headers), AccountStatisticResponseDto.class);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertEquals(MediaType.APPLICATION_JSON_VALUE,
                 Objects.requireNonNull(response.getHeaders().getContentType()).toString());
