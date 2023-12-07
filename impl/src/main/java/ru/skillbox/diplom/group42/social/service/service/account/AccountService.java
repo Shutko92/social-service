@@ -33,6 +33,10 @@ public class AccountService {
     private final AccountMapper accountMapper;
     private final NotificationSettingsRepository notificationSettingsRepository;
 
+    /**
+     * Метод вызывает идентификатор пользователя, передает его дальше для обработки, возвращает результат.
+     * @return информация об аккаунте.
+     */
     public AccountDto getAccount() {
         Long id = SecurityUtil.getJwtUserIdFromSecurityContext();
         log.info("AccountService method getAccount() executed. Account id: {}", id);
@@ -40,6 +44,12 @@ public class AccountService {
         return getAccountById(id);
     }
 
+    /**
+     * Метод ищет аккаунт через репозиторий по идентификатору. В противном случае выбрасывается исключение.
+     * Результат конвертируется в ответ.
+     * @param id идентификатор аккаунта.
+     * @return информация об аккаунте.
+     */
     public AccountDto getAccountById(Long id) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new BadCredentialsException("AccountService method getAccountById(): User with id " + id + " does not exist"));
@@ -47,6 +57,13 @@ public class AccountService {
         return accountMapper.convertToDto(account);
     }
 
+    /**
+     * Метод ищет аккаунты по спецификации владельца и параметрам запроса, если в параметрах указан владелец.
+     * В противном случае поиск ведется по другим полям.
+     * @param accountSearchDto параметры запроса.
+     * @param page параметр для разделения информации на страницы.
+     * @return постраничная информация об аккаунтах.
+     */
     public Page<AccountDto> searchAccount(AccountSearchDto accountSearchDto, Pageable page) {
         log.info("AccountService method search(AccountSearchDto accountSearchDto, Pageable page) executed" + accountSearchDto.toString());
         if (accountSearchDto.getAuthor() != null) {
@@ -56,6 +73,12 @@ public class AccountService {
         }
     }
 
+    /**
+     * Метод вызывает идентификатор пользователяб ищет соответствующий аккаунт или выбрасывает исключение,
+     * ковертирует аккаунт в сущность, которую сохраняет, конвертирует сущность в ответ.
+     * @param accountDto параметры запроса.
+     * @return инфотмация о аккаунте.
+     */
     public AccountDto updateAccount(AccountDto accountDto) {
         log.debug("Entering AccountService method Account updateAccount");
         Long userId = SecurityUtil.getJwtUserIdFromSecurityContext();
@@ -71,6 +94,12 @@ public class AccountService {
         return accountMapper.convertToDto(accountToSave);
     }
 
+    /**
+     * Метод ищет аккаунт по идентификатору через репозиторий, если находит, выставляет ему статус из параметров и
+     * фикксирует актуальное время, как последнее время активноости. Сохраняет результат.
+     * @param userId идентификатор аккаунта.
+     * @param status статус аккаунта.
+     */
     public void setAccountOnlineStatus(Long userId, boolean status){
         Optional<Account> account = accountRepository.findById(userId);
         if(!account.isPresent()) return;
@@ -79,6 +108,10 @@ public class AccountService {
         accountRepository.save(account.get());
     }
 
+    /**
+     * Метод конвертирует данные пользователя в аккаунт, сохраняет аккаунт, передает идентификатор дальше.
+     * @param user пользователь
+     */
     public void createAccount(User user) {
         log.debug("Entering AccountService method createAccount(User user)");
         log.info("AccountService method createAccount(User user)");
@@ -121,12 +154,20 @@ public class AccountService {
                         dto.getAgeFrom() == null ? null : ZonedDateTime.now().minusYears(dto.getAgeFrom()), true));
     }
 
+    /**
+     * Метод удаляет аккаунт по идентификатору из параметра.
+     * @param id идентификатор аккаунта.
+     */
     public void deleteById(Long id) {
         log.debug("Entering AccountService method deleteById(), id: {}", id);
         log.info("AccountService method deleteById(Long id) executed, id: {}", id);
         accountRepository.deleteById(id);
     }
 
+    /**
+     * Метод вызывает идентификатор пользователя, ищет аккаут по идентификатору, передает его идентификатор дальше.
+     * @return сообщение об удалении.
+     */
     public String deleteAccount() {
         log.debug("Entering AccountService method deleteAccount()");
         Long id = SecurityUtil.getJwtUserIdFromSecurityContext();

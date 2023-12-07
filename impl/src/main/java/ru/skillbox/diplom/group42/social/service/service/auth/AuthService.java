@@ -44,6 +44,11 @@ public class AuthService {
     private final AccountService accountService;
     private final AuthMapper authMapper;
 
+    /**
+     * Метод ищет пользователя через репозиторий по E-mail. Если пользователь уже существует, выбрасывается исключение.
+     * Если капа не выолнена, выбрасывается исключение. Параметры передаются в другой метод.
+     * @param registrationDto параметры запроса.
+     */
     public void register(RegistrationDto registrationDto) {
         log.info("ENTERED register(User user) in AuthService");
         Optional<User> optionalUser = userRepository.findByEmail(registrationDto.getEmail());
@@ -59,6 +64,13 @@ public class AuthService {
         newUserCreation(registrationDto);
     }
 
+    /**
+     * Метод берет E-mail из параметров и ищет пользователя. Если ничего не находится, выбрасывается исключение.
+     * С помощью декодировки сравнивает пароль пользователя и пароль из параметров. При несовпадении выбрасывается исключение.
+     * Создает токен пользователяи формирует ответ аутентификации. При неудачной аутентификации выбрасывается исключение.
+     * @param authenticateDto параметры запроса.
+     * @return
+     */
     public AuthenticateResponseDto login(AuthenticateDto authenticateDto) {
         try {
             log.info("Method login(AuthenticateDto authenticateDto) in AuthService. User with email: {} is attempting to login", authenticateDto.getEmail());
@@ -94,6 +106,12 @@ public class AuthService {
         }
     }
 
+    /**
+     * Метод Вызывает пользователя из контекста, проверяет его пароль и пароль из параметров на совпадение. В случае
+     * несовпадения выбрасывается исключение. Ищет пользователя через репозиторий по идентификатору и кодирует новый пароль.
+     * пароль передается в другой метод, пользователь сохраняется.
+     * @param dto параметры смены пароля.
+     */
     public void changePassword(PasswordChangeDto dto) {
         JwtUser jwtUser = getJwtUserFromSecurityContext();
         boolean isOldPasswordCorrect = new BCryptPasswordEncoder().matches(dto.getOldPassword(),jwtUser.getPassword());

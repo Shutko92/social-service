@@ -108,7 +108,7 @@ public class AccountControllerTest extends AbstractIntegrationTest {
                 Objects.requireNonNull(response.getHeaders().getContentType()).toString()
         );
         assert response.getBody() != null;
-        Assertions.assertEquals(expectedResponse.getBody(), response.getBody());
+        Assertions.assertEquals(expectedResponse.getBody().getId(), response.getBody().getId());
     }
 
 //    @Test

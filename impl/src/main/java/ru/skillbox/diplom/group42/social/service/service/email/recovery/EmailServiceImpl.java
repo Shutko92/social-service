@@ -45,6 +45,10 @@ public class EmailServiceImpl {
     @Value("${host.local}")
     String LOCAL_HOST;
 
+    /**
+     * Метод вызывает пользователя, генерирует пароль, передает его в другой сервис, формирует E-mail, вызывает
+     * Другие методы. В случае ошибки выбрасывает исключение.
+     */
     public void sendLinkByEmail() {
         try {
             JwtUser user = getJwtUserFromSecurityContext();
@@ -62,6 +66,14 @@ public class EmailServiceImpl {
         }
     }
 
+    /**
+     * Метод берет header из параметров, на его основе генерирует пароль, вызывает идентификатор пользователя,
+     * ищет ссылку через репозиторий по паролю и с негативным указателем удалениия. Если ссылка находится,
+     * ищется пользователь по ндентификатору, обновляется и сохраняется. Идентификатор передается в другой метод.
+     * @param request сервлет-запрос.
+     * @param dto параметры для смены E-mail.
+     * @return HttpStatus.
+     */
     public HttpStatus changeEmailByLink(HttpServletRequest request, EmailRecoveryDto dto) {
         String referer = request.getHeader("referer");
         UUID uuid = UUID.fromString(Objects.requireNonNull(getRefererUUID(referer)));

@@ -37,7 +37,12 @@ public class FriendService {
     private final FriendMapper friendMapper;
     private final NotificationHandler notificationHandler;
 
-
+    /**
+     * Метод ищет друзей по спецификации и параметрам через репозиторий и конвертирует результат в ответ.
+     * @param friendSearchDto параметры поиска друзей.
+     * @param page параметр для разделения на страницы.
+     * @return страничная информация о друзьях.
+     */
     public Page<FriendShortDto> getFriends(FriendSearchDto friendSearchDto, Pageable page) {
 
         log.info("FriendService method search(FriendSearchDto friendSearchDto, Pageable page) executed");
@@ -45,7 +50,14 @@ public class FriendService {
                 , page).map(friendMapper::convertToFriendShortDto);
     }
 
-
+    /**
+     * Метод вызывает идентификаторы пользователя и его собеседника и ищет аккаунты через репозиторий или выбрасывает исключение.
+     * Вызывает другой метод, если ответ отрицательный, ищет записи друзей через репозиторий, проставляет им статусы друзей.
+     * Иначе конвертирует аккаунты в сущность друзей, устанавливает им связи друзей, отправляет нотификацию на дружбу,
+     * сохраняет друзей, конвертирует друга в ответ.
+     * @param id идентифиеатор аккаунта.
+     * @return информация о друге.
+     */
     public FriendShortDto friendRequest(Long id) {
         Long myId = SecurityUtil.getJwtUserIdFromSecurityContext();
         Account account = accountRepository.findById(id)
@@ -89,6 +101,12 @@ public class FriendService {
         return friendMapper.convertToFriendShortDto(friendTo);
     }
 
+    /**
+     * Метод Ищет записи о дружбе по идентификаторам через репозитории, проставляет им статус дружбы, сохраняет друзей,
+     * конвертирует пользователя в ответ
+     * @param id идентифиеатор аккаунта.
+     * @return информация о пользователе.
+     */
     public FriendShortDto friendApprove(Long id) {
         Friend friend = friendRepository.findByIdFromAndIdToAndStatusCode(id, SecurityUtil.getJwtUserIdFromSecurityContext(), "REQUEST_TO");
         friend.setStatusCode(StatusCode.FRIEND.toString());
@@ -124,7 +142,14 @@ public class FriendService {
         return new CountDto(friendRepository.getCountRequest(SecurityUtil.getJwtUserIdFromSecurityContext()));
     }
 
-
+    /**
+     * Метод вызывает идентификаторы пользователя и его собеседника и ищет аккаунты через репозиторий или выбрасывает исключение.
+     * Вызывает другой метод, если ответ отрицательный, ищет записи друзей через репозиторий, проставляет им статусы друзей.
+     * Иначе конвертирует аккаунты в сущность друзей, устанавливает им связи друзей, отправляет нотификацию на дружбу,
+     * сохраняет друзей, конвертирует друга в ответ.
+     * @param id идентифиеатор аккаунта.
+     * @return информация о пользователе.
+     */
     public FriendShortDto subscribeById(Long id) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new BadCredentialsException("User with id " + id + " does not exist"));
@@ -186,6 +211,12 @@ public class FriendService {
         return friendMapper.convertToFriendShortDto(friend);
     }
 
+    /**
+     * Метод ищет записи дружбы пользователя и собеседника, меняет им статусы, что дружбы нет, удаляет друзей, конвертирует
+     * пользователя в ответ.
+     * @param id идентификатор друга.
+     * @return информация о пользователе.
+     */
     public FriendShortDto deleteById(Long id) {
         Friend friend = friendRepository.findFriendByIdFromAndIdToAndIsDeletedFalse(SecurityUtil.getJwtUserFromSecurityContext().getId(), id);
 
@@ -207,6 +238,12 @@ public class FriendService {
         return true;
     }
 
+    /**
+     * Метод вызывает другой метод, если ответ отрицательный, ищет записи о дружбе по спецификации, конвертирует результат в ответ.
+     * Иначе вызывает другой метод, ищет записи о дружбе по спецификации, конвертирует результат в ответ.
+     * @param friendSearchDto параметры поиска друзей.
+     * @return информация о друзьях.
+     */
     public List<FriendShortDto> recommended(FriendSearchDto friendSearchDto) {
 
         log.info("FriendService method recommended(FriendSearchDto friendSearchDto) executed");

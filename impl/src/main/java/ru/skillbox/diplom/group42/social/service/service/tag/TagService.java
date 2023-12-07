@@ -22,6 +22,11 @@ public class TagService {
     private final TagRepository tagRepository;
     private final TagMapper tagMapper;
 
+    /**
+     * Метод сохраняет новые теги по параметрам запроса коллеции TagDto, если они не были найдены в базе данных.
+     * @param tagDto название.
+     * @return список тегов.
+     */
     public Set<Tag> create(Set<TagDto> tagDto) {
         Set<Tag> tagSet = new HashSet<>();
         List<Tag> tagList = tagRepository.findByNameIn(tagMapper.convertSetToEntity(tagDto).stream()
@@ -39,14 +44,28 @@ public class TagService {
         return tagSet;
     }
 
+    /**
+     * Метод обновляет тег по параметру запроса TagDto.
+     * @param tagDto С
+     * @return название.
+     */
     public TagDto update(TagDto tagDto) {
         return tagMapper.convertToDto(tagRepository.save(tagMapper.convertToEntity(tagDto)));
     }
 
+    /**
+     * Метод возвращает тег по параметру запроса TagSearchDto.
+     * @param tagSearchDto название.
+     * @return название.
+     */
     public TagDto getTag(TagSearchDto tagSearchDto) {
         return tagMapper.convertToDto(tagRepository.findByName(tagSearchDto.getName()));
     }
 
+    /**
+     * Метод удаляет тег по запрошенному id.
+     * @param id идентификатор тега.
+     */
     public void deleteById(Long id) {
         tagRepository.deleteById(id);
 
