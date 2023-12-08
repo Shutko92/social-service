@@ -42,7 +42,7 @@ public class Friend extends BaseEntity {
  private ZonedDateTime birthDate;
 
  @Column(name = "is_online")
- private boolean isOnline;
+ private Boolean isOnline;
 
  @Column(name = "id_from")
  private Long idFrom;

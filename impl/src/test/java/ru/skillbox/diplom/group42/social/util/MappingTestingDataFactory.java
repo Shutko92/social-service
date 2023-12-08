@@ -292,7 +292,7 @@ public class MappingTestingDataFactory {
         friend.setCountry("some country");
         friend.setFirstName(TEST_FIRST_NAME);
         friend.setLastName(TEST_LAST_NAME);
-        friend.setOnline(false);
+        friend.setIsOnline(false);
         friend.setBirthDate(TIME_TEST);
         friend.setIdFrom(TEST_SECOND_ID);
         friend.setIdTo(TEST_ID);
