@@ -257,7 +257,7 @@ public class MappingTestingDataFactory {
     public static StatisticResponseDto createStatisticResponseDto() {
         StatisticResponseDto response = new StatisticResponseDto();
         List<StatisticPerDateDto> perDate = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 4; i++) {
             perDate.add(createStatisticPerDateDto());
         }
         response.setCount(TEST_SIZE);
@@ -271,10 +271,10 @@ public class MappingTestingDataFactory {
         AccountStatisticResponseDto accountResponse = new AccountStatisticResponseDto();
         List<StatisticPerDateDto> perDate = new ArrayList<>();
         List<AccountCountPerAgeDto> accountPerAge = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 4; i++) {
             perDate.add(createStatisticPerDateDto());
         }
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 4; i++) {
             accountPerAge.add(createAccountCountPerAgeDto());
         }
         accountResponse.setCount(TEST_SIZE);

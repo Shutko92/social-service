@@ -1,4 +1,4 @@
-FROM openjdk:21
+FROM openjdk:20
 ARG JAR_FILE=impl/target/social-service-impl-1.0.0-SNAPSHOT-exec.jar
 COPY ${JAR_FILE} social-service-impl.jar
 EXPOSE 8080

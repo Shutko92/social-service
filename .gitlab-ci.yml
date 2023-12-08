@@ -27,7 +27,7 @@ build-job:
   only:
     - develop
   script:
-    - mvn clean package
+    - mvn clean package -Dnet.bytebuddy.experimental=true
   artifacts:
     paths:
       - impl/target/social-service-impl-1.0.0-SNAPSHOT-exec.jar

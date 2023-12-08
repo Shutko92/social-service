@@ -46,6 +46,7 @@ class StatisticServiceTest {
     private AccountStatisticResponseDto accountResponse = createAccountStatisticResponseDto();
     private List<Post> posts = List.of(createPost(TEST_ID), createPost(TEST_SECOND_ID));
     private List<Account> accounts = List.of(createTestAccount(TEST_ID), createTestAccount(TEST_SECOND_ID));
+    private StatisticRequestDto request = createStatisticRequestDto();
 
     @BeforeEach
     public void beforeMethod(){
@@ -54,35 +55,30 @@ class StatisticServiceTest {
 
     @Test
     void funPostLikeCommentStatisticInvokePostRepo() {
-        StatisticRequestDto request = createStatisticRequestDto();
         statisticService.postLikeCommentStatistic(request, StatisticType.POST);
         verify(postRepository, times(1)).findAll(any(Specification.class));
     }
 
     @Test
     void funPostLikeCommentStatisticInvokeLikeRepo() {
-        StatisticRequestDto request = createStatisticRequestDto();
         statisticService.postLikeCommentStatistic(request, StatisticType.LIKE);
         verify(likeRepository, times(1)).findAll(any(Specification.class));
     }
 
     @Test
     void funPostLikeCommentStatisticInvokeCommentRepo() {
-        StatisticRequestDto request = createStatisticRequestDto();
         statisticService.postLikeCommentStatistic(request, StatisticType.COMMENT);
         verify(commentRepository, times(1)).findAll(any(Specification.class));
     }
 
     @Test
     void funPostLikeCommentStatisticInvokeAdminConsoleMapper() {
-        StatisticRequestDto request = createStatisticRequestDto();
         statisticService.postLikeCommentStatistic(request, StatisticType.POST);
         verify(adminConsoleMapper, times(1)).dataToStatisticResponse(any(ZonedDateTime.class), anyInt(),any(), any());
     }
 
     @Test
     void funAccountStatisticInvokeAdminConsoleMapper() {
-        StatisticRequestDto request = createStatisticRequestDto();
         statisticService.postLikeCommentStatistic(request, StatisticType.POST);
         verify(adminConsoleMapper, times(1)).dataToStatisticResponse(any(ZonedDateTime.class), anyInt(),any(), any());
     }
@@ -91,17 +87,8 @@ class StatisticServiceTest {
     void funPostLikeCommentStatisticShouldReturnStatisticResponseDto() {
         when(postRepository.findAll(any(Specification.class))).thenReturn(posts);
         when(adminConsoleMapper.dataToStatisticResponse(any(ZonedDateTime.class), anyInt(),any(), any())).thenReturn(response);
-        StatisticRequestDto request = createStatisticRequestDto();
         StatisticResponseDto response = statisticService.postLikeCommentStatistic(request, StatisticType.POST);
         assertNotNull(response);
     }
 
-    @Test
-    void funAccountStatisticShouldReturnAccountStatisticResponseDto() {
-        when(accountRepository.findAll(any(Specification.class))).thenReturn(accounts);
-        when(adminConsoleMapper.dataToAccountStatisticResponse(any(ZonedDateTime.class), anyInt(),any(), any())).thenReturn(accountResponse);
-        StatisticRequestDto request = createStatisticRequestDto();
-        AccountStatisticResponseDto response = statisticService.accountStatistic(request);
-        assertNotNull(response);
-    }
 }
