@@ -25,4 +25,5 @@
     <include file="classpath:liquibase/create-notification-table.xml"/>
     <include file="classpath:liquibase/create-notification-settings-table.xml"/>
     <include file="classpath:liquibase/create-friend-table.xml"/>
+    <include file="classpath:liquibase/insert-admin.xml"/>
 </databaseChangeLog>

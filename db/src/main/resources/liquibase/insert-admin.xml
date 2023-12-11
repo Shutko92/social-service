@@ -1,0 +1,44 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="insert_admin" author="ilya">
+        <insert tableName="user">
+            <column name="id" value="6969"/>
+            <column name="is_deleted" value="false"/>
+            <column name="first_name" value="Admin"/>
+            <column name="last_name" value="Admin"/>
+            <column name="email" value="admin.account@gmail.com"/>
+            <column name="password" value="$2a$10$Zg9rnLApt.GGjw0t2Zwyp.AF0kRLJHt8F4cfLpZA6ud2Hz5m.npK."/>
+        </insert>
+
+        <insert tableName="account">
+            <column name="id" value="6969"/>
+            <column name="phone" value="null"/>
+            <column name="photo" value="null"/>
+            <column name="profile_cover" value="null"/>
+            <column name="about" value="null"/>
+            <column name="city" value="null"/>
+            <column name="country" value="null"/>
+            <column name="status_code" value="null"/>
+            <column name="reg_date" value="2023-12-11 18:20:04.046380 +00:00"/>
+            <column name="birth_date" value="null"/>
+            <column name="message_permission" value="null"/>
+            <column name="last_online_time" value="2023-12-11 18:20:22.687364 +00:00"/>
+            <column name="is_online" value="true"/>
+            <column name="is_blocked" value="false"/>
+            <column name="emoji_status" value="null"/>
+            <column name="created_on" value="2023-12-11 18:20:04.046380 +00:00"/>
+            <column name="updated_on" value="2023-12-11 18:20:04.046000 +00:00"/>
+            <column name="deletion_timestamp" value="null"/>
+        </insert>
+
+        <insert tableName="user_role">
+            <column name="role_id" value="1"/>
+            <column name="user_id" value="6969"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
