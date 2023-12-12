@@ -38,6 +38,7 @@ public interface PostController extends BaseController<PostDto, PostSearchDto> {
     @Override
     @GetMapping(value = "/{id}")
     ResponseEntity<PostDto> getById(@PathVariable @Parameter(description = "id поста") Long id);
+
     @Operation(summary = "Получение всех постов"
             , responses = {
             @ApiResponse(responseCode = "200", description = "Посты найден"
@@ -51,7 +52,7 @@ public interface PostController extends BaseController<PostDto, PostSearchDto> {
                     , content = @Content)})
     @Override
     @GetMapping
-    ResponseEntity<Page<PostDto>> getAll(@Parameter(description = "ДТО поиска")PostSearchDto postSearchDTO,@Parameter(description = "параметры пагинации") Pageable pageable);
+    ResponseEntity<Page<PostDto>> getAll(@Parameter(description = "ДТО поиска") PostSearchDto postSearchDTO, @Parameter(description = "параметры пагинации") Pageable pageable);
 
     @Operation(summary = "Создание поста"
             , responses = {
@@ -67,6 +68,7 @@ public interface PostController extends BaseController<PostDto, PostSearchDto> {
     @Override
     @PostMapping
     ResponseEntity<PostDto> create(@RequestBody @Parameter(description = "ДТО поста") PostDto dto);
+
     @Operation(summary = "Обновление поста"
             , responses = {
             @ApiResponse(responseCode = "200", description = "Пост обновлен"
@@ -81,13 +83,14 @@ public interface PostController extends BaseController<PostDto, PostSearchDto> {
     @Override
     @PutMapping
     ResponseEntity<PostDto> update(@RequestBody @Parameter(description = "ДТО поста") PostDto dto);
+
     @Operation(summary = "Удаление поста по id"
             , responses = {
             @ApiResponse(responseCode = "200", description = "Пост удален"),
             @ApiResponse(responseCode = "404", description = "Пост не найден"
                     , content = @Content()),
             @ApiResponse(responseCode = "400", description = "Неправильный запрос"
-                    ,content = @Content()),
+                    , content = @Content()),
             @ApiResponse(responseCode = "403", description = "В доступе отказано"
                     , content = @Content)})
     @Override
@@ -109,7 +112,7 @@ public interface PostController extends BaseController<PostDto, PostSearchDto> {
     @GetMapping("/{postId}/comment")
     ResponseEntity<Page<CommentDto>> getAllCommentsToPost(@PathVariable @Parameter(description = "postId") Long postId
             , @Parameter(description = "CommentSearchDto") CommentSearchDto commentSearchDto
-            ,@Parameter(description = "Pageable") Pageable pageable);
+            , @Parameter(description = "Pageable") Pageable pageable);
 
     @Operation(summary = "Получение всех сабкомментариев к посту"
             , responses = {
@@ -141,7 +144,7 @@ public interface PostController extends BaseController<PostDto, PostSearchDto> {
                     , content = @Content)})
     @PostMapping("/{postId}/comment")
     ResponseEntity<CommentDto> create(@PathVariable @Parameter(description = "postId") Long postId
-            ,@Parameter(description = "CommentDto") @RequestBody CommentDto dto);
+            , @Parameter(description = "CommentDto") @RequestBody CommentDto dto);
 
     @Operation(summary = "Создание сабкомментариев"
             , responses = {
@@ -203,6 +206,7 @@ public interface PostController extends BaseController<PostDto, PostSearchDto> {
     @PostMapping("/{id}/like")
     ResponseEntity<LikeDto> createPostReaction(@PathVariable @Parameter(description = "postId") Long id
             , @RequestBody LikeDto likeDto);
+
     @Operation(summary = "Удаление реакции к посту"
             , responses = {
             @ApiResponse(responseCode = "200", description = "Реакция удалена"
@@ -232,6 +236,7 @@ public interface PostController extends BaseController<PostDto, PostSearchDto> {
     @PostMapping("/{id}/comment/{commentId}/like")
     ResponseEntity<LikeDto> createCommentLike(@PathVariable @Parameter(description = "postId") Long id, @Parameter(description = "likeDto") LikeDto likeDto
             , @PathVariable @Parameter(description = "commentId") Long commentId);
+
     @Operation(summary = "Удаление лайка к комментарию"
             , responses = {
             @ApiResponse(responseCode = "200", description = "Лайк удален"

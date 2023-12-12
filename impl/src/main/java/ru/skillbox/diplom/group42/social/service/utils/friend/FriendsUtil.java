@@ -75,7 +75,7 @@ public class FriendsUtil {
                     .and(equal(Friend_.isDeleted, false, true))
                     .and(equal(Friend_.idFrom, friendSearchDto.getIdFrom(), true))
                     .and(equal(Friend_.statusCode, friendSearchDto.getStatusCode(), true))
-                    //.and(equal(Friend_.idTo, friendSearchDto.getIdTo(), true))
+                    .and(equal(Friend_.idTo, friendSearchDto.getIdTo(), true))
                     .and(equal(Friend_.previousStatusCode, friendSearchDto.getPreviousStatusCode(), true))
                     .and(equal(Friend_.idFrom, SecurityUtil.getJwtUserFromSecurityContext().getId(), true))
                     .and(notIn(Friend_.idTo, Collections.singleton(SecurityUtil.getJwtUserFromSecurityContext().getId()), true));

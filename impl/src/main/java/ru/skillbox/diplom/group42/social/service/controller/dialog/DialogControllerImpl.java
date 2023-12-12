@@ -15,7 +15,6 @@ import ru.skillbox.diplom.group42.social.service.service.dialog.DialogService;
 @AllArgsConstructor
 public class DialogControllerImpl implements DialogController {
 
-
     private final DialogService dialogService;
 
     @Override

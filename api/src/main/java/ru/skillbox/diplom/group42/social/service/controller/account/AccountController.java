@@ -18,7 +18,7 @@ import ru.skillbox.diplom.group42.social.service.util.ConstantURL;
 
 @Tag(name = "Аккаунт", description = "Операций с аккаунтом")
 @RestController
-@RequestMapping( ConstantURL.BASE_URL +"/account/")
+@RequestMapping(ConstantURL.BASE_URL + "/account/")
 public interface AccountController extends BaseController<AccountDto, AccountSearchDto> {
 
     @Operation(summary = "Получение аккаунта", description = "Позволяет получить аккаунт")

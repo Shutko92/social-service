@@ -27,26 +27,8 @@ public class KafkaProducerConfig {
     private String bootstrapAddress;
 
     @Bean
-    public ProducerFactory<String, MessageDto> producerMessageFactory() {
-        Map<String, Object> producerFactoryConfig = new HashMap<>();
-        producerFactoryConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-        producerFactoryConfig.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        producerFactoryConfig.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        return new DefaultKafkaProducerFactory<>(producerFactoryConfig, new StringSerializer(), new JsonSerializer<>());
-    }
-
-    @Bean
-    public KafkaTemplate<String, MessageDto> kafkaMessageTemplate() {
-        return new KafkaTemplate<>(producerMessageFactory());
-    }
-
-    @Bean
     public ProducerFactory<String, EventNotificationDto> eventNotificationProducerFactory() {
-        Map<String, Object> producerFactoryConfig = new HashMap<>();
-        producerFactoryConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-        producerFactoryConfig.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        producerFactoryConfig.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        return new DefaultKafkaProducerFactory<>(producerFactoryConfig, new StringSerializer(), new JsonSerializer<>());
+        return new DefaultKafkaProducerFactory<>(getProducerFactoryConfig(), new StringSerializer(), new JsonSerializer<>());
     }
 
     @Bean
@@ -56,16 +38,20 @@ public class KafkaProducerConfig {
 
     @Bean
     public ProducerFactory<String, StreamingMessageDto<NotificationDto>> sendNotificationProducerFactory() {
-        Map<String, Object> producerFactoryConfig = new HashMap<>();
-        producerFactoryConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-        producerFactoryConfig.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        producerFactoryConfig.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        return new DefaultKafkaProducerFactory<>(producerFactoryConfig, new StringSerializer(), new JsonSerializer<>());
+        return new DefaultKafkaProducerFactory<>(getProducerFactoryConfig(), new StringSerializer(), new JsonSerializer<>());
     }
 
     @Bean
     public KafkaTemplate<String, StreamingMessageDto<NotificationDto>> sendNotificationKafkaTemplate() {
         return new KafkaTemplate<>(sendNotificationProducerFactory());
+    }
+
+    private Map<String,Object> getProducerFactoryConfig(){
+        Map<String, Object> producerFactoryConfig = new HashMap<>();
+        producerFactoryConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+        producerFactoryConfig.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        producerFactoryConfig.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        return producerFactoryConfig;
     }
 
 

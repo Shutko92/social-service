@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://postgres-service:5432/postgres
-    username: postgres
-    password: skillbox
+    url: ${DB_HOST:jdbc:postgresql://postgres-service:5432/postgres}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:skillbox}
   jpa:
     properties:
       hibernate:
@@ -25,15 +25,15 @@ spring:
     consumer:
       group-id: ${GROUP-ID:group-1}
   mail:
-    host: smtp.yandex.ru
+    host: ${MAIL_HOST:smtp.yandex.ru}
     port: 465
-    username: javapro42@yandex.ru
-    password: mjysuhedahhswnef
+    username: ${MAIL_USERNAME:javapro42@yandex.ru}
+    password: ${MAIL_PASSWORD:mjysuhedahhswnef}
 
 vars:
   captchaCharStr: 0123456789
 host:
-  local: http://212.22.70.159:1111
+  local: ${PROD_HOST:http://212.22.70.159:1111}
 
 endpoints:
   admin:
@@ -72,6 +72,11 @@ logging:
   level:
     org:
       apache:
-        kafka: OFF
+        kafka: ${KAFKA_LOGGER:OFF}
+    root: ${ROOT_LOGGER:info}
+    ru:
+      skillbox:
+        diplom:
+          group42: ${PROJECT_LOGGER:debug}
 
 kafka-enable: true

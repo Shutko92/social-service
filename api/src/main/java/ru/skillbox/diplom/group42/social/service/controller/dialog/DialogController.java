@@ -11,7 +11,7 @@ import ru.skillbox.diplom.group42.social.service.dto.message.UnreadCountDto;
 import ru.skillbox.diplom.group42.social.service.util.ConstantURL;
 
 @RestController
-@RequestMapping(ConstantURL.BASE_URL +"/dialogs")
+@RequestMapping(ConstantURL.BASE_URL + "/dialogs")
 public interface DialogController {
 
     @PutMapping("/{dialogId}")
@@ -34,7 +34,6 @@ public interface DialogController {
 
     @GetMapping("/messages")
     ResponseEntity<Page<MessageShortDto>> getMessagesToDialog(@RequestParam("recipientId") Long recipientId, Pageable pageable);
-
 
 
 }

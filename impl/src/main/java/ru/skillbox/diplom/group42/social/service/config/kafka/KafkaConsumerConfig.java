@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@EnableKafka
 @ConditionalOnProperty(value = "kafka-enable", havingValue = "true", matchIfMissing = true)
 public class KafkaConsumerConfig {
 
@@ -32,32 +31,8 @@ public class KafkaConsumerConfig {
     private String groupId;
 
     @Bean
-    public ConsumerFactory<String, MessageDto> consumerMessageFactory() {
-        Map<String, Object> consumerFactoryConfig = new HashMap<>();
-        consumerFactoryConfig.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-        consumerFactoryConfig.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        consumerFactoryConfig.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        consumerFactoryConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        return new DefaultKafkaConsumerFactory<>(consumerFactoryConfig, new StringDeserializer(), new JsonDeserializer<>(MessageDto.class));
-    }
-
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, MessageDto> kafkaListenerMessageContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, MessageDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerMessageFactory());
-        return factory;
-    }
-
-
-    @Bean
     public ConsumerFactory<String, EventNotificationDto> eventNotificationDtoConsumerFactory() {
-        Map<String, Object> consumerFactoryConfig = new HashMap<>();
-        consumerFactoryConfig.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-        consumerFactoryConfig.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        consumerFactoryConfig.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        consumerFactoryConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        return new DefaultKafkaConsumerFactory<>(consumerFactoryConfig, new StringDeserializer(), new JsonDeserializer<>(EventNotificationDto.class));
+        return new DefaultKafkaConsumerFactory<>(getConsumerFactoryConfig(), new StringDeserializer(), new JsonDeserializer<>(EventNotificationDto.class));
     }
 
     @Bean
@@ -69,12 +44,8 @@ public class KafkaConsumerConfig {
 
     @Bean
     public ConsumerFactory<String, StreamingMessageDto<NotificationDto>> sendNotificationDtoConsumerFactory() {
-        Map<String, Object> consumerFactoryConfig = new HashMap<>();
-        consumerFactoryConfig.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-        consumerFactoryConfig.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        consumerFactoryConfig.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        consumerFactoryConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        return new DefaultKafkaConsumerFactory<>(consumerFactoryConfig, new StringDeserializer(), new JsonDeserializer<>(StreamingMessageDto.class));
+
+        return new DefaultKafkaConsumerFactory<>(getConsumerFactoryConfig(), new StringDeserializer(), new JsonDeserializer<>(StreamingMessageDto.class));
     }
 
     @Bean
@@ -82,6 +53,14 @@ public class KafkaConsumerConfig {
         ConcurrentKafkaListenerContainerFactory<String, StreamingMessageDto<NotificationDto>> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(sendNotificationDtoConsumerFactory());
         return factory;
+    }
+    private Map<String,Object> getConsumerFactoryConfig(){
+        Map<String, Object> consumerFactoryConfig = new HashMap<>();
+        consumerFactoryConfig.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+        consumerFactoryConfig.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        consumerFactoryConfig.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        consumerFactoryConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        return consumerFactoryConfig;
     }
 
 }

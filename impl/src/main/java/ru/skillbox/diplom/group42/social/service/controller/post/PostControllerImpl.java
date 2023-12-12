@@ -34,6 +34,7 @@ public class PostControllerImpl implements PostController {
 
     @Override
     public ResponseEntity<Page<PostDto>> getAll(PostSearchDto postSearchDTO, Pageable pageable) {
+        log.debug("PostControllerImpl " +  postSearchDTO);
         return ResponseEntity.ok(postService.getAll(postSearchDTO, pageable));
     }
 
@@ -100,10 +101,11 @@ public class PostControllerImpl implements PostController {
         likeService.deleteLike(id, TypeLike.POST);
         return ResponseEntity.ok().build();
     }
+
     //--------------------------=Like=-----------------------------//
     @Override
-    public ResponseEntity<LikeDto> createCommentLike(Long id,LikeDto likeDto, Long commentId) {
-        return ResponseEntity.ok(likeService.addLike(commentId, likeDto,TypeLike.COMMENT));
+    public ResponseEntity<LikeDto> createCommentLike(Long id, LikeDto likeDto, Long commentId) {
+        return ResponseEntity.ok(likeService.addLike(commentId, likeDto, TypeLike.COMMENT));
     }
 
     @Override

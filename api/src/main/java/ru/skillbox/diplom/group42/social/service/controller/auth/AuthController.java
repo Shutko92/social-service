@@ -27,8 +27,8 @@ public interface AuthController {
 
     @Operation(summary = "Регистрация пользователя", description = "Позволяет зарегистрировать пользователя")
     @ApiResponses(value = {
-           @ApiResponse(responseCode = "200", description = "Регистрация прошла успешно", content = @Content),
-           @ApiResponse(responseCode = "400", description = "Данные введены неверно", content = @Content)
+            @ApiResponse(responseCode = "200", description = "Регистрация прошла успешно", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Данные введены неверно", content = @Content)
     })
     @PostMapping("register")
     void register(@RequestBody RegistrationDto registrationDto);
@@ -37,8 +37,8 @@ public interface AuthController {
     @Operation(summary = "Авторизация пользователя", description = "Позволяет авторизовать пользователя")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Авторизация прошла успешно",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = AuthenticateResponseDto.class)) }),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AuthenticateResponseDto.class))}),
             @ApiResponse(responseCode = "400", description = "Данные введены неверно", content = @Content),
             @ApiResponse(responseCode = "404", description = "Пользователь не найден", content = @Content),
     })
@@ -54,28 +54,28 @@ public interface AuthController {
 
     @Operation(summary = "Получение изображения капчи", description = "Позволяет получить изображение капчи")
     @ApiResponse(responseCode = "200", description = "Изображение капчи успешно получено",
-            content = { @Content(mediaType = "application/json", schema = @Schema(implementation = CaptchaDto.class))
-    })
+            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = CaptchaDto.class))
+            })
     @GetMapping("captcha")
     ResponseEntity<CaptchaDto> getCaptchaImage();
 
     @Operation(summary = "Запрос на изменение почты", description = "Отправляет запрос на изменение почты")
-    @ApiResponse(responseCode = "200", description = "Запрос на изменение почты отправлен",content = @Content)
-    @ApiResponse(responseCode = "500", description = "Ошибка сервера при отправке почтового сообщения",content = @Content)
+    @ApiResponse(responseCode = "200", description = "Запрос на изменение почты отправлен", content = @Content)
+    @ApiResponse(responseCode = "500", description = "Ошибка сервера при отправке почтового сообщения", content = @Content)
     @SecurityRequirement(name = "JWT")
     @PostMapping("change-email-link")
     void handlerRequestChangeEmail();
 
     @Operation(summary = "Подтверждение изменения почты по ссылке", description = "Получает подверждение о смене почты")
-    @ApiResponse(responseCode = "200", description = "Email успешно обновлен",content = @Content)
-    @ApiResponse(responseCode = "406", description = "Ссылка на смену email не действительна",content = @Content)
+    @ApiResponse(responseCode = "200", description = "Email успешно обновлен", content = @Content)
+    @ApiResponse(responseCode = "406", description = "Ссылка на смену email не действительна", content = @Content)
     @SecurityRequirement(name = "JWT")
     @PutMapping("email")
     HttpStatus confirmChangeEmail(HttpServletRequest request, @RequestBody EmailRecoveryDto dto);
 
 
     @Operation(summary = "Запрос на изменение пароля", description = "Отправляет запрос на изменение пароля")
-    @ApiResponse(responseCode = "200", description = "Запрос на изменение пароля отправлен",content = @Content)
+    @ApiResponse(responseCode = "200", description = "Запрос на изменение пароля отправлен", content = @Content)
     @SecurityRequirement(name = "JWT")
     @PostMapping("change-password-link")
     HttpStatus handlerRequestChangePassword(@RequestBody PasswordChangeDto dto);

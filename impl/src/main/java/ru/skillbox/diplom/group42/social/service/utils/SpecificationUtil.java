@@ -15,7 +15,6 @@ public class SpecificationUtil {
     public static Specification getBaseSpecification(BaseSearchDto searchDto) {
         return equal(BaseEntity_.id, searchDto.getId(), true)
                 .and(equal(BaseEntity_.isDeleted, searchDto.getIsDeleted(), true));
-
     }
 
     public static <T, V> Specification<T> equal(SingularAttribute<T, V> field, V value, boolean isSkipNullValues) {
@@ -45,7 +44,6 @@ public class SpecificationUtil {
         });
     }
 
-
     public static <T, V> Specification<T> notIn(SingularAttribute<T, V> field, Collection<V> value, boolean isSkipNullValues) {
         return nullValueCheck(value, isSkipNullValues, () -> {
             return (root, query, builder) -> {
@@ -54,6 +52,7 @@ public class SpecificationUtil {
             };
         });
     }
+
     public static <T> Specification<T> between(SingularAttribute<T, ZonedDateTime> field, ZonedDateTime timeFrom, ZonedDateTime timeTo, boolean isSkipNullValues) {
         return SpecificationUtil.nullValueCheck(timeFrom, timeTo, isSkipNullValues, () -> {
             if (timeFrom == null && timeTo == null) {
@@ -87,7 +86,6 @@ public class SpecificationUtil {
         return (value == null && isSkipNullValues) ? EMPTY_SPECIFICATION : supplier.get();
     }
 
-
     public static <T> Specification<T> likeToLower(
             SingularAttribute<? super T, String> attribute,
             String value,
@@ -97,7 +95,6 @@ public class SpecificationUtil {
                 (root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.lower(root.get(attribute)), "%" + value.toLowerCase() + "%")
         );
     }
-
 
 }
 

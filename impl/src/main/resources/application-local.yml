@@ -33,6 +33,7 @@ spring:
     password: mjysuhedahhswnef
 
 
+
 vars:
   captchaCharStr: 0123456789
 host:
@@ -81,6 +82,11 @@ logging:
   level:
     org:
      apache:
-      kafka: OFF
+      kafka: info
+    root: info
+    ru:
+      skillbox:
+        diplom:
+          group42: debug
 
 kafka-enable: true

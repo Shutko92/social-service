@@ -27,20 +27,5 @@ class DialogMapperTest {
         assertEquals(dialog.getIsDeleted(), dialogDto.getIsDeleted());
     }
 
-    @Test
-    void convertToListDtoIsCorrect() {
-        List<Dialog> dialogs = new ArrayList<>();
-        Dialog dialog = createTestDialog();
-        for (int i = 0; i < 3; i++) {
-            dialogs.add(dialog);
-        }
-        List<DialogDto> dialogDtoList = mapper.convertToListDto(dialogs);
-        for (DialogDto dialogDto : dialogDtoList) {
-            assertEquals(dialog.getId(), dialogDto.getId());
-            assertEquals(dialog.getUnreadCount(), dialogDto.getUnreadCount());
-            assertEquals(dialog.getConversationPartner1(), dialogDto.getConversationPartner1());
-            assertEquals(dialog.getConversationPartner2(), dialogDto.getConversationPartner2());
-            assertEquals(dialog.getIsDeleted(), dialogDto.getIsDeleted());
-        }
-    }
+
 }

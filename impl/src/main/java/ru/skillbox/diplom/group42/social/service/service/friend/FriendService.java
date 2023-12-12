@@ -201,7 +201,6 @@ public class FriendService {
      * @return информация о друзьях.
      */
     public List<FriendShortDto> recommended(FriendSearchDto friendSearchDto) {
-        log.info("FriendService method recommended(FriendSearchDto friendSearchDto) executed");
         int connectionAdd = MAX_CONNECTION - hasConnections() <= 0 ? MAX_CONNECTION : MAX_CONNECTION - hasConnections();
         createRandomConnections(connectionAdd);
         return friendRepository.findAll(getRecommendationsSpecification(friendSearchDto)).stream()
@@ -229,6 +228,7 @@ public class FriendService {
         if (friend != null){
             friend.setPreviousStatusCode(String.valueOf(StatusCode.FRIEND));
             friend.setStatusCode(String.valueOf(StatusCode.BLOCKED));
+            
             friendRepository.save(friend);
             return friendMapper.convertToFriendShortDto(friend);
         }

@@ -32,5 +32,4 @@ public interface NotificationController {
     ResponseEntity<NotificationCountDto> getCountNotifications();
 
 
-
 }

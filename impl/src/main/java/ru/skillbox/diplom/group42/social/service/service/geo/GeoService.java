@@ -28,7 +28,6 @@ public class GeoService {
 //    @Scheduled(cron = "0 0 2 1 1-12 *")
     @Scheduled(cron = "@midnight")
     public void loadCountries() throws Exception {
-        log.info("Method loadCountries was executed in " + this.getClass().getName());
         vkConnector.vkInit();
     }
 
@@ -37,7 +36,6 @@ public class GeoService {
      * @return имеющиеся страны.
      */
     public List<CountryDto> getAllCountries() {
-        log.info("Method getAllCountries was executed in " + this.getClass().getName());
         return geoMapper.countriesToDtoList(countryRepository.findAll());
     }
 
@@ -47,7 +45,6 @@ public class GeoService {
      * @return города.
      */
     public List<CityDto> getCitiesBy(Long countryId) {
-        log.info("Method getCitiesBy country_id " + countryId + " was executed in " + this.getClass().getName());
         return geoMapper.citiesToDtoList(cityRepository.findAllByCountryId(countryId));
     }
 }

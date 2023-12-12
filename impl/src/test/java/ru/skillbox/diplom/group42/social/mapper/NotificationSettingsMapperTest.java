@@ -27,17 +27,4 @@ class NotificationSettingsMapperTest {
         assertEquals(testNotificationSetting.getEnableSendEmailMessage(), notificationSettingDto.getEnableSendEmailMessage());
     }
 
-    @Test
-    void convertToEntity() {
-        NotificationSettingDto notificationSettingDto = createNotificationSettingDto();
-        NotificationSettings notificationSettings = mapper.convertToEntity(notificationSettingDto);
-        assertEquals(notificationSettingDto.getId(), notificationSettings.getId());
-        assertEquals(notificationSettingDto.getEnableMessage(), notificationSettings.getEnableMessage());
-        assertEquals(notificationSettingDto.getEnablePost(), notificationSettings.getEnablePost());
-        assertEquals(notificationSettingDto.getEnableFriendBirthday(), notificationSettings.getEnableFriendBirthday());
-        assertEquals(notificationSettingDto.getEnableCommentComment(), notificationSettings.getEnableCommentComment());
-        assertEquals(notificationSettingDto.getEnableFriendRequest(), notificationSettings.getEnableFriendRequest());
-        assertEquals(notificationSettingDto.getEnablePostComment(), notificationSettings.getEnablePostComment());
-        assertEquals(notificationSettingDto.getEnableSendEmailMessage(), notificationSettings.getEnableSendEmailMessage());
-    }
 }

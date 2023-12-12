@@ -39,7 +39,6 @@ public class VkConnector {
         VkApiClient vk = new VkApiClient(transportClient);
 
         UserActor actor = new UserActor(APP_ID, access_token);
-        log.info("Method vkInit was executed in {}", this.getClass().getName());
         collectCountries(vk, actor);
     }
 
@@ -59,12 +58,10 @@ public class VkConnector {
             }
         }
 
-        log.info("Method collectCountries was executed in {}", this.getClass().getName());
         collectCities(vk, actor, countryIdList);
     }
 
     private void collectCities(VkApiClient vk, UserActor actor, List<Long> idList) throws Exception {
-        log.info("Method collectCities is working in {}", this.getClass().getName());
         for (Long id : idList) {
             GetCitiesResponse cityResponse;
             Set<City> cities;
@@ -85,7 +82,6 @@ public class VkConnector {
                 Thread.sleep(3000);
             } while (cityResponse.getCount()>0);
         }
-        log.info("Method collectCities finished in {}", this.getClass().getName());
     }
 
     private void saveCities(Set<City> cities) {
@@ -94,6 +90,5 @@ public class VkConnector {
                 cityRepository.save(city);
             }
         }
-        log.info("Method saveCities was executed in {}", this.getClass().getName());
     }
 }

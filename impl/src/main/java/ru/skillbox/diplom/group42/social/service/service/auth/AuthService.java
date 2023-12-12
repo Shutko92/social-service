@@ -50,15 +50,15 @@ public class AuthService {
      * @param registrationDto параметры запроса.
      */
     public void register(RegistrationDto registrationDto) {
-        log.info("ENTERED register(User user) in AuthService");
+
         Optional<User> optionalUser = userRepository.findByEmail(registrationDto.getEmail());
-        log.info("Looking for previously registered user with such email");
+
         if (optionalUser.isPresent()) {
-            log.warn("User already exists");
+            log.debug("User already exists");
             throw new RegisteringExistingUserException();
         }
         if (!passCaptcha(registrationDto)) {
-            log.warn("In AuthService register: captcha failed");
+            log.debug("In AuthService register: captcha failed");
             throw new InvalidCaptchaException();
         }
         newUserCreation(registrationDto);
@@ -73,35 +73,26 @@ public class AuthService {
      */
     public AuthenticateResponseDto login(AuthenticateDto authenticateDto) {
         try {
-            log.info("Method login(AuthenticateDto authenticateDto) in AuthService. User with email: {} is attempting to login", authenticateDto.getEmail());
-
             String email = authenticateDto.getEmail();
             Optional<User> user = userRepository.findByEmail(email);
 
             if (!user.isPresent()) {
-                log.error("User with email: {} was not found", email);
+                log.debug("User with email: {} was not found", email);
                 throw new UsernameNotFoundException("User with email: " + email + " was not found");
             }
 
             PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
             if (!passwordEncoder.matches(authenticateDto.getPassword(), user.get().getPassword())) {
-                log.error("Invalid password for user with email: {}", email);
+                log.debug("Invalid password for user with email: {}", email);
                 throw new BadCredentialsException("Invalid email or password");
             }
-
             String token = jwtTokenProvider.createToken(email, user.get().getId(), user.get().getRole());
-
             AuthenticateResponseDto responseDto = new AuthenticateResponseDto(token, token);
             authenticateDto.setEmail(email);
 
-            log.info("User {} ({} {}) logged in",
-                    user.get().getEmail(),
-                    user.get().getFirstName(),
-                    user.get().getLastName());
-
             return responseDto;
         } catch (AuthenticationException e) {
-            log.error("AuthenticationException occurred: {}", e.getMessage());
+            log.debug("AuthenticationException occurred: {}", e.getMessage());
             throw new BadCredentialsException("Invalid email or password");
         }
     }
@@ -114,9 +105,9 @@ public class AuthService {
      */
     public void changePassword(PasswordChangeDto dto) {
         JwtUser jwtUser = getJwtUserFromSecurityContext();
-        boolean isOldPasswordCorrect = new BCryptPasswordEncoder().matches(dto.getOldPassword(),jwtUser.getPassword());
-        log.info("User password is correct " + isOldPasswordCorrect);
-        if(!isOldPasswordCorrect){
+        boolean isOldPasswordCorrect = new BCryptPasswordEncoder().matches(dto.getOldPassword(), jwtUser.getPassword());
+        if (!isOldPasswordCorrect) {
+            log.debug("Invalid password: {}", dto.getNewPassword1());
             throw new NotFoundException("User password is not correct");
         }
         User user = userRepository.findById(jwtUser.getId()).orElse(null);
@@ -137,13 +128,6 @@ public class AuthService {
         User user = authMapper.convertRegistrationDtoToUser(registrationDto);
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         user.setRole(userRoles);
-
         accountService.createAccount(user);
-
-        log.info("IN register - user: {} {} with email [{}] successfully registered",
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail()
-        );
     }
 }

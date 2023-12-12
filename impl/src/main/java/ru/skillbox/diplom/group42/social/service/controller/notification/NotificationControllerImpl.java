@@ -33,9 +33,10 @@ public class NotificationControllerImpl implements NotificationController {
         return ResponseEntity.ok().build();
     }
 
+
     @Override
     public ResponseEntity<Boolean> createSettingsNotifications(Long id) {
-        return null;
+        return ResponseEntity.noContent().build();
     }
 
     @Override

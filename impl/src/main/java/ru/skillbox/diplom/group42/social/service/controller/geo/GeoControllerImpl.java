@@ -18,19 +18,18 @@ public class GeoControllerImpl implements GeoController {
 
     @Override
     public void loadCountries() throws Exception {
-        log.info("Method loadCountries was executed in " + this.getClass().getName());
+
         geoService.loadCountries();
     }
 
     @Override
     public List<CountryDto> getCountries() {
-        log.info("Method getCountries was executed in " + this.getClass().getName());
+
         return geoService.getAllCountries();
     }
 
     @Override
     public List<CityDto> getCities(@PathVariable Long countryId) {
-        log.info("Method getCities was executed in " + this.getClass().getName());
         return geoService.getCitiesBy(countryId);
     }
 }

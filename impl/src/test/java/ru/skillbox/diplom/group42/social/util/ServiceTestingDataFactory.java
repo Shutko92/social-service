@@ -96,13 +96,13 @@ public class ServiceTestingDataFactory {
         post.setIsDeleted(false);
         post.setIds(new ArrayList<>());
         post.setTags(tagsList);
-        post.setAccountIds(new ArrayList<>());
-        post.setBlockedIds(new ArrayList<>());
-        post.setAuthor("test Author");
+        post.setAccountIds(null);
+        post.setBlockedIds(null);
+        post.setAuthor(null);
         post.setWithFriends(true);
         post.setReaction(new ArrayList<>());
-        post.setDateFrom(TIME_TEST);
-        post.setDateTo(TIME_TEST);
+        post.setDateFrom(TIME_TEST.toString());
+        post.setDateTo(TIME_TEST.toString());
         post.setText("test Text");
         return post;
     }

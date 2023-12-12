@@ -8,7 +8,7 @@ import ru.skillbox.diplom.group42.social.service.dto.admin.console.response.Acco
 import ru.skillbox.diplom.group42.social.service.dto.admin.console.response.StatisticResponseDto;
 import ru.skillbox.diplom.group42.social.service.util.ConstantURL;
 
-@RequestMapping( ConstantURL.BASE_URL + "/admin-console/statistic")
+@RequestMapping(ConstantURL.BASE_URL + "/admin-console/statistic")
 public interface AdminConsoleController {
 
     @GetMapping("/post")

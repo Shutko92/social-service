@@ -18,8 +18,7 @@ public class SecurityUtil {
             JwtUser jwtUser = (JwtUser) auth.getPrincipal();
             return jwtUser.getId();
         }
-
-          throw new IllegalStateException("An anonymous user attempted to access protected resources.");
+        throw new IllegalStateException("An anonymous user attempted to access protected resources.");
     }
 
     public static JwtUser getJwtUserFromSecurityContext() {
@@ -29,7 +28,6 @@ public class SecurityUtil {
             UsernamePasswordAuthenticationToken auth = (UsernamePasswordAuthenticationToken) authentication;
             return (JwtUser) auth.getPrincipal();
         }
-
         throw new IllegalStateException("An anonymous user attempted to access protected resources.");
     }
 }

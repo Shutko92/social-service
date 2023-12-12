@@ -9,7 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface NotificationRepository extends BaseRepository<Notification> {
-    Optional<Notification> getByAuthorId(Long authorId);
     Integer countByRecipientIdAndIsDeleted(Long authorId, Boolean isDeleted);
     List<Notification> findAllByRecipientIdAndIsDeleted(Long recipientId, Boolean isDeleted);
 

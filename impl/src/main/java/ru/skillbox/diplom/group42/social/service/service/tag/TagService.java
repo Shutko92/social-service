@@ -34,7 +34,7 @@ public class TagService {
         Set<Tag> convertListTagDto = tagMapper.convertSetToEntity(tagDto);
 
         convertListTagDto.forEach(tag -> {
-            if (!tagList.contains(tag)){
+            if (!tagList.contains(tag)) {
                 tag.setIsDeleted(false);
                 tagSet.add(tag);
             }
