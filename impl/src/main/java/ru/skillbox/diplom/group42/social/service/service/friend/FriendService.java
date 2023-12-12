@@ -39,8 +39,9 @@ public class FriendService {
 
     /**
      * Метод ищет друзей по спецификации и параметрам через репозиторий и конвертирует результат в ответ.
+     *
      * @param friendSearchDto параметры поиска друзей.
-     * @param page параметр для разделения на страницы.
+     * @param page            параметр для разделения на страницы.
      * @return страничная информация о друзьях.
      */
     public Page<FriendShortDto> getFriends(FriendSearchDto friendSearchDto, Pageable page) {
@@ -55,6 +56,7 @@ public class FriendService {
      * Вызывает другой метод, если ответ отрицательный, ищет записи друзей через репозиторий, проставляет им статусы друзей.
      * Иначе конвертирует аккаунты в сущность друзей, устанавливает им связи друзей, отправляет нотификацию на дружбу,
      * сохраняет друзей, конвертирует друга в ответ.
+     *
      * @param \id идентифиеатор аккаунта.
      * @return информация о друге.
      */
@@ -74,7 +76,7 @@ public class FriendService {
         } else {
             friendTo = friendMapper.convertToFriendTo(accountTo, idFrom);
             friendFrom = friendMapper.convertToFriendFrom(accountFrom, accountTo);
-            notificationHandler.sendNotifications(
+            notificationHandler.sendNotifications(idFrom,
                     idTo,
                     NotificationType.FRIEND_REQUEST,
                     "Поступила заявка в друзья!"
@@ -88,6 +90,7 @@ public class FriendService {
     /**
      * Метод Ищет записи о дружбе по идентификаторам через репозитории, проставляет им статус дружбы, сохраняет друзей,
      * конвертирует пользователя в ответ
+     *
      * @param id идентифиеатор аккаунта.
      * @return информация о пользователе.
      */
@@ -111,6 +114,7 @@ public class FriendService {
      * Вызывает другой метод, если ответ отрицательный, ищет записи друзей через репозиторий, проставляет им статусы друзей.
      * Иначе конвертирует аккаунты в сущность друзей, устанавливает им связи друзей, отправляет нотификацию на дружбу,
      * сохраняет друзей, конвертирует друга в ответ.
+     *
      * @param \id идентифиеатор аккаунта.
      * @return информация о пользователе.
      */
@@ -163,6 +167,7 @@ public class FriendService {
     /**
      * Метод ищет записи дружбы пользователя и собеседника, меняет им статусы, что дружбы нет, удаляет друзей, конвертирует
      * пользователя в ответ.
+     *
      * @param \id идентификатор друга.
      * @return информация о пользователе.
      */
@@ -172,7 +177,7 @@ public class FriendService {
         String previousStatus2 = StatusCode.NONE.toString();
         Friend friend = friendRepository.findByIdFromAndIdToAndStatusCode(userId, deleteId, StatusCode.FRIEND.toString());
         Friend friend2 = friendRepository.findByIdFromAndIdToAndStatusCode(deleteId, userId, StatusCode.FRIEND.toString());
-        if(friend == null){
+        if (friend == null) {
             friend = friendRepository.findByIdFromAndIdToAndStatusCode(userId, deleteId, StatusCode.REQUEST_FROM.toString());
             friend2 = friendRepository.findByIdFromAndIdToAndStatusCode(deleteId, userId, StatusCode.REQUEST_TO.toString());
             previousStatus1 = StatusCode.REQUEST_FROM.toString();
@@ -190,13 +195,15 @@ public class FriendService {
             friendRepository.save(friend);
             friendRepository.save(friend2);
             return shortDto;
-        } catch (Exception exception){
+        } catch (Exception exception) {
             throw new UsernameNotFoundException("User " + deleteId + " not found");
         }
     }
+
     /**
      * Метод вызывает другой метод, если ответ отрицательный, ищет записи о дружбе по спецификации, конвертирует результат в ответ.
      * Иначе вызывает другой метод, ищет записи о дружбе по спецификации, конвертирует результат в ответ.
+     *
      * @param friendSearchDto параметры поиска друзей.
      * @return информация о друзьях.
      */
@@ -206,36 +213,37 @@ public class FriendService {
         return friendRepository.findAll(getRecommendationsSpecification(friendSearchDto)).stream()
                 .map(friendMapper::convertToFriendShortDto).collect(Collectors.toList());
     }
-    public FriendShortDto block(Long idBlocked) throws UsernameNotFoundException{
+
+    public FriendShortDto block(Long idBlocked) throws UsernameNotFoundException {
         Long userId = SecurityUtil.getJwtUserFromSecurityContext().getId();
         Friend friend = friendRepository.findByIdFromAndIdToAndStatusCode(userId, idBlocked, StatusCode.FRIEND.toString());
-        Friend friend2 = friendRepository.findByIdFromAndIdToAndStatusCode(idBlocked, userId,  StatusCode.FRIEND.toString());
+        Friend friend2 = friendRepository.findByIdFromAndIdToAndStatusCode(idBlocked, userId, StatusCode.FRIEND.toString());
         Friend rawRecommendation = friendRepository.findByIdFromAndIdToAndStatusCode(
                 userId,
                 idBlocked,
                 StatusCode.RECOMMENDATION.toString()
         );
-        if(rawRecommendation != null){
+        if (rawRecommendation != null) {
             rawRecommendation.setPreviousStatusCode(StatusCode.RECOMMENDATION.toString());
             rawRecommendation.setStatusCode(StatusCode.REJECTING.toString());
             friendRepository.save(rawRecommendation);
         }
-        if (friend2 != null){
+        if (friend2 != null) {
             friend2.setPreviousStatusCode(String.valueOf(StatusCode.FRIEND));
             friend2.setStatusCode(String.valueOf(StatusCode.NONE));
             friendRepository.save(friend2);
         }
-        if (friend != null){
+        if (friend != null) {
             friend.setPreviousStatusCode(String.valueOf(StatusCode.FRIEND));
             friend.setStatusCode(String.valueOf(StatusCode.BLOCKED));
-            
+
             friendRepository.save(friend);
             return friendMapper.convertToFriendShortDto(friend);
         }
-        throw new UsernameNotFoundException("User " +idBlocked + " not found.");
+        throw new UsernameNotFoundException("User " + idBlocked + " not found.");
     }
 
-    public FriendShortDto unBlock(Long idUnBlocked) throws UsernameNotFoundException{
+    public FriendShortDto unBlock(Long idUnBlocked) throws UsernameNotFoundException {
         Long userId = SecurityUtil.getJwtUserFromSecurityContext().getId();
         Friend friend = friendRepository.findByIdFromAndIdToAndStatusCode(userId, idUnBlocked, StatusCode.BLOCKED.toString());
         Friend rawRecommendation = friendRepository.findByIdFromAndIdToAndStatusCode(
@@ -243,18 +251,18 @@ public class FriendService {
                 idUnBlocked,
                 StatusCode.REJECTING.toString()
         );
-        if(rawRecommendation != null){
+        if (rawRecommendation != null) {
             rawRecommendation.setPreviousStatusCode(StatusCode.REJECTING.toString());
             rawRecommendation.setStatusCode(StatusCode.RECOMMENDATION.toString());
             friendRepository.save(rawRecommendation);
         }
-        if (friend != null){
+        if (friend != null) {
             friend.setPreviousStatusCode(String.valueOf(StatusCode.BLOCKED));
             friend.setStatusCode(String.valueOf(StatusCode.FRIEND));
             friendRepository.save(friend);
             return friendMapper.convertToFriendShortDto(friend);
         }
-        throw new UsernameNotFoundException("User " +idUnBlocked + " not found.");
+        throw new UsernameNotFoundException("User " + idUnBlocked + " not found.");
     }
 
     private Specification<Friend> getRecommendationsSpecification(FriendSearchDto friendSearchDto) {
@@ -307,10 +315,10 @@ public class FriendService {
         }
     }
 
-    private Boolean isRawNoBlockedOrRejecting(Long idFrom, Long idTo){
-        Friend blocked = friendRepository.findByIdFromAndIdToAndStatusCode(idFrom,idTo,StatusCode.BLOCKED.toString());
-        Friend rejecting = friendRepository.findByIdFromAndIdToAndStatusCode(idFrom,idTo,StatusCode.REJECTING.toString());
-        Friend exist = friendRepository.findByIdFromAndIdToAndStatusCode(idFrom,idTo,StatusCode.RECOMMENDATION.toString());
+    private Boolean isRawNoBlockedOrRejecting(Long idFrom, Long idTo) {
+        Friend blocked = friendRepository.findByIdFromAndIdToAndStatusCode(idFrom, idTo, StatusCode.BLOCKED.toString());
+        Friend rejecting = friendRepository.findByIdFromAndIdToAndStatusCode(idFrom, idTo, StatusCode.REJECTING.toString());
+        Friend exist = friendRepository.findByIdFromAndIdToAndStatusCode(idFrom, idTo, StatusCode.RECOMMENDATION.toString());
         return rejecting == null && blocked == null && exist == null;
     }
 

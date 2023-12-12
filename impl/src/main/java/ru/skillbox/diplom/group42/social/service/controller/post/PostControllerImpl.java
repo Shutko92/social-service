@@ -34,7 +34,6 @@ public class PostControllerImpl implements PostController {
 
     @Override
     public ResponseEntity<Page<PostDto>> getAll(PostSearchDto postSearchDTO, Pageable pageable) {
-        log.debug("PostControllerImpl " +  postSearchDTO);
         return ResponseEntity.ok(postService.getAll(postSearchDTO, pageable));
     }
 

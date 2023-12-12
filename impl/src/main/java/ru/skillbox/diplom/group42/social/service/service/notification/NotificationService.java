@@ -39,12 +39,12 @@ public class NotificationService {
 
     /**
      * Метод ищет записи о нотификациях пользователя через репозиторий, конвертирует результат в ответ.
+     *
      * @param pageable параметр для разделения на страницы.
      * @return страничная информация о нотификациях.
      */
     public Page<NotificationsDto> getNotifications(Pageable pageable) {
         List<Notification> notificationList = notificationRepository.findAllByRecipientIdAndIsDeleted(SecurityUtil.getJwtUserIdFromSecurityContext(), false);
-        log.info("FOUND"+notificationList.toString());
         return new PageImpl<>(notificationList.stream().map(notification -> {
             NotificationsDto notificationsDto = new NotificationsDto();
             notificationsDto.setTimeStamp(ZonedDateTime.now());
@@ -58,6 +58,7 @@ public class NotificationService {
 
     /**
      * Метод ищет настройки нотификаций пользователя через репозиторий или выбрасывает исключение.
+     *
      * @return информация о настройках нотификаций.
      */
     public NotificationSettingDto getNotificationsSettings() {
@@ -68,11 +69,10 @@ public class NotificationService {
 
     }
 
-//TODO см. фронт, ответ на фронт приходит раньше че изменения в БД
-
     /**
      * Метод ищет настройки нотификаций пользователя через репозиторий или выбрасывает исключение, сравнивает с вариантами нотификаций,
      * при совпадении активирует, сохраняет результат.
+     *
      * @param notificationSettingsUpdateDto параметры обновления нотификаций.
      */
     public void updateSettingsNotifications(NotificationSettingsUpdateDto notificationSettingsUpdateDto) {
@@ -100,6 +100,7 @@ public class NotificationService {
 
     /**
      * Метод считает нотификации пользователя через репозиторий, формирует ответ с фиксированным временем.
+     *
      * @return счет нотификаций.
      */
     public NotificationCountDto getCountNotifications() {
@@ -115,11 +116,11 @@ public class NotificationService {
     /**
      * Метод формирует сообщение, маркирует его, как нотификацию, конвертирует параметры в объект, сохраняет,
      * вставляет инвормацию в сообщение, отправляет его.
+     *
      * @param eventNotificationDto параметры нотификаций событий.
      */
     @KafkaListener(topics = "notifications-handler", containerFactory = "concurrentKafkaListenerContainerFactory")
     public void createNotifications(EventNotificationDto eventNotificationDto) {
-        log.info("NotificationHandler START createNotification");
         StreamingMessageDto<NotificationDto> streamingMessageDto = new StreamingMessageDto<>();
         streamingMessageDto.setType("NOTIFICATION");
         streamingMessageDto.setRecipientId(eventNotificationDto.getReceiverId());
