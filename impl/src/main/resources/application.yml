@@ -44,7 +44,10 @@ endpoints:
    /api/v1/auth/**,
    /swagger-ui/**,
    /api-docs/**,
-   /api-docs.yaml
+   /api-docs.yaml,
+   /actuator/**,
+   /metrics**
+
 roles:
   admin: "admin"
 jwt:
@@ -80,3 +83,15 @@ logging:
           group42: ${PROJECT_LOGGER:debug}
 
 kafka-enable: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true

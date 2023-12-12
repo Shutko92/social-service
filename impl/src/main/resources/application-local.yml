@@ -3,7 +3,7 @@ spring:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
-    password: skillbox
+    password: testtest
   jpa:
     properties:
       hibernate:
@@ -50,7 +50,9 @@ endpoints:
     /swagger.json,
     /swagger-resources/**,
     /webjars/**,
-    /v1/api-docs
+    /v1/api-docs,
+    /actuator/**,
+    /metrics**
 
 roles:
   admin: "admin"
@@ -78,6 +80,18 @@ cloudinary:
   api_key: 358825755328599
   api_secret: NoYeSddTS8z06a5Dga_wQZO6RZU
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
 logging:
   level:
     org:
