@@ -133,10 +133,9 @@ public class StatisticService {
         if (accountList.stream().noneMatch(account -> account.getBirthDate() != null)) {
             return List.of(new AccountCountPerAgeDto(0,0));
         }
-        Map<Integer, Integer> ageGrouped = accountList.stream().collect(Collectors.groupingBy(Account::getBirthDate))
+        Map<Integer, Integer> ageGrouped = accountList.stream().filter(account -> account.getBirthDate() != null).collect(Collectors.groupingBy(Account::getBirthDate))
                 .entrySet().stream().collect(Collectors.toMap(entry -> Period.between(entry.getKey().toLocalDate(), LocalDate.now()).getYears(),
                         entry -> entry.getValue().size()));
-
         List<AccountCountPerAgeDto> statisticList = new ArrayList<>();
         for (Map.Entry<Integer, Integer> entry : ageGrouped.entrySet()) {
             statisticList.add(new AccountCountPerAgeDto(entry.getKey(), entry.getValue()));
