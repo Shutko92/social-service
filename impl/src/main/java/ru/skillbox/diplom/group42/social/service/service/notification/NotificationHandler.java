@@ -2,6 +2,7 @@ package ru.skillbox.diplom.group42.social.service.service.notification;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.mail.SimpleMailMessage;
@@ -9,6 +10,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import ru.skillbox.diplom.group42.social.service.dto.account.StatusCode;
+import ru.skillbox.diplom.group42.social.service.dto.friend.FriendSearchDto;
 import ru.skillbox.diplom.group42.social.service.dto.notification.EventNotificationDto;
 import ru.skillbox.diplom.group42.social.service.dto.notification.NotificationType;
 import ru.skillbox.diplom.group42.social.service.entity.account.Account;
@@ -18,6 +21,7 @@ import ru.skillbox.diplom.group42.social.service.exception.ResourceFoundExceptio
 import ru.skillbox.diplom.group42.social.service.repository.account.AccountRepository;
 import ru.skillbox.diplom.group42.social.service.repository.friend.FriendRepository;
 import ru.skillbox.diplom.group42.social.service.repository.notification.NotificationSettingsRepository;
+import ru.skillbox.diplom.group42.social.service.service.friend.FriendService;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -61,8 +65,10 @@ public class NotificationHandler {
     }
 
     private Set<Long> getRecipientId(Long authorId) {
-        return friendRepository.findByIdFromOrIdToAndStatusCode(authorId, authorId, "FRIEND")
+        return friendRepository.findByIdFromAndStatusCode(authorId, StatusCode.FRIEND.toString())
                 .stream().map(Friend::getIdTo).filter(idFrom -> !idFrom.equals(authorId)).collect(Collectors.toSet());
+
+
 
     }
 

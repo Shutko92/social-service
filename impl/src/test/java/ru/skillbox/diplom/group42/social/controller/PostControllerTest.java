@@ -84,7 +84,7 @@ class PostControllerTest extends AbstractIntegrationTest{
         commentDto.setParentId(getComment().getId());
         Map<String, Long> variables = new HashMap<>();
         variables.put("id", getPost().getId());
-        variables.put("commentId", TEST_ID);
+        variables.put("commentId", getComment().getId());
         ResponseEntity<CommentDto> response = template.exchange("/api/v1/post/{id}/comment/{commentId}", HttpMethod.PUT,
                 new HttpEntity<>(commentDto, headers), CommentDto.class, variables);
         Assertions.assertEquals(

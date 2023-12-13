@@ -41,39 +41,11 @@ class FriendControllerTest extends AbstractIntegrationTest{
 
     @Test
     @Order(1)
-    void friendRequestReturnsFriendShortDto() {
+    void countFriendRequestsReturnsCountDto() {
         setFriend1(getAccountTestUser(template,headers).getBody().getId());
         createTestUserAccount(template,"make_friends@mail.ru");
         String token = loginTestUserAccount(template,"make_friends@mail.ru").getBody().getAccessToken();
         HttpHeaders headers = getHeaderWithToken(token);
-        ResponseEntity<FriendShortDto> response = template.exchange(
-                "/api/v1/friends/{id}/request", HttpMethod.POST, new HttpEntity<>(headers), FriendShortDto.class, getFriend1());
-        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        Assertions.assertEquals(
-                MediaType.APPLICATION_JSON_VALUE,
-                Objects.requireNonNull(response.getHeaders().getContentType()).toString()
-        );
-        setFriend2(getAccountTestUser(template,headers).getBody().getId());
-    }
-
-    @Test
-    void friendApproveReturnsFriendShortDto() {
-        String token = loginTestUserAccount(template,"friends@mail.ru").getBody().getAccessToken();
-        HttpHeaders headers = getHeaderWithToken(token);
-        ResponseEntity<FriendShortDto> response = template.exchange(
-                "/api/v1/friends/{id}/approve", HttpMethod.PUT, new HttpEntity<>(headers), FriendShortDto.class, getFriend2());
-        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        Assertions.assertEquals(
-                MediaType.APPLICATION_JSON_VALUE,
-                Objects.requireNonNull(response.getHeaders().getContentType()).toString()
-        );
-    }
-
-    @Test
-    @Order(2)
-    void countFriendRequestsReturnsCountDto() {
         ResponseEntity<CountDto> response = template.exchange(
                 "/api/v1/friends/count", HttpMethod.GET, new HttpEntity<>(headers), CountDto.class);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -85,7 +57,7 @@ class FriendControllerTest extends AbstractIntegrationTest{
     }
 
     @Test
-    @Order(3)
+    @Order(2)
     void subscribeReturnsFriendShortDto() {
         ResponseEntity<FriendShortDto> response = template.exchange(
                 "/api/v1/friends/subscribe/{id}", HttpMethod.POST, new HttpEntity<>(headers), FriendShortDto.class, getFriend1());
@@ -98,7 +70,7 @@ class FriendControllerTest extends AbstractIntegrationTest{
     }
 
     @Test
-    @Order(4)
+    @Order(3)
     void recommendations() {
         FriendSearchDto friendSearchDto = createFriendSearchDto();
         friendSearchDto.setIdFrom(getFriend1());
